@@ -1,8 +1,11 @@
 using Orchard.UI.Resources;
 
-namespace Orchard.Resources {
-    public class jQuery : IResourceManifestProvider {
-        public void BuildManifests(ResourceManifestBuilder builder) {
+namespace Orchard.Resources
+{
+    public class jQuery : IResourceManifestProvider
+    {
+        public void BuildManifests(ResourceManifestBuilder builder)
+        {
             var manifest = builder.Add();
 
             // jQuery.
@@ -53,10 +56,10 @@ namespace Orchard.Resources {
 
             // jQuery Time Entry.
             manifest.DefineScript("jQueryTimeEntry").SetUrl("TimeEntry/jquery.timeentry.min.js", "TimeEntry/jquery.timeentry.js").SetDependencies("jQueryPlugin").SetVersion("2.0.1");
-            manifest.DefineStyle("jQueryTimeEntry").SetUrl("TimeEntry/jquery.timeentry.min.css","TimeEntry/jquery.timeentry.css").SetVersion("2.0.1");
+            manifest.DefineStyle("jQueryTimeEntry").SetUrl("TimeEntry/jquery.timeentry.min.css", "TimeEntry/jquery.timeentry.css").SetVersion("2.0.1");
 
             // jQuery Date/Time Editor Enhancements.
-            manifest.DefineStyle("jQueryDateTimeEditor").SetUrl("jquery-datetime-editor.min.css","jquery-datetime-editor.css").SetDependencies("DateTimeEditor");
+            manifest.DefineStyle("jQueryDateTimeEditor").SetUrl("jquery-datetime-editor.min.css", "jquery-datetime-editor.css").SetDependencies("DateTimeEditor");
 
             // jQuery File Upload.
             manifest.DefineScript("jQueryFileUpload").SetUrl("jquery.fileupload-full.min.js", "jquery.fileupload-full.js").SetVersion("9.11.2").SetDependencies("jQueryUI_Widget");

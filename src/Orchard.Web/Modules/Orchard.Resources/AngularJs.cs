@@ -1,8 +1,11 @@
 using Orchard.UI.Resources;
 
-namespace Orchard.Resources {
-    public class AngularJs : IResourceManifestProvider {
-        public void BuildManifests(ResourceManifestBuilder builder) {
+namespace Orchard.Resources
+{
+    public class AngularJs : IResourceManifestProvider
+    {
+        public void BuildManifests(ResourceManifestBuilder builder)
+        {
             var manifest = builder.Add();
             manifest.DefineScript("AngularJs").SetUrl("angular.min.js", "angular.js").SetVersion("1.3.3");
             manifest.DefineScript("AngularJs_Sanitize").SetUrl("angular-sanitize.min.js", "angular-sanitize.js").SetVersion("1.3.3").SetDependencies("AngularJs");

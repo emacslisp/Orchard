@@ -8,11 +8,13 @@ using Orchard.Redis.Extensions;
 using StackExchange.Redis;
 using System;
 
-namespace Orchard.Redis.Caching {
+namespace Orchard.Redis.Caching
+{
 
     [OrchardFeature("Orchard.Redis.Caching")]
     [OrchardSuppressDependency("Orchard.Caching.Services.DefaultCacheStorageProvider")]
-    public class RedisCacheStorageProvider : Component, ICacheStorageProvider {
+    public class RedisCacheStorageProvider : Component, ICacheStorageProvider
+    {
         public const string ConnectionStringKey = "Orchard.Redis.Cache";
 
         private readonly ShellSettings _shellSettings;
@@ -20,13 +22,16 @@ namespace Orchard.Redis.Caching {
         private readonly string _connectionString;
         private readonly ConnectionMultiplexer _connectionMultiplexer;
 
-        public IDatabase Database {
-            get {
+        public IDatabase Database
+        {
+            get
+            {
                 return _connectionMultiplexer.GetDatabase();
             }
         }
 
-        public RedisCacheStorageProvider(ShellSettings shellSettings, IRedisConnectionProvider redisConnectionProvider) {
+        public RedisCacheStorageProvider(ShellSettings shellSettings, IRedisConnectionProvider redisConnectionProvider)
+        {
             _shellSettings = shellSettings;
             _redisConnectionProvider = redisConnectionProvider;
             _connectionString = _redisConnectionProvider.GetConnectionString(ConnectionStringKey);
@@ -35,33 +40,40 @@ namespace Orchard.Redis.Caching {
             Logger = NullLogger.Instance;
         }
 
-        public object Get<T>(string key) {
+        public object Get<T>(string key)
+        {
             var json = Database.StringGet(GetLocalizedKey(key));
-            if(String.IsNullOrEmpty(json)) {
+            if (String.IsNullOrEmpty(json))
+            {
                 return null;
             }
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public void Put<T>(string key, T value) {
+        public void Put<T>(string key, T value)
+        {
             var json = JsonConvert.SerializeObject(value);
             Database.StringSet(GetLocalizedKey(key), json, null);
         }
 
-        public void Put<T>(string key, T value, TimeSpan validFor) {
+        public void Put<T>(string key, T value, TimeSpan validFor)
+        {
             var json = JsonConvert.SerializeObject(value);
             Database.StringSet(GetLocalizedKey(key), json, validFor);
         }
 
-        public void Remove(string key) {
+        public void Remove(string key)
+        {
             Database.KeyDelete(GetLocalizedKey(key));
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             _connectionMultiplexer.KeyDeleteWithPrefix(GetLocalizedKey("*"));
         }
 
-        private string GetLocalizedKey(string key) {
+        private string GetLocalizedKey(string key)
+        {
             return _shellSettings.Name + ":Cache:" + key;
         }
     }
