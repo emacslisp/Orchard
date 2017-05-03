@@ -5,21 +5,21 @@
     string FormatShapeName(string shape) {
         string shapeType = Model.ShapeType;
         string displayType = Model.DisplayType;
-        
+
         if(!String.IsNullOrWhiteSpace(displayType)) {
             if(shape.StartsWith(shapeType + "_" + displayType)) {
-                shape = shapeType + shape.Substring(shapeType.Length + displayType.Length + 1) + "_" + displayType; 
+                shape = shapeType + shape.Substring(shapeType.Length + displayType.Length + 1) + "_" + displayType;
             }
         }
-        
+
         return shape.Replace("__", "-").Replace("_", ".");
     }
-    
+
     string FormatShapeFilename(string shape, string themeId) {
         shape = FormatShapeName(shape);
         return "~/Themes/" + themeId + "/Views/" + shape.Replace("__", "-").Replace("_", ".") + ".cshtml";
     }
-    
+
     string RemoveBeacons(string htmlContent) {
         var regex = new System.Text.RegularExpressions.Regex(@"<script\sclass=""shape-tracing-wrapper(.*?)</script>");
         return regex.Replace(htmlContent, String.Empty);
@@ -35,9 +35,9 @@
 <script type="text/javascript">
 shapeTracingMetadataHost[@Model.ShapeId] = {};
 
-shapeTracingMetadataHost[@Model.ShapeId].shape = { 
-    type: '@Model.ShapeType', 
-    template: '@Model.Template', 
+shapeTracingMetadataHost[@Model.ShapeId].shape = {
+    type: '@Model.ShapeType',
+    template: '@Model.Template',
     originalTemplate: '@Model.OriginalTemplate',
     displayType: '@(String.IsNullOrEmpty((string)Model.DisplayType) ? T("n/a").Text : Model.DisplayType.ToString())',
     position: '@(String.IsNullOrEmpty((string)Model.Position) ? T("n/a").Text : Model.Position.ToString())',
@@ -47,7 +47,7 @@ shapeTracingMetadataHost[@Model.ShapeId].shape = {
         {
         <text>{</text>
         <text>filename: '@FormatShapeFilename(alternate, WorkContext.CurrentTheme.Id)',</text>
-        <text>alternate: '@FormatShapeName(alternate)',</text> 
+        <text>alternate: '@FormatShapeName(alternate)',</text>
         <text>template: '@Model.Template',</text>
         <text>returnUrl: '@Context.Request.RawUrl'</text>
         <text>},</text>

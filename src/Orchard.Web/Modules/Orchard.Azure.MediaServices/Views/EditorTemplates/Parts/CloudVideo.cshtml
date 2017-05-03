@@ -34,10 +34,10 @@
             Html.RenderPartial("CloudVideoEditor.Proxied");
         }
     </div>
-    <div id="cloudvideo-assets" @if (Model.Part.Id > 0) { <text> data-refresh-url="@Url.Action("AssetsTable", "Job", new { Model.Part.Id, Area = "Orchard.Azure.MediaServices" })" </text>      }>
+    <div id="cloudvideo-assets" @if (Model.Part.Id > 0) { <text> data-refresh-url="@Url.Action("AssetsTable", "Job", new { Model.Part.Id, Area = "Orchard.Azure.MediaServices" })" </text>       }>
         @Display.CloudVideo_Edit_Assets(CloudVideoPart: Model.Part)
     </div>
-    <div id="cloudvideo-jobs" @if (Model.Part.Id > 0) { <text> data-refresh-url="@Url.Action("JobsTable", "Job", new { Model.Part.Id, Area = "Orchard.Azure.MediaServices" })" </text>       }>
+    <div id="cloudvideo-jobs" @if (Model.Part.Id > 0) { <text> data-refresh-url="@Url.Action("JobsTable", "Job", new { Model.Part.Id, Area = "Orchard.Azure.MediaServices" })" </text>        }>
         @Display.CloudVideo_Edit_Jobs(CloudVideoPart: Model.Part)
     </div>
     <div id="cloudvideo-preview">

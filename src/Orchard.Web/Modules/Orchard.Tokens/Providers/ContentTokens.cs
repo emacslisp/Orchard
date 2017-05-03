@@ -12,12 +12,15 @@ using Orchard.Localization;
 using Orchard.ContentManagement.FieldStorage;
 using Orchard.Mvc.Extensions;
 
-namespace Orchard.Tokens.Providers {
-    public class ContentTokens : ITokenProvider {
+namespace Orchard.Tokens.Providers
+{
+    public class ContentTokens : ITokenProvider
+    {
         private readonly IContentManager _contentManager;
         private readonly UrlHelper _urlHelper;
 
-        public ContentTokens(IContentManager contentManager, UrlHelper urlHelper) {
+        public ContentTokens(IContentManager contentManager, UrlHelper urlHelper)
+        {
             _contentManager = contentManager;
             _urlHelper = urlHelper;
             T = NullLocalizer.Instance;
@@ -25,7 +28,8 @@ namespace Orchard.Tokens.Providers {
 
         public Localizer T { get; set; }
 
-        public void Describe(DescribeContext context) {
+        public void Describe(DescribeContext context)
+        {
             context.For("Content", T("Content Items"), T("Content Items"))
                 .Token("Id", T("Content Id"), T("Numeric primary key value of content."))
                 .Token("Author", T("Content Author"), T("Person in charge of the content."), "User")
@@ -40,15 +44,19 @@ namespace Orchard.Tokens.Providers {
                 ;
 
             // Token descriptors for fields
-            foreach (var typeDefinition in _contentManager.GetContentTypeDefinitions()) {
-                foreach (var typePart in typeDefinition.Parts) {
+            foreach (var typeDefinition in _contentManager.GetContentTypeDefinitions())
+            {
+                foreach (var typePart in typeDefinition.Parts)
+                {
 
-                    if (!typePart.PartDefinition.Fields.Any()) {
+                    if (!typePart.PartDefinition.Fields.Any())
+                    {
                         continue;
                     }
 
                     var partContext = context.For("Content");
-                    foreach (var partField in typePart.PartDefinition.Fields) {
+                    foreach (var partField in typePart.PartDefinition.Fields)
+                    {
                         var field = partField;
                         var tokenName = "Fields." + typePart.PartDefinition.Name + "." + field.Name;
 
@@ -71,7 +79,8 @@ namespace Orchard.Tokens.Providers {
                 .Token("Fields", T("Fields"), T("Fields for each of the attached parts. For example, Fields.Page.Approved."));
         }
 
-        public void Evaluate(EvaluateContext context) {
+        public void Evaluate(EvaluateContext context)
+        {
             context.For<IContent>("Content")
                 .Token("Id", content => content != null ? content.Id : 0)
                 .Token("Author", AuthorName)
@@ -93,13 +102,17 @@ namespace Orchard.Tokens.Providers {
                 .Chain("Body", "Text", Body)
                 ;
 
-            if (context.Target == "Content") {
+            if (context.Target == "Content")
+            {
                 var forContent = context.For<IContent>("Content");
                 // is there a content available in the context ?
-                if (forContent != null && forContent.Data != null && forContent.Data.ContentItem != null) {
-                    foreach (var typePart in forContent.Data.ContentItem.TypeDefinition.Parts) {
+                if (forContent != null && forContent.Data != null && forContent.Data.ContentItem != null)
+                {
+                    foreach (var typePart in forContent.Data.ContentItem.TypeDefinition.Parts)
+                    {
                         var part = typePart;
-                        foreach (var partField in typePart.PartDefinition.Fields) {
+                        foreach (var partField in typePart.PartDefinition.Fields)
+                        {
                             var field = partField;
                             var tokenName = "Fields." + typePart.PartDefinition.Name + "." + partField.Name;
                             forContent.Token(
@@ -133,8 +146,10 @@ namespace Orchard.Tokens.Providers {
                 .Token("Fields", def => string.Join(", ", def.Parts.SelectMany(x => x.PartDefinition.Fields.Select(x2 => x2.FieldDefinition.Name + " " + x.PartDefinition.Name + "." + x2.Name)).ToArray()));
         }
 
-        private IHtmlString AuthorName(IContent content) {
-            if (content == null) {
+        private IHtmlString AuthorName(IContent content)
+        {
+            if (content == null)
+            {
                 return new HtmlString(String.Empty); // Null content isn't "Anonymous"
             }
 
@@ -145,57 +160,70 @@ namespace Orchard.Tokens.Providers {
             return author == null ? (IHtmlString)T("Anonymous") : new HtmlString(HttpUtility.HtmlEncode(author.UserName));
         }
 
-        private static ContentField LookupField(IContent content, string partName, string fieldName) {
+        private static ContentField LookupField(IContent content, string partName, string fieldName)
+        {
             return content.ContentItem.Parts
                 .Where(part => part.PartDefinition.Name == partName)
                 .SelectMany(part => part.Fields.Where(field => field.Name == fieldName))
                 .SingleOrDefault();
         }
 
-        private IContent Container(IContent content) {
+        private IContent Container(IContent content)
+        {
             var commonPart = content.As<ICommonPart>();
-            if (commonPart == null) {
+            if (commonPart == null)
+            {
                 return null;
             }
 
             return commonPart.Container;
         }
 
-        private string DisplayText(IContent content) {
-            if (content == null) {
+        private string DisplayText(IContent content)
+        {
+            if (content == null)
+            {
                 return String.Empty;
             }
 
             return _contentManager.GetItemMetadata(content).DisplayText;
         }
 
-        private object Date(IContent content) {
+        private object Date(IContent content)
+        {
             return content != null ? content.As<ICommonPart>().CreatedUtc : null;
         }
 
-        private string DisplayUrl(IContent content) {
-            if (content == null) {
+        private string DisplayUrl(IContent content)
+        {
+            if (content == null)
+            {
                 return String.Empty;
             }
 
             return _urlHelper.RouteUrl(_contentManager.GetItemMetadata(content).DisplayRouteValues);
         }
 
-        private string EditUrl(IContent content) {
-            if (content == null) {
+        private string EditUrl(IContent content)
+        {
+            if (content == null)
+            {
                 return String.Empty;
             }
 
             return _urlHelper.RouteUrl(_contentManager.GetItemMetadata(content).EditorRouteValues);
         }
 
-        private string Body(IContent content) {
-            if (content == null) {
+        private string Body(IContent content)
+        {
+            if (content == null)
+            {
                 return String.Empty;
             }
 
             var bodyPart = content.As<BodyPart>();
-            if (bodyPart == null) {
+            if (bodyPart == null)
+            {
                 return String.Empty;
             }
 

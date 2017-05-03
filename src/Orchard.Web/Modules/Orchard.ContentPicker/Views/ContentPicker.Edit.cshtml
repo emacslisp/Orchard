@@ -29,7 +29,7 @@
           data-not-published-text="@T("Not Published")"
           data-types="@types">
     @if (!String.IsNullOrWhiteSpace(displayName)) {
-        <label @if (required) { <text> class="required" </text>  }>@displayName</label>
+        <label @if (required) { <text> class="required" </text>    }>@displayName</label>
     }
     <div class="message message-Warning content-picker-message">@T("You need to save your changes.")</div>
     <table class="items content-picker" summary="@displayName">

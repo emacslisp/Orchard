@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using Orchard.Azure.MediaServices.Models;
 
-namespace Orchard.Azure.MediaServices.ViewModels.Media {
-    public class CloudVideoPartViewModel {
-        public CloudVideoPartViewModel(IEnumerable<string> subtitleLanguages) {
+namespace Orchard.Azure.MediaServices.ViewModels.Media
+{
+    public class CloudVideoPartViewModel
+    {
+        public CloudVideoPartViewModel(IEnumerable<string> subtitleLanguages)
+        {
             TemporaryVideoFile = new TemporaryFileViewModel();
             SubtitleLanguages = subtitleLanguages;
         }

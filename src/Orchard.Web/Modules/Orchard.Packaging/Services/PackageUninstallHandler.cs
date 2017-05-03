@@ -9,8 +9,10 @@ using Orchard.Environment.Extensions.Models;
 using Orchard.Environment.State;
 using Orchard.Events;
 
-namespace Orchard.Packaging.Services {
-    public interface IPackageUninstallHandler : IEventHandler {
+namespace Orchard.Packaging.Services
+{
+    public interface IPackageUninstallHandler : IEventHandler
+    {
         /// <summary>
         /// Queues a package to be uninstalled after the request is processed.
         /// </summary>
@@ -24,7 +26,8 @@ namespace Orchard.Packaging.Services {
         void UninstallPackage(string packageId);
     }
 
-    public class PackageUninstallHandler : IFeatureEventHandler, IPackageUninstallHandler {
+    public class PackageUninstallHandler : IFeatureEventHandler, IPackageUninstallHandler
+    {
         private readonly ShellSettings _shellSettings;
         private readonly IShellDescriptorManager _shellDescriptorManager;
         private readonly IProcessingEngine _processingEngine;
@@ -36,7 +39,8 @@ namespace Orchard.Packaging.Services {
             IShellDescriptorManager shellDescriptorManager,
             IProcessingEngine processingEngine,
             IHostEnvironment hostEnvironment,
-            IPackageInstaller packageInstaller) {
+            IPackageInstaller packageInstaller)
+        {
             _shellSettings = shellSettings;
             _shellDescriptorManager = shellDescriptorManager;
             _processingEngine = processingEngine;
@@ -44,32 +48,41 @@ namespace Orchard.Packaging.Services {
             _packageInstaller = packageInstaller;
         }
 
-        public void Installing(Feature feature) {
+        public void Installing(Feature feature)
+        {
         }
 
-        public void Installed(Feature feature) {
+        public void Installed(Feature feature)
+        {
         }
 
-        public void Enabling(Feature feature) {
+        public void Enabling(Feature feature)
+        {
         }
 
-        public void Enabled(Feature feature) {
+        public void Enabled(Feature feature)
+        {
         }
 
-        public void Disabling(Feature feature) {
+        public void Disabling(Feature feature)
+        {
         }
 
-        public void Disabled(Feature feature) {
+        public void Disabled(Feature feature)
+        {
         }
 
-        public void Uninstalling(Feature feature) {
+        public void Uninstalling(Feature feature)
+        {
         }
 
-        public void Uninstalled(Feature feature) {
+        public void Uninstalled(Feature feature)
+        {
             QueuePackageUninstall(PackageBuilder.BuildPackageId(feature.Descriptor.Extension.Id, feature.Descriptor.Extension.ExtensionType));
         }
 
-        public void QueuePackageUninstall(string packageId) {
+        public void QueuePackageUninstall(string packageId)
+        {
             _processingEngine.AddTask(
                 _shellSettings,
                 _shellDescriptorManager.GetShellDescriptor(),
@@ -77,7 +90,8 @@ namespace Orchard.Packaging.Services {
                 new Dictionary<string, object> { { "packageId", packageId } });
         }
 
-        public void UninstallPackage(string packageId) {
+        public void UninstallPackage(string packageId)
+        {
             _packageInstaller.Uninstall(packageId, _hostEnvironment.MapPath("~/"));
         }
     }

@@ -17,8 +17,10 @@ using Orchard.FileSystems.Media;
 using Orchard.Logging;
 using Orchard.Services;
 
-namespace Orchard.Azure.MediaServices.Services.Assets {
-    public class AssetManager : Component, IAssetManager {
+namespace Orchard.Azure.MediaServices.Services.Assets
+{
+    public class AssetManager : Component, IAssetManager
+    {
 
         private readonly IAssetStorageProvider _assetStorageProvider;
         private readonly IRepository<AssetRecord> _assetRepository;
@@ -37,7 +39,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             IMimeTypeProvider mimeTypeProvider,
             ITempFileManager fileManager,
             IWamsClient wamsClient,
-            IAssetFactory factory) {
+            IAssetFactory factory)
+        {
 
             _assetStorageProvider = assetStoragePRovider;
             _assetRepository = assetRepository;
@@ -49,26 +52,30 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             _factory = factory;
         }
 
-        public Asset GetAssetById(int id) {
+        public Asset GetAssetById(int id)
+        {
             Logger.Debug("GetAssetById() invoked with id value {0}.", id);
 
             var record = _assetRepository.Get(id);
             return record != null ? Activate(record) : null;
         }
 
-        public IEnumerable<Asset> LoadAssetsFor(CloudVideoPart part) {
+        public IEnumerable<Asset> LoadAssetsFor(CloudVideoPart part)
+        {
             Logger.Debug("LoadAssetsFor() invoked for cloud video item with ID {0}.", part.Id);
 
             return LoadAssetRecordsFor(part).Select(Activate);
         }
 
-        public IEnumerable<T> LoadAssetsFor<T>(CloudVideoPart part) where T:Asset {
+        public IEnumerable<T> LoadAssetsFor<T>(CloudVideoPart part) where T : Asset
+        {
             Logger.Debug("LoadAssetsFor<{0}>() invoked for cloud video item with ID {1}.", typeof(T).Name, part.Id);
 
             return LoadAssetRecordsFor(part).Select(Activate).Where(x => x is T).Cast<T>();
         }
 
-        public IEnumerable<Asset> LoadPendingAssets() {
+        public IEnumerable<Asset> LoadPendingAssets()
+        {
             Logger.Debug("LoadPendingAssets() invoked.");
 
             var pendingAssetsQuery =
@@ -79,7 +86,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             return pendingAssetsQuery.ToArray().Select(Activate);
         }
 
-        public Asset CreateAssetFor<T>(CloudVideoPart part, Action<T> initialize = null) where T : Asset, new() {
+        public Asset CreateAssetFor<T>(CloudVideoPart part, Action<T> initialize = null) where T : Asset, new()
+        {
             Logger.Debug("CreateAssetFor() invoked for cloud video item with ID {0}.", part.Id);
 
             var newAsset = (T)Activate(typeof(T).FullName);
@@ -95,7 +103,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             return newAsset;
         }
 
-        public void DeleteAssetsFor(CloudVideoPart part) {
+        public void DeleteAssetsFor(CloudVideoPart part)
+        {
             Logger.Debug("DeleteAssetsFor() invoked for cloud video item with ID {0}.", part.Id);
 
             var assetsQuery =
@@ -106,15 +115,18 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             DeleteAssets(assetsQuery);
         }
 
-        public void DeleteAssets(IEnumerable<Asset> assets) {
+        public void DeleteAssets(IEnumerable<Asset> assets)
+        {
             Logger.Debug("DeleteAssets() invoked.");
 
             var deleteTasks = new List<Task>();
 
-            foreach (var asset in assets) {
+            foreach (var asset in assets)
+            {
                 if (asset.UploadState.Status.IsAny(AssetUploadStatus.Pending, AssetUploadStatus.Uploading))
                     asset.UploadState.Status = AssetUploadStatus.Canceled;
-                else {
+                else
+                {
                     deleteTasks.Add(DeleteAssetAsync(asset));
                 }
             }
@@ -122,13 +134,15 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             Task.WaitAll(deleteTasks.ToArray());
         }
 
-        public void DeleteAsset(Asset asset) {
+        public void DeleteAsset(Asset asset)
+        {
             Logger.Debug("DeleteAsset() invoked for asset with record ID {0}.", asset.Record.Id);
 
             DeleteAssetAsync(asset).Wait();
         }
 
-        public void PublishAssetsFor(CloudVideoPart part) {
+        public void PublishAssetsFor(CloudVideoPart part)
+        {
             Logger.Debug("PublishAssetsFor() invoked for cloud video item with ID {0}.", part.Id);
 
             var unpublishedAssetsQuery =
@@ -138,17 +152,21 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
             var publishTasks = new List<Task>();
 
-            foreach (var asset in unpublishedAssetsQuery) {
+            foreach (var asset in unpublishedAssetsQuery)
+            {
                 var wamsAsset = _wamsClient.GetAssetById(asset.WamsAssetId);
                 if (wamsAsset == null)
                     throw new ApplicationException(String.Format("The asset record with ID {0} refers to a WAMS asset with ID '{1}' but no asset with that ID exists in the configured WAMS instance.", asset.Record.Id, asset.WamsAssetId));
 
-                publishTasks.Add(_wamsClient.CreateLocatorsAsync(wamsAsset, WamsLocatorCategory.Public).ContinueWith((previousTask) => {
-                    try {
+                publishTasks.Add(_wamsClient.CreateLocatorsAsync(wamsAsset, WamsLocatorCategory.Public).ContinueWith((previousTask) =>
+                {
+                    try
+                    {
                         var wamsLocators = previousTask.Result;
                         asset.WamsPublicLocatorId = wamsLocators.SasLocator.Id;
                         asset.WamsPublicLocatorUrl = wamsLocators.SasLocator.Url;
-                        if (wamsLocators.OnDemandLocator != null && asset is DynamicVideoAsset) {
+                        if (wamsLocators.OnDemandLocator != null && asset is DynamicVideoAsset)
+                        {
                             var videoAsset = (DynamicVideoAsset)asset;
                             videoAsset.WamsPublicOnDemandLocatorId = wamsLocators.OnDemandLocator.Id;
                             videoAsset.WamsPublicOnDemandLocatorUrl = wamsLocators.OnDemandLocator.Url;
@@ -158,7 +176,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
                         Logger.Information("Assets with record ID {0} was published.", asset.Record.Id);
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Logger.Error(ex, "Error while publishing asset with record ID {0}.", asset.Record.Id);
                         throw;
                     }
@@ -170,7 +189,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             Logger.Information("Assets were published for cloud video item with ID {0}.", part.Id);
         }
 
-        public void UnpublishAssetsFor(CloudVideoPart part) {
+        public void UnpublishAssetsFor(CloudVideoPart part)
+        {
             Logger.Debug("UnpublishAssetsFor() invoked for cloud video item with ID {0}.", part.Id);
 
             var publishedAssetsQuery =
@@ -180,11 +200,13 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
             var unpublishTasks = new List<Task>();
 
-            foreach (var asset in publishedAssetsQuery) {
+            foreach (var asset in publishedAssetsQuery)
+            {
                 string wamsPublicSasLocatorId = asset.WamsPublicLocatorId;
                 string wamsPublicOnDemandLocatorId = null;
                 string wamsManifestFilename = null;
-                if (asset is DynamicVideoAsset) {
+                if (asset is DynamicVideoAsset)
+                {
                     var dynamicVideoAsset = (DynamicVideoAsset)asset;
                     wamsPublicOnDemandLocatorId = dynamicVideoAsset.WamsPublicOnDemandLocatorId;
                     wamsManifestFilename = dynamicVideoAsset.WamsManifestFilename;
@@ -193,14 +215,17 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                 var wamsAsset = _wamsClient.GetAssetById(asset.WamsAssetId);
                 if (wamsAsset == null)
                     throw new ApplicationException(String.Format("The asset record with ID {0} refers to a WAMS asset with ID '{1}' but no asset with that ID exists in the configured WAMS instance.", asset.Record.Id, asset.WamsAssetId));
-                
+
                 var wamsLocators = new WamsLocators(new WamsLocatorInfo(wamsPublicSasLocatorId, null), new WamsLocatorInfo(wamsPublicOnDemandLocatorId, null), wamsManifestFilename);
 
-                unpublishTasks.Add(_wamsClient.DeleteLocatorsAsync(wamsAsset, wamsLocators).ContinueWith((previousTask) => {
-                    try {
+                unpublishTasks.Add(_wamsClient.DeleteLocatorsAsync(wamsAsset, wamsLocators).ContinueWith((previousTask) =>
+                {
+                    try
+                    {
                         asset.WamsPublicLocatorId = null;
                         asset.WamsPublicLocatorUrl = null;
-                        if (asset is DynamicVideoAsset) {
+                        if (asset is DynamicVideoAsset)
+                        {
                             var videoAsset = (DynamicVideoAsset)asset;
                             videoAsset.WamsPublicOnDemandLocatorId = null;
                             videoAsset.WamsPublicOnDemandLocatorUrl = null;
@@ -210,7 +235,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
                         Logger.Information("Assets with record ID {0} was unpublished.", asset.Record.Id);
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Logger.Error(ex, "Error while unpublishing asset with record ID {0}.", asset.Record.Id);
                         throw;
                     }
@@ -222,7 +248,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             Logger.Information("Assets were unpublished for cloud video item with ID {0}.", part.Id);
         }
 
-        public ThumbnailAsset GetThumbnailAssetFor(CloudVideoPart part) {
+        public ThumbnailAsset GetThumbnailAssetFor(CloudVideoPart part)
+        {
             Logger.Debug("GetThumbnailAssetFor() invoked for cloud video item with ID {0}.", part.Id);
 
             var thumbnailAssetQuery =
@@ -235,7 +262,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             return thumbnailAssetQuery.FirstOrDefault();
         }
 
-        public string SaveTemporaryFile(HttpPostedFileBase file) {
+        public string SaveTemporaryFile(HttpPostedFileBase file)
+        {
             Logger.Debug("SaveTemporaryFile() invoked for file with name '{0}'.", file.FileName);
 
             var extension = Path.GetExtension(file.FileName);
@@ -245,22 +273,27 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             return temporaryFilePath;
         }
 
-        private async Task DeleteAssetAsync(Asset asset) {
-            try {
+        private async Task DeleteAssetAsync(Asset asset)
+        {
+            try
+            {
 
-                if (asset.UploadState.Status == AssetUploadStatus.Uploading) {
+                if (asset.UploadState.Status == AssetUploadStatus.Uploading)
+                {
                     Logger.Information("Asset with record ID {0} is uploading; setting upload status to Canceled.", asset.Record.Id);
 
                     // Instruct AssetUploader to cease uploading, delete WAMS asset and clean up temporary storage.
                     asset.UploadState.Status = AssetUploadStatus.Canceled;
                 }
-                else {
+                else
+                {
                     var wamsAsset = !String.IsNullOrEmpty(asset.WamsAssetId) ? _wamsClient.GetAssetById(asset.WamsAssetId) : null;
 
                     if (wamsAsset != null)
                         await _wamsClient.DeleteAssetAsync(wamsAsset).ConfigureAwait(continueOnCapturedContext: false);
 
-                    if (!String.IsNullOrEmpty(asset.LocalTempFileName)) {
+                    if (!String.IsNullOrEmpty(asset.LocalTempFileName))
+                    {
                         _fileManager.DeleteFile(asset.LocalTempFileName);
                         asset.LocalTempFileName = null;
                         asset.LocalTempFileSize = null;
@@ -272,31 +305,37 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
                 Logger.Information("Asset with record ID {0} was deleted.", asset.Record.Id);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while deleting asset with record ID {0}.", asset.Record.Id);
                 throw;
             }
         }
 
-        private IEnumerable<AssetRecord> LoadAssetRecordsFor(CloudVideoPart part) {
+        private IEnumerable<AssetRecord> LoadAssetRecordsFor(CloudVideoPart part)
+        {
             return _assetRepository.Fetch(x => x.VideoContentItemId == part.Id && x.PublishStatus != AssetPublishStatus.Removed);
         }
 
-        private Asset Activate(string assetType) {
+        private Asset Activate(string assetType)
+        {
             return Activate(new AssetRecord { Type = assetType });
         }
 
-        private Asset Activate(AssetRecord record) {
+        private Asset Activate(AssetRecord record)
+        {
             var asset = _factory.Create(record.Type);
             return Activate(asset, record);
         }
 
-        private Asset Activate(Asset asset, AssetRecord record) {
+        private Asset Activate(Asset asset, AssetRecord record)
+        {
             asset.Record = record;
             _assetStorageProvider.BindStorage(asset);
             asset.MimeTypeProvider = _mimeTypeProvider;
             asset._videoPartField.Loader(() => _contentManager.Get<CloudVideoPart>(record.VideoContentItemId, VersionOptions.Latest));
-            asset._videoPartField.Setter(x => {
+            asset._videoPartField.Setter(x =>
+            {
                 if (x == null) throw new ArgumentNullException("You must set a reference to a CloudVideoPart. Nulls are not alowed.");
                 record.VideoContentItemId = x.Id;
                 return x;

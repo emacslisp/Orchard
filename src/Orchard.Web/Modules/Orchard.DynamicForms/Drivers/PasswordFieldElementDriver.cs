@@ -6,23 +6,29 @@ using Orchard.Layouts.Services;
 using Orchard.Tokens;
 using DescribeContext = Orchard.Forms.Services.DescribeContext;
 
-namespace Orchard.DynamicForms.Drivers {
-    public class PasswordFieldElementDriver : FormsElementDriver<PasswordField>{
+namespace Orchard.DynamicForms.Drivers
+{
+    public class PasswordFieldElementDriver : FormsElementDriver<PasswordField>
+    {
         private readonly ITokenizer _tokenizer;
 
-        public PasswordFieldElementDriver(IFormsBasedElementServices formsServices, ITokenizer tokenizer) : base(formsServices) {
+        public PasswordFieldElementDriver(IFormsBasedElementServices formsServices, ITokenizer tokenizer) : base(formsServices)
+        {
             _tokenizer = tokenizer;
         }
 
-        protected override EditorResult OnBuildEditor(PasswordField element, ElementEditorContext context) {
+        protected override EditorResult OnBuildEditor(PasswordField element, ElementEditorContext context)
+        {
             var autoLabelEditor = BuildForm(context, "AutoLabel");
             var passwordFieldValidation = BuildForm(context, "PasswordFieldValidation", "Validation:10");
 
             return Editor(context, autoLabelEditor, passwordFieldValidation);
         }
 
-        protected override void DescribeForm(DescribeContext context) {
-            context.Form("PasswordFieldValidation", factory => {
+        protected override void DescribeForm(DescribeContext context)
+        {
+            context.Form("PasswordFieldValidation", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "PasswordFieldValidation",
@@ -48,7 +54,7 @@ namespace Orchard.DynamicForms.Drivers {
                         Id: "RegularExpression",
                         Name: "RegularExpression",
                         Title: "Regular Expression",
-                        Classes: new[] { "text", "large"},
+                        Classes: new[] { "text", "large" },
                         Description: T("The regular expression the password must match with.")),
                     _CompareWith: shape.Textbox(
                         Id: "CompareWith",
@@ -73,7 +79,8 @@ namespace Orchard.DynamicForms.Drivers {
             });
         }
 
-        protected override void OnDisplaying(PasswordField element, ElementDisplayingContext context) {
+        protected override void OnDisplaying(PasswordField element, ElementDisplayingContext context)
+        {
             context.ElementShape.ProcessedName = _tokenizer.Replace(element.Name, context.GetTokenData());
             context.ElementShape.ProcessedLabel = _tokenizer.Replace(element.Label, context.GetTokenData(), new ReplaceOptions { Encoding = ReplaceOptions.NoEncode });
         }

@@ -2,9 +2,12 @@
 using Orchard.MultiTenancy.Annotations;
 using System.Collections.Generic;
 
-namespace Orchard.MultiTenancy.ViewModels {
-    public class TenantAddViewModel  {
-        public TenantAddViewModel() {
+namespace Orchard.MultiTenancy.ViewModels
+{
+    public class TenantAddViewModel
+    {
+        public TenantAddViewModel()
+        {
             // define "Allow the tenant to set up the database" as default value 
             DataProvider = "";
             Themes = new List<ThemeEntry>();

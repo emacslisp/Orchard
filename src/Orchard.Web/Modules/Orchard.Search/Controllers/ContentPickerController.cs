@@ -18,10 +18,12 @@ using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 
-namespace Orchard.Search.Controllers {
+namespace Orchard.Search.Controllers
+{
     [Admin]
     [OrchardFeature("Orchard.Search.ContentPicker")]
-    public class ContentPickerController : Controller {
+    public class ContentPickerController : Controller
+    {
         private readonly ISiteService _siteService;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IIndexManager _indexManager;
@@ -30,7 +32,8 @@ namespace Orchard.Search.Controllers {
             IOrchardServices orchardServices,
             ISiteService siteService,
             IContentDefinitionManager contentDefinitionManager,
-            IIndexManager indexManager) {
+            IIndexManager indexManager)
+        {
             _siteService = siteService;
             _contentDefinitionManager = contentDefinitionManager;
             _indexManager = indexManager;
@@ -44,23 +47,28 @@ namespace Orchard.Search.Controllers {
         public Localizer T { get; set; }
 
         [Themed(false)]
-        public ActionResult Index(PagerParameters pagerParameters, string part, string field, string searchText = "") {
+        public ActionResult Index(PagerParameters pagerParameters, string part, string field, string searchText = "")
+        {
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var searchSettingsPart = Services.WorkContext.CurrentSite.As<SearchSettingsPart>();
             var totalCount = 0;
             var foundIds = new int[0];
 
-            if (!String.IsNullOrWhiteSpace(searchText)) {
+            if (!String.IsNullOrWhiteSpace(searchText))
+            {
                 ContentPickerSearchFieldSettings settings = null;
                 // if the picker is loaded for a specific field, apply custom settings
-                if (!String.IsNullOrEmpty(part) && !String.IsNullOrEmpty(field)) {
+                if (!String.IsNullOrEmpty(part) && !String.IsNullOrEmpty(field))
+                {
                     var definition = _contentDefinitionManager.GetPartDefinition(part).Fields.FirstOrDefault(x => x.Name == field);
-                    if (definition != null) {
+                    if (definition != null)
+                    {
                         settings = definition.Settings.GetModel<ContentPickerSearchFieldSettings>();
                     }
                 }
 
-                if (!_indexManager.HasIndexProvider()) {
+                if (!_indexManager.HasIndexProvider())
+                {
                     return View("NoIndex");
                 }
 
@@ -71,10 +79,12 @@ namespace Orchard.Search.Controllers {
 
                 var builder = _indexManager.GetSearchIndexProvider().CreateSearchBuilder(searchIndex);
 
-                try {
+                try
+                {
                     builder.Parse(searchFields, searchText);
 
-                    if (settings != null && !String.IsNullOrEmpty(settings.DisplayedContentTypes)) {
+                    if (settings != null && !String.IsNullOrEmpty(settings.DisplayedContentTypes))
+                    {
                         var rawTypes = settings.DisplayedContentTypes.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                         var contentTypes = _contentDefinitionManager
                             .ListTypeDefinitions()
@@ -82,7 +92,8 @@ namespace Orchard.Search.Controllers {
                             .ToArray();
 
 
-                        foreach (string type in contentTypes.Select(x => x.Name)) {
+                        foreach (string type in contentTypes.Select(x => x.Name))
+                        {
                             builder.WithField("type", type).NotAnalyzed().AsFilter();
                         }
                     }
@@ -93,16 +104,19 @@ namespace Orchard.Search.Controllers {
 
                     foundIds = searchResults.Select(searchHit => searchHit.ContentItemId).ToArray();
                 }
-                catch (Exception exception) {
+                catch (Exception exception)
+                {
                     Logger.Error(T("Invalid search query: {0}", exception.Message).Text);
                     Services.Notifier.Error(T("Invalid search query: {0}", exception.Message));
                 }
             }
 
             var list = Services.New.List();
-            foreach (var contentItem in Services.ContentManager.GetMany<IContent>(foundIds, VersionOptions.Published, QueryHints.Empty)) {
+            foreach (var contentItem in Services.ContentManager.GetMany<IContent>(foundIds, VersionOptions.Published, QueryHints.Empty))
+            {
                 // ignore search results which content item has been removed or unpublished
-                if (contentItem == null) {
+                if (contentItem == null)
+                {
                     totalCount--;
                     continue;
                 }
@@ -112,7 +126,8 @@ namespace Orchard.Search.Controllers {
 
             var pagerShape = Services.New.Pager(pager).TotalItemCount(totalCount);
 
-            foreach(IShape item in list.Items) {
+            foreach (IShape item in list.Items)
+            {
                 item.Metadata.Type = "ContentPicker";
             }
 

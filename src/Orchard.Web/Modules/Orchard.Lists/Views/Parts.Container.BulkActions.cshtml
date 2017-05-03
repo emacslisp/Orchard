@@ -42,7 +42,7 @@
     </fieldset>
 }
 else {
-  <fieldset class="bulk-actions">
+    <fieldset class="bulk-actions">
         <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
         <select id="orderResults" name="Options.OrderBy">
             @Html.SelectOption((SortBy)Model.Options.OrderBy, SortBy.Created, T("Recently Created").ToString())

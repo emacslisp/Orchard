@@ -9,26 +9,32 @@ using Orchard.ContentTypes.ViewModels;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Core.Contents.Settings;
 
-namespace Orchard.ContentTypes.Settings {
-    public class EditorEvents : ContentDefinitionEditorEventsBase {
+namespace Orchard.ContentTypes.Settings
+{
+    public class EditorEvents : ContentDefinitionEditorEventsBase
+    {
 
-        public override IEnumerable<TemplateViewModel> TypeEditor(ContentTypeDefinition definition) {
+        public override IEnumerable<TemplateViewModel> TypeEditor(ContentTypeDefinition definition)
+        {
             var settings = definition.Settings.GetModel<ContentTypeSettings>();
-            var model = new ContentTypeSettingsViewModel {
+            var model = new ContentTypeSettingsViewModel
+            {
                 Creatable = settings.Creatable,
                 Listable = settings.Listable,
                 Draftable = settings.Draftable,
                 Securable = settings.Securable,
             };
 
-            if(definition.Settings.ContainsKey("Stereotype")) {
+            if (definition.Settings.ContainsKey("Stereotype"))
+            {
                 model.Stereotype = definition.Settings["Stereotype"] ?? String.Empty;
             }
 
             yield return DefinitionTemplate(model);
         }
 
-        public override IEnumerable<TemplateViewModel> TypeEditorUpdate(ContentTypeDefinitionBuilder builder, IUpdateModel updateModel) {
+        public override IEnumerable<TemplateViewModel> TypeEditorUpdate(ContentTypeDefinitionBuilder builder, IUpdateModel updateModel)
+        {
             var model = new ContentTypeSettingsViewModel();
             updateModel.TryUpdateModel(model, "ContentTypeSettingsViewModel", null, null);
 

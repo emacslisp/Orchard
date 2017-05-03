@@ -2,7 +2,7 @@
 
 @{ Layout.Title = T("Edit Comment").ToString(); }
 
-@using(Html.BeginFormAntiForgeryPost()) { 
+@using(Html.BeginFormAntiForgeryPost()) {
     @Html.ValidationSummary()
     @Display(Model);
 } 

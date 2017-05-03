@@ -1,10 +1,10 @@
 ﻿<button id="filters">@T("Filters")</button>
 @{
-    Script.Include("caman/caman.full.min.js"); 
+    Script.Include("caman/caman.full.min.js");
 }
 
 @using (Script.Foot()) {
-    
+
     <script type="text/javascript">
     //<![CDATA[
 
@@ -21,7 +21,7 @@
                     var max = self.data('max');
                     var input = self.siblings('input');
                     var step = self.data('step') || 1;
-                    
+
                     $(this).slider({
                         min: min,
                         max: max,
@@ -44,7 +44,7 @@
                         self.slider({ value: Math.min(max, Math.max(min, +$(this).val())) });
                     });
                 });
-                
+
                 // save resize
                 $('#filters-apply').on('click', function () {
                     $('#filters-options').hide();
@@ -54,7 +54,7 @@
                 // cancel resizing
                 $('#filters-cancel').on('click', function () {
                     host.image.src = imageSrc;
-                    
+
                     $('#filters-options').hide();
                     host.hideOptions();
                 });
@@ -102,7 +102,7 @@
                                     caman[filter](value);
                                 }
                             });
-                            
+
                             caman.render(function () {
                                 host.image.src = canvas.toDataURL('image/png');
                                 applying = false;
@@ -114,7 +114,7 @@
                 }
             });
         });
-    //]]>    
+    //]]>
 
     </script>
 }

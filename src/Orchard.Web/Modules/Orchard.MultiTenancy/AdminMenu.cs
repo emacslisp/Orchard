@@ -3,11 +3,14 @@ using Orchard.Localization;
 using Orchard.Security;
 using Orchard.UI.Navigation;
 
-namespace Orchard.MultiTenancy {
-    public class AdminMenu : INavigationProvider {
+namespace Orchard.MultiTenancy
+{
+    public class AdminMenu : INavigationProvider
+    {
         private readonly ShellSettings _shellSettings;
 
-        public AdminMenu(ShellSettings shellSettings) {
+        public AdminMenu(ShellSettings shellSettings)
+        {
             _shellSettings = shellSettings;
         }
 
@@ -15,7 +18,8 @@ namespace Orchard.MultiTenancy {
 
         public string MenuName { get { return "admin"; } }
 
-        public void GetNavigation(NavigationBuilder builder) {
+        public void GetNavigation(NavigationBuilder builder)
+        {
             if (_shellSettings.Name != ShellSettings.DefaultName)
                 return;
 

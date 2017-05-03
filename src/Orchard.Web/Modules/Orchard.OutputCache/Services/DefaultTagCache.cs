@@ -6,41 +6,52 @@ using Orchard.Utility.Extensions;
 using Orchard.Environment.Configuration;
 using System.Web.Caching;
 
-namespace Orchard.OutputCache.Services {
+namespace Orchard.OutputCache.Services
+{
     /// <summary>
     /// Tenant wide case insensitive reverse index for <see cref="CacheItem"/> tags.
     /// </summary>
-    public class DefaultTagCache : ITagCache {
+    public class DefaultTagCache : ITagCache
+    {
         private readonly ConcurrentDictionary<string, HashSet<string>> _dictionary;
 
-        public DefaultTagCache(IWorkContextAccessor workContextAccessor, ShellSettings shellSettings) {
+        public DefaultTagCache(IWorkContextAccessor workContextAccessor, ShellSettings shellSettings)
+        {
             var key = shellSettings.Name + ":TagCache";
             var workContext = workContextAccessor.GetContext();
 
-            if ( workContext != null ) {
+            if (workContext != null)
+            {
                 _dictionary = workContext.HttpContext.Cache.Get(key) as ConcurrentDictionary<string, HashSet<string>>;
 
-                if ( _dictionary == null ) {
+                if (_dictionary == null)
+                {
                     _dictionary = new ConcurrentDictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
                     workContext.HttpContext.Cache.Add(key, _dictionary, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
                 }
             }
         }
 
-        public void Tag(string tag, params string[] keys) {
+        public void Tag(string tag, params string[] keys)
+        {
             var set = _dictionary.GetOrAdd(tag, x => new HashSet<string>());
 
-            lock (set) {
-                foreach (var key in keys) {
+            lock (set)
+            {
+                foreach (var key in keys)
+                {
                     set.Add(key);
                 }
             }
         }
 
-        public IEnumerable<string> GetTaggedItems(string tag) {
+        public IEnumerable<string> GetTaggedItems(string tag)
+        {
             HashSet<string> set;
-            if (_dictionary.TryGetValue(tag, out set)) {
-                lock (set) {
+            if (_dictionary.TryGetValue(tag, out set))
+            {
+                lock (set)
+                {
                     return set.ToReadOnlyCollection();
                 }
             }
@@ -48,7 +59,8 @@ namespace Orchard.OutputCache.Services {
             return Enumerable.Empty<string>();
         }
 
-        public void RemoveTag(string tag) {
+        public void RemoveTag(string tag)
+        {
             HashSet<string> set;
             _dictionary.TryRemove(tag, out set);
         }

@@ -26,8 +26,10 @@ using ContentOptions = Orchard.Lists.ViewModels.ContentOptions;
 using ContentsBulkAction = Orchard.Lists.ViewModels.ContentsBulkAction;
 using ListContentsViewModel = Orchard.Lists.ViewModels.ListContentsViewModel;
 
-namespace Orchard.Lists.Controllers {
-    public class AdminController : Controller {
+namespace Orchard.Lists.Controllers
+{
+    public class AdminController : Controller
+    {
         private readonly IContentManager _contentManager;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IOrchardServices _services;
@@ -39,9 +41,10 @@ namespace Orchard.Lists.Controllers {
             IOrchardServices services,
             IContentDefinitionManager contentDefinitionManager,
             IShapeFactory shapeFactory,
-            IContainerService containerService, 
+            IContainerService containerService,
             IListViewService listViewService,
-            ITransactionManager transactionManager) {
+            ITransactionManager transactionManager)
+        {
 
             _services = services;
             _contentManager = services.ContentManager;
@@ -58,10 +61,12 @@ namespace Orchard.Lists.Controllers {
         public ILogger Logger { get; set; }
         dynamic Shape { get; set; }
 
-        public ActionResult Index(Core.Contents.ViewModels.ListContentsViewModel model, PagerParameters pagerParameters) {
+        public ActionResult Index(Core.Contents.ViewModels.ListContentsViewModel model, PagerParameters pagerParameters)
+        {
             var query = _containerService.GetContainersQuery(VersionOptions.Latest);
 
-            if (!String.IsNullOrEmpty(model.TypeName)) {
+            if (!String.IsNullOrEmpty(model.TypeName))
+            {
                 var contentTypeDefinition = _contentDefinitionManager.GetTypeDefinition(model.TypeName);
                 if (contentTypeDefinition == null)
                     return HttpNotFound();
@@ -72,7 +77,8 @@ namespace Orchard.Lists.Controllers {
                 query = query.ForType(model.TypeName);
             }
 
-            switch (model.Options.OrderBy) {
+            switch (model.Options.OrderBy)
+            {
                 case ContentsOrder.Modified:
                     query = query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
                     break;
@@ -92,7 +98,7 @@ namespace Orchard.Lists.Controllers {
             var pager = new Pager(_services.WorkContext.CurrentSite, pagerParameters);
             var pagerShape = Shape.Pager(pager).TotalItemCount(query.Count());
             var pageOfLists = query.Slice(pager.GetStartIndex(), pager.PageSize);
-            
+
             var listsShape = Shape.List();
             listsShape.AddRange(pageOfLists.Select(x => _contentManager.BuildDisplay(x, "SummaryAdmin")).ToList());
             var viewModel = Shape.ViewModel()
@@ -104,14 +110,18 @@ namespace Orchard.Lists.Controllers {
 
         [HttpPost, ActionName("Index")]
         [FormValueRequired("submit.Filter")]
-        public ActionResult ListFilterPOST(ContentOptions options) {
+        public ActionResult ListFilterPOST(ContentOptions options)
+        {
             var routeValues = ControllerContext.RouteData.Values;
-            if (options != null) {
+            if (options != null)
+            {
                 routeValues["Options.OrderBy"] = options.OrderBy;
-                if (_containerService.GetContainerTypes().Any(ctd => string.Equals(ctd.Name, options.SelectedFilter, StringComparison.OrdinalIgnoreCase))) {
+                if (_containerService.GetContainerTypes().Any(ctd => string.Equals(ctd.Name, options.SelectedFilter, StringComparison.OrdinalIgnoreCase)))
+                {
                     routeValues["id"] = options.SelectedFilter;
                 }
-                else {
+                else
+                {
                     routeValues.Remove("id");
                 }
             }
@@ -121,15 +131,20 @@ namespace Orchard.Lists.Controllers {
 
         [HttpPost, ActionName("Index")]
         [FormValueRequired("submit.BulkEdit")]
-        public ActionResult ListPOST(ContentOptions options, IEnumerable<int> itemIds, PagerParameters pagerParameters) {
-            if (itemIds != null) {
+        public ActionResult ListPOST(ContentOptions options, IEnumerable<int> itemIds, PagerParameters pagerParameters)
+        {
+            if (itemIds != null)
+            {
                 var checkedContentItems = _contentManager.GetMany<ContentItem>(itemIds, VersionOptions.Latest, QueryHints.Empty);
-                switch (options.BulkAction) {
+                switch (options.BulkAction)
+                {
                     case ContentsBulkAction.None:
                         break;
                     case ContentsBulkAction.PublishNow:
-                        foreach (var item in checkedContentItems) {
-                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't publish selected lists."))) {
+                        foreach (var item in checkedContentItems)
+                        {
+                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't publish selected lists.")))
+                            {
                                 _transactionManager.Cancel();
                                 return new HttpUnauthorizedResult();
                             }
@@ -138,8 +153,10 @@ namespace Orchard.Lists.Controllers {
                         _services.Notifier.Success(T("Lists successfully published."));
                         break;
                     case ContentsBulkAction.Unpublish:
-                        foreach (var item in checkedContentItems) {
-                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't unpublish selected lists."))) {
+                        foreach (var item in checkedContentItems)
+                        {
+                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't unpublish selected lists.")))
+                            {
                                 _transactionManager.Cancel();
                                 return new HttpUnauthorizedResult();
                             }
@@ -148,8 +165,10 @@ namespace Orchard.Lists.Controllers {
                         _services.Notifier.Success(T("Lists successfully unpublished."));
                         break;
                     case ContentsBulkAction.Remove:
-                        foreach (var item in checkedContentItems) {
-                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.DeleteContent, item, T("Couldn't remove selected lists."))) {
+                        foreach (var item in checkedContentItems)
+                        {
+                            if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.DeleteContent, item, T("Couldn't remove selected lists.")))
+                            {
                                 _transactionManager.Cancel();
                                 return new HttpUnauthorizedResult();
                             }
@@ -165,46 +184,57 @@ namespace Orchard.Lists.Controllers {
             return RedirectToAction("Index", new { page = pagerParameters.Page, pageSize = pagerParameters.PageSize });
         }
 
-        public ActionResult Create(string id) {
-            if (String.IsNullOrWhiteSpace(id)) {
+        public ActionResult Create(string id)
+        {
+            if (String.IsNullOrWhiteSpace(id))
+            {
                 var containerTypes = _containerService.GetContainerTypes().ToList();
-                if (containerTypes.Count > 1) {
+                if (containerTypes.Count > 1)
+                {
                     return RedirectToAction("SelectType");
                 }
-                return RedirectToAction("Create", new {id = containerTypes.First().Name});
+                return RedirectToAction("Create", new { id = containerTypes.First().Name });
             }
 
-            return RedirectToAction("Create", "Admin", new {area = "Contents", id, returnUrl = Url.Action("Index", "Admin", new { area = "Orchard.Lists" })});
+            return RedirectToAction("Create", "Admin", new { area = "Contents", id, returnUrl = Url.Action("Index", "Admin", new { area = "Orchard.Lists" }) });
         }
 
-        public ActionResult SelectType() {
+        public ActionResult SelectType()
+        {
             var viewModel = Shape.ViewModel().ContainerTypes(_containerService.GetContainerTypes().ToList());
             return View(viewModel);
         }
 
-        public ActionResult List(ListContentsViewModel model, PagerParameters pagerParameters) {
+        public ActionResult List(ListContentsViewModel model, PagerParameters pagerParameters)
+        {
             var pager = new Pager(_services.WorkContext.CurrentSite, pagerParameters);
             var container = _contentManager.GetLatest(model.ContainerId);
-            if (container == null || !container.Has<ContainerPart>()) {
+            if (container == null || !container.Has<ContainerPart>())
+            {
                 return HttpNotFound();
             }
 
             model.ContainerDisplayName = container.ContentManager.GetItemMetadata(container).DisplayText;
-            if (string.IsNullOrEmpty(model.ContainerDisplayName)) {
+            if (string.IsNullOrEmpty(model.ContainerDisplayName))
+            {
                 model.ContainerDisplayName = container.ContentType;
             }
 
             var query = GetListContentItemQuery(model.ContainerId);
-            if (query == null) {
+            if (query == null)
+            {
                 return HttpNotFound();
             }
 
             var containerPart = container.As<ContainerPart>();
-            if (containerPart.EnablePositioning) {
+            if (containerPart.EnablePositioning)
+            {
                 query = OrderByPosition(query);
             }
-            else {
-                switch (model.Options.OrderBy) {
+            else
+            {
+                switch (model.Options.OrderBy)
+                {
                     case SortBy.Modified:
                         query = query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
                         break;
@@ -221,7 +251,8 @@ namespace Orchard.Lists.Controllers {
                 }
             }
 
-            var listView = containerPart.AdminListView.BuildDisplay(new BuildListViewDisplayContext {
+            var listView = containerPart.AdminListView.BuildDisplay(new BuildListViewDisplayContext
+            {
                 New = _services.New,
                 Container = containerPart,
                 ContentQuery = query,
@@ -242,7 +273,8 @@ namespace Orchard.Lists.Controllers {
                 .ItemContentTypes(container.As<ContainerPart>().ItemContentTypes.ToList())
                 ;
 
-            if (containerPart.Is<ContainablePart>()) {
+            if (containerPart.Is<ContainablePart>())
+            {
                 viewModel.ListNavigation(_services.New.ListNavigation(ContainablePart: containerPart.As<ContainablePart>()));
             }
 
@@ -251,9 +283,11 @@ namespace Orchard.Lists.Controllers {
 
         [HttpPost, ActionName("List")]
         [FormValueRequired("submit.Order")]
-        public ActionResult ListOrderPOST(ContentOptions options) {
+        public ActionResult ListOrderPOST(ContentOptions options)
+        {
             var routeValues = ControllerContext.RouteData.Values;
-            if (options != null) {
+            if (options != null)
+            {
                 routeValues["Options.OrderBy"] = options.OrderBy;
             }
             return RedirectToAction("List", routeValues);
@@ -261,33 +295,41 @@ namespace Orchard.Lists.Controllers {
 
         [HttpPost, ActionName("List")]
         [FormValueRequired("submit.BulkEdit")]
-        public ActionResult ListPOST(ContentOptions options, IEnumerable<int> itemIds, int? targetContainerId, PagerParameters pagerParameters, string returnUrl) {
-            if (itemIds != null) {
-                switch (options.BulkAction) {
+        public ActionResult ListPOST(ContentOptions options, IEnumerable<int> itemIds, int? targetContainerId, PagerParameters pagerParameters, string returnUrl)
+        {
+            if (itemIds != null)
+            {
+                switch (options.BulkAction)
+                {
                     case ContentsBulkAction.None:
                         break;
                     case ContentsBulkAction.PublishNow:
-                        if (!BulkPublishNow(itemIds)) {
+                        if (!BulkPublishNow(itemIds))
+                        {
                             return new HttpUnauthorizedResult();
                         }
                         break;
                     case ContentsBulkAction.Unpublish:
-                        if (!BulkUnpublish(itemIds)) {
+                        if (!BulkUnpublish(itemIds))
+                        {
                             return new HttpUnauthorizedResult();
                         }
                         break;
                     case ContentsBulkAction.Remove:
-                        if (!BulkRemove(itemIds)) {
+                        if (!BulkRemove(itemIds))
+                        {
                             return new HttpUnauthorizedResult();
                         }
                         break;
                     case ContentsBulkAction.RemoveFromList:
-                        if (!BulkRemoveFromList(itemIds)) {
+                        if (!BulkRemoveFromList(itemIds))
+                        {
                             return new HttpUnauthorizedResult();
                         }
                         break;
                     case ContentsBulkAction.MoveToList:
-                        if (!BulkMoveToList(itemIds, targetContainerId)) {
+                        if (!BulkMoveToList(itemIds, targetContainerId))
+                        {
                             return new HttpUnauthorizedResult();
                         }
                         break;
@@ -301,7 +343,8 @@ namespace Orchard.Lists.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Insert(int containerId, int itemId, PagerParameters pagerParameters) {
+        public ActionResult Insert(int containerId, int itemId, PagerParameters pagerParameters)
+        {
             var container = _containerService.Get(containerId, VersionOptions.Latest);
             var item = _contentManager.Get(itemId, VersionOptions.Latest, new QueryHints().ExpandParts<CommonPart, ContainablePart>());
             var commonPart = item.As<CommonPart>();
@@ -311,10 +354,12 @@ namespace Orchard.Lists.Controllers {
             var position = _containerService.GetFirstPosition(containerId) + 1;
             LocalizedString message;
 
-            if (previousItemContainer == null) {
+            if (previousItemContainer == null)
+            {
                 message = T("{0} was moved to <a href=\"{1}\">{2}</a>", itemMetadata.DisplayText, Url.RouteUrl(containerMetadata.AdminRouteValues), containerMetadata.DisplayText);
             }
-            else if (previousItemContainer.Id != containerId) {
+            else if (previousItemContainer.Id != containerId)
+            {
                 var previousItemContainerMetadata = _contentManager.GetItemMetadata(commonPart.Container);
                 message = T("{0} was moved from <a href=\"{3}\">{4}</a> to <a href=\"{1}\">{2}</a>",
                     itemMetadata.DisplayText,
@@ -323,7 +368,8 @@ namespace Orchard.Lists.Controllers {
                     Url.RouteUrl(previousItemContainerMetadata.AdminRouteValues),
                     previousItemContainerMetadata.DisplayText);
             }
-            else {
+            else
+            {
                 message = T("{0} is already part of this list and was moved to the top.", itemMetadata.DisplayText);
             }
 
@@ -333,10 +379,12 @@ namespace Orchard.Lists.Controllers {
         }
 
         [HttpPost]
-        public ActionResult UpdatePositions(int containerId, int oldIndex, int newIndex, PagerParameters pagerParameters) {
+        public ActionResult UpdatePositions(int containerId, int oldIndex, int newIndex, PagerParameters pagerParameters)
+        {
             var pager = new Pager(_services.WorkContext.CurrentSite, pagerParameters);
             var query = OrderByPosition(GetListContentItemQuery(containerId));
-            if (query == null) {
+            if (query == null)
+            {
                 return HttpNotFound();
             }
             var pageOfContentItems = query.Slice(pager.GetStartIndex(), pager.PageSize).ToList();
@@ -345,7 +393,8 @@ namespace Orchard.Lists.Controllers {
             pageOfContentItems.Insert(newIndex, contentItem);
 
             var index = pager.GetStartIndex() + pageOfContentItems.Count;
-            foreach (var item in pageOfContentItems.Select(x => x.As<ContainablePart>())) {
+            foreach (var item in pageOfContentItems.Select(x => x.As<ContainablePart>()))
+            {
                 item.Position = --index;
                 RePublish(item);
             }
@@ -354,9 +403,11 @@ namespace Orchard.Lists.Controllers {
 
         [ActionName("List")]
         [HttpPost, FormValueRequired("submit.ListOp")]
-        public ActionResult ListOperation(int containerId, ListOperation operation, SortBy? sortBy, SortDirection? sortByDirection, PagerParameters pagerParameters) {
+        public ActionResult ListOperation(int containerId, ListOperation operation, SortBy? sortBy, SortDirection? sortByDirection, PagerParameters pagerParameters)
+        {
             var items = _containerService.GetContentItems(containerId, VersionOptions.Latest).Select(x => x.As<ContainablePart>());
-            switch (operation) {
+            switch (operation)
+            {
                 case ViewModels.ListOperation.Reverse:
                     _containerService.Reverse(items);
                     _services.Notifier.Success(T("The list has been reversed."));
@@ -374,14 +425,16 @@ namespace Orchard.Lists.Controllers {
                     break;
             }
 
-            return RedirectToAction("List", new {containerId, page = pagerParameters.Page, pageSize = pagerParameters.PageSize});
+            return RedirectToAction("List", new { containerId, page = pagerParameters.Page, pageSize = pagerParameters.PageSize });
         }
 
         [HttpPost, ActionName("List")]
         [FormValueRequired("listViewName")]
-        public ActionResult ChangeListView(int containerId, string listViewName, PagerParameters pagerParameters) {
+        public ActionResult ChangeListView(int containerId, string listViewName, PagerParameters pagerParameters)
+        {
             var container = _containerService.Get(containerId, VersionOptions.Latest);
-            if (container == null || !container.Has<ContainerPart>()) {
+            if (container == null || !container.Has<ContainerPart>())
+            {
                 return HttpNotFound();
             }
 
@@ -392,14 +445,17 @@ namespace Orchard.Lists.Controllers {
         /// <summary>
         /// Only publishes the content if it is already published.
         /// </summary>
-        private void RePublish(IContent content) {
-            if(content.ContentItem.VersionRecord.Published)
+        private void RePublish(IContent content)
+        {
+            if (content.ContentItem.VersionRecord.Published)
                 _contentManager.Publish(content.ContentItem);
         }
 
-        private IContentQuery<ContentItem> GetListContentItemQuery(int containerId) {
+        private IContentQuery<ContentItem> GetListContentItemQuery(int containerId)
+        {
             var containableTypes = GetContainableTypes().Select(ctd => ctd.Name).ToList();
-            if (containableTypes.Count == 0) {
+            if (containableTypes.Count == 0)
+            {
                 // Force the name to be matched against empty and return no items in the query
                 containableTypes.Add(string.Empty);
             }
@@ -411,22 +467,27 @@ namespace Orchard.Lists.Controllers {
             return query;
         }
 
-        private IContentQuery<ContentItem> OrderByPosition(IContentQuery<ContentItem> query) {
+        private IContentQuery<ContentItem> OrderByPosition(IContentQuery<ContentItem> query)
+        {
             return query.Join<ContainablePartRecord>().OrderByDescending(x => x.Position);
         }
 
-        private IEnumerable<ContentTypeDefinition> GetContainableTypes() {
+        private IEnumerable<ContentTypeDefinition> GetContainableTypes()
+        {
             return _contentDefinitionManager.ListTypeDefinitions().Where(ctd => ctd.Parts.Any(c => c.PartDefinition.Name == "ContainablePart"));
         }
 
-        private bool BulkMoveToList(IEnumerable<int> selectedIds, int? targetContainerId) {
-            if (!targetContainerId.HasValue) {
+        private bool BulkMoveToList(IEnumerable<int> selectedIds, int? targetContainerId)
+        {
+            if (!targetContainerId.HasValue)
+            {
                 _services.Notifier.Information(T("Please select the list to move the items to."));
                 return true;
             }
             var id = targetContainerId.Value;
             var targetContainer = _contentManager.Get<ContainerPart>(id);
-            if (targetContainer == null) {
+            if (targetContainer == null)
+            {
                 _services.Notifier.Information(T("Please select the list to move the items to."));
                 return true;
             }
@@ -435,13 +496,16 @@ namespace Orchard.Lists.Controllers {
             var containerDisplayText = _contentManager.GetItemMetadata(targetContainer).DisplayText ?? targetContainer.ContentItem.ContentType;
             var selectedItems = _contentManager.GetMany<ContainablePart>(selectedIds, VersionOptions.Latest, QueryHints.Empty);
 
-            foreach (var item in selectedItems) {
-                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, item, T("Couldn't move selected content."))) {
+            foreach (var item in selectedItems)
+            {
+                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, item, T("Couldn't move selected content.")))
+                {
                     return false;
                 }
-                
+
                 // Ensure the item can be in that container.
-                if (itemContentTypes.Any() && itemContentTypes.All(x => x.Name != item.ContentItem.ContentType)) {
+                if (itemContentTypes.Any() && itemContentTypes.All(x => x.Name != item.ContentItem.ContentType))
+                {
                     _services.TransactionManager.Cancel();
                     _services.Notifier.Warning(T("One or more items could not be moved to '{0}' because it is restricted to containing items of type '{1}'.", containerDisplayText, itemContentTypes.Select(x => x.DisplayName).ToOrString(T)));
                     return true; // todo: transactions
@@ -453,10 +517,13 @@ namespace Orchard.Lists.Controllers {
             return true;
         }
 
-        private bool BulkRemoveFromList(IEnumerable<int> itemIds) {
+        private bool BulkRemoveFromList(IEnumerable<int> itemIds)
+        {
             var selectedItems = _contentManager.GetMany<ContainablePart>(itemIds, VersionOptions.Latest, QueryHints.Empty);
-            foreach (var item in selectedItems) {
-                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, item, T("Couldn't remove selected content from the list."))) {
+            foreach (var item in selectedItems)
+            {
+                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, item, T("Couldn't remove selected content from the list.")))
+                {
                     _services.TransactionManager.Cancel();
                     return false;
                 }
@@ -467,9 +534,12 @@ namespace Orchard.Lists.Controllers {
             return true;
         }
 
-        private bool BulkRemove(IEnumerable<int> itemIds) {
-            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId))) {
-                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.DeleteContent, item, T("Couldn't remove selected content."))) {
+        private bool BulkRemove(IEnumerable<int> itemIds)
+        {
+            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId)))
+            {
+                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.DeleteContent, item, T("Couldn't remove selected content.")))
+                {
                     _services.TransactionManager.Cancel();
                     return false;
                 }
@@ -480,9 +550,12 @@ namespace Orchard.Lists.Controllers {
             return true;
         }
 
-        private bool BulkUnpublish(IEnumerable<int> itemIds) {
-            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId))) {
-                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't unpublish selected content."))) {
+        private bool BulkUnpublish(IEnumerable<int> itemIds)
+        {
+            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId)))
+            {
+                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't unpublish selected content.")))
+                {
                     _services.TransactionManager.Cancel();
                     return false;
                 }
@@ -493,9 +566,12 @@ namespace Orchard.Lists.Controllers {
             return true;
         }
 
-        private bool BulkPublishNow(IEnumerable<int> itemIds) {
-            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId))) {
-                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't publish selected content."))) {
+        private bool BulkPublishNow(IEnumerable<int> itemIds)
+        {
+            foreach (var item in itemIds.Select(itemId => _contentManager.GetLatest(itemId)))
+            {
+                if (!_services.Authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, item, T("Couldn't publish selected content.")))
+                {
                     _services.TransactionManager.Cancel();
                     return false;
                 }

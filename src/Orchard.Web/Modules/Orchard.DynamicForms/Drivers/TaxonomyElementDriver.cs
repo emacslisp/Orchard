@@ -13,19 +13,23 @@ using Orchard.Taxonomies.Services;
 using Orchard.Tokens;
 using DescribeContext = Orchard.Forms.Services.DescribeContext;
 
-namespace Orchard.DynamicForms.Drivers {
+namespace Orchard.DynamicForms.Drivers
+{
     [OrchardFeature("Orchard.DynamicForms.Taxonomies")]
-    public class TaxonomyElementDriver : FormsElementDriver<Taxonomy> {
+    public class TaxonomyElementDriver : FormsElementDriver<Taxonomy>
+    {
         private readonly ITaxonomyService _taxonomyService;
         private readonly ITokenizer _tokenizer;
 
         public TaxonomyElementDriver(IFormsBasedElementServices formsServices, ITaxonomyService taxonomyService, ITokenizer tokenizer)
-            : base(formsServices) {
+            : base(formsServices)
+        {
             _taxonomyService = taxonomyService;
             _tokenizer = tokenizer;
         }
 
-        protected override EditorResult OnBuildEditor(Taxonomy element, ElementEditorContext context) {
+        protected override EditorResult OnBuildEditor(Taxonomy element, ElementEditorContext context)
+        {
             var autoLabelEditor = BuildForm(context, "AutoLabel");
             var enumerationEditor = BuildForm(context, "TaxonomyForm");
             var checkBoxValidation = BuildForm(context, "TaxonomyValidation", "Validation:10");
@@ -33,8 +37,10 @@ namespace Orchard.DynamicForms.Drivers {
             return Editor(context, autoLabelEditor, enumerationEditor, checkBoxValidation);
         }
 
-        protected override void DescribeForm(DescribeContext context) {
-            context.Form("TaxonomyForm", factory => {
+        protected override void DescribeForm(DescribeContext context)
+        {
+            context.Form("TaxonomyForm", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "TaxonomyForm",
@@ -81,7 +87,8 @@ namespace Orchard.DynamicForms.Drivers {
 
                 // Taxonomy
                 var taxonomies = _taxonomyService.GetTaxonomies();
-                foreach (var taxonomy in taxonomies) {
+                foreach (var taxonomy in taxonomies)
+                {
                     form._Taxonomy.Items.Add(new SelectListItem { Text = taxonomy.Name, Value = taxonomy.Id.ToString(CultureInfo.InvariantCulture) });
                 }
 
@@ -99,7 +106,8 @@ namespace Orchard.DynamicForms.Drivers {
                 return form;
             });
 
-            context.Form("TaxonomyValidation", factory => {
+            context.Form("TaxonomyValidation", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "TaxonomyValidation",
@@ -126,7 +134,8 @@ namespace Orchard.DynamicForms.Drivers {
             });
         }
 
-        protected override void OnDisplaying(Taxonomy element, ElementDisplayingContext context) {
+        protected override void OnDisplaying(Taxonomy element, ElementDisplayingContext context)
+        {
             var taxonomyId = element.TaxonomyId;
             var typeName = element.GetType().Name;
             var displayType = context.DisplayType;
@@ -134,7 +143,8 @@ namespace Orchard.DynamicForms.Drivers {
 
             // Allow the initially selected value to be tokenized.
             // If a value was posted, use that value instead (without tokenizing it).
-            if (element.PostedValue == null) {
+            if (element.PostedValue == null)
+            {
                 var defaultValue = _tokenizer.Replace(element.DefaultValue, tokenData, new ReplaceOptions { Encoding = ReplaceOptions.NoEncode });
                 element.RuntimeValue = defaultValue;
             }
@@ -146,11 +156,13 @@ namespace Orchard.DynamicForms.Drivers {
             context.ElementShape.Metadata.Alternates.Add(String.Format("Elements_{0}_{1}__{2}", typeName, displayType, element.InputType));
         }
 
-        private IEnumerable<SelectListItem> GetTermOptions(Taxonomy element, string displayType, int? taxonomyId, IDictionary<string, object> tokenData) {
+        private IEnumerable<SelectListItem> GetTermOptions(Taxonomy element, string displayType, int? taxonomyId, IDictionary<string, object> tokenData)
+        {
             var optionLabel = element.OptionLabel;
             var runtimeValues = GetRuntimeValues(element);
 
-            if (!String.IsNullOrWhiteSpace(optionLabel)) {
+            if (!String.IsNullOrWhiteSpace(optionLabel))
+            {
                 yield return new SelectListItem { Text = displayType != "Design" ? _tokenizer.Replace(optionLabel, tokenData) : optionLabel, Value = string.Empty };
             }
 
@@ -161,19 +173,22 @@ namespace Orchard.DynamicForms.Drivers {
             var valueExpression = !String.IsNullOrWhiteSpace(element.ValueExpression) ? element.ValueExpression : "{Content.Id}";
             var textExpression = !String.IsNullOrWhiteSpace(element.TextExpression) ? element.TextExpression : "{Content.DisplayText}";
 
-            var projection = terms.Select(x => {
-                var data = new {Content = x};
+            var projection = terms.Select(x =>
+            {
+                var data = new { Content = x };
                 var value = _tokenizer.Replace(valueExpression, data, new ReplaceOptions { Encoding = ReplaceOptions.NoEncode });
                 var text = _tokenizer.Replace(textExpression, data, new ReplaceOptions { Encoding = ReplaceOptions.NoEncode });
 
-                return new SelectListItem {
+                return new SelectListItem
+                {
                     Text = text,
                     Value = value,
                     Selected = runtimeValues.Contains(value, StringComparer.OrdinalIgnoreCase)
                 };
             });
 
-            switch (element.SortOrder) {
+            switch (element.SortOrder)
+            {
                 case "Asc":
                     projection = projection.OrderBy(x => x.Text);
                     break;
@@ -182,12 +197,14 @@ namespace Orchard.DynamicForms.Drivers {
                     break;
             }
 
-            foreach (var item in projection) {
+            foreach (var item in projection)
+            {
                 yield return item;
             }
         }
 
-        private IEnumerable<string> GetRuntimeValues(Taxonomy element) {
+        private IEnumerable<string> GetRuntimeValues(Taxonomy element)
+        {
             var runtimeValue = element.RuntimeValue;
             return runtimeValue != null ? runtimeValue.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries) : Enumerable.Empty<string>();
         }

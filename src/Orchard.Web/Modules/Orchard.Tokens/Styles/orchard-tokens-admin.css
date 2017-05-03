@@ -14,16 +14,16 @@
     position: relative;
 }
 
-.token-wrapper > div {
-    float: left;
-    left: 100%;
-    position: absolute;
-    margin-bottom: 0;
-}
+    .token-wrapper > div {
+        float: left;
+        left: 100%;
+        position: absolute;
+        margin-bottom: 0;
+    }
 
-.token-wrapper span[role="status"] {
-    display: none;
-}
+    .token-wrapper span[role="status"] {
+        display: none;
+    }
 
 .ui-autocomplete {
     max-height: 12em;
@@ -33,47 +33,47 @@
     overflow: auto;
 }
 
-.ui-autocomplete .acdesc {
-    padding-right: 5px;
-    float: right;
-}
+    .ui-autocomplete .acdesc {
+        padding-right: 5px;
+        float: right;
+    }
 
-.ui-autocomplete .acvalue {
-    left: 150px;
-    position: absolute;
-}
+    .ui-autocomplete .acvalue {
+        left: 150px;
+        position: absolute;
+    }
 
-.ui-autocomplete .accategory {
-    font-weight: bold;
-}
+    .ui-autocomplete .accategory {
+        font-weight: bold;
+    }
 
-.ui-autocomplete li a {
-    padding-left: 1%;
-    background-color: transparent;
-    color: #333;
-}
+    .ui-autocomplete li a {
+        padding-left: 1%;
+        background-color: transparent;
+        color: #333;
+    }
 
-.ui-autocomplete li:hover {
-    background-color: #eee;
-    color: white;
-    cursor: pointer;
-}
+    .ui-autocomplete li:hover {
+        background-color: #eee;
+        color: white;
+        cursor: pointer;
+    }
 
-.ui-autocomplete .listitemtext {
-    display: inline-block;
-    vertical-align: top;
-    padding-right: 1%;
-    word-wrap: break-word;
-}
+    .ui-autocomplete .listitemtext {
+        display: inline-block;
+        vertical-align: top;
+        padding-right: 1%;
+        word-wrap: break-word;
+    }
 
-.ui-autocomplete .acdescmod {
-    width: 42%;
-}
+    .ui-autocomplete .acdescmod {
+        width: 42%;
+    }
 
-.ui-autocomplete .acvaluemod {
-    width: 28%;
-}
+    .ui-autocomplete .acvaluemod {
+        width: 28%;
+    }
 
-.ui-autocomplete .aclabelmod {
-    width: 24%;
-}
+    .ui-autocomplete .aclabelmod {
+        width: 24%;
+    }

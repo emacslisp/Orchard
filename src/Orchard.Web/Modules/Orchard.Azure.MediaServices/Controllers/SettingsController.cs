@@ -17,14 +17,17 @@ using Orchard.Logging;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 
-namespace Orchard.Azure.MediaServices.Controllers {
+namespace Orchard.Azure.MediaServices.Controllers
+{
 
     [Admin]
-    public class SettingsController : Controller {
+    public class SettingsController : Controller
+    {
         private readonly IOrchardServices _services;
         private readonly IWamsClient _wamsClient;
 
-        public SettingsController(IOrchardServices services, IWamsClient wamsClient) {
+        public SettingsController(IOrchardServices services, IWamsClient wamsClient)
+        {
             _services = services;
             _wamsClient = wamsClient;
 
@@ -35,13 +38,16 @@ namespace Orchard.Azure.MediaServices.Controllers {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public ActionResult Index() {
+        public ActionResult Index()
+        {
             if (!_services.Authorizer.Authorize(Permissions.ManageCloudMediaSettings, T("You are not authorized to manage Microsoft Azure Media settings.")))
                 return new HttpUnauthorizedResult();
 
             var settings = _services.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
-            var viewModel = new SettingsViewModel {
-                General = new GeneralSettingsViewModel {
+            var viewModel = new SettingsViewModel
+            {
+                General = new GeneralSettingsViewModel
+                {
                     WamsAccountName = settings.WamsAccountName,
                     WamsAccountKey = settings.WamsAccountKey,
                     StorageAccountKey = settings.StorageAccountKey,
@@ -49,15 +55,18 @@ namespace Orchard.Azure.MediaServices.Controllers {
                     AccessPolicyDuration = settings.AccessPolicyDuration,
                     AllowedVideoFilenameExtensions = String.Join(";", settings.AllowedVideoFilenameExtensions)
                 },
-                EncodingSettings = new EncodingSettingsViewModel {
+                EncodingSettings = new EncodingSettingsViewModel
+                {
                     WamsEncodingPresets = settings.WamsEncodingPresets,
                     DefaultWamsEncodingPresetIndex = settings.DefaultWamsEncodingPresetIndex
                 },
-                EncryptionSettings = new EncryptionSettingsViewModel {
+                EncryptionSettings = new EncryptionSettingsViewModel
+                {
                     KeySeedValue = settings.EncryptionKeySeedValue,
                     LicenseAcquisitionUrl = settings.EncryptionLicenseAcquisitionUrl,
                 },
-                SubtitleLanguages = new SubtitleLanguagesSettingsViewModel {
+                SubtitleLanguages = new SubtitleLanguagesSettingsViewModel
+                {
                     Languages = settings.SubtitleLanguages
                 }
             };
@@ -66,17 +75,21 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Save(SettingsViewModel viewModel) {
+        public ActionResult Save(SettingsViewModel viewModel)
+        {
             if (!_services.Authorizer.Authorize(Permissions.ManageCloudMediaSettings, T("You are not authorized to manage Microsoft Azure Media settings.")))
                 return new HttpUnauthorizedResult();
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 return View("Index", viewModel);
             }
 
             var presetPattern = new Regex(@"^[\w\s]*$");
-            foreach (var preset in viewModel.EncodingSettings.WamsEncodingPresets) {
-                if (!presetPattern.IsMatch(preset.Name)) {
+            foreach (var preset in viewModel.EncodingSettings.WamsEncodingPresets)
+            {
+                if (!presetPattern.IsMatch(preset.Name))
+                {
                     _services.Notifier.Error(T("The encoding preset name '{0}' is invalid. Encoding presets can only contain letters, numbers and spaces.", preset.Name));
                     return View("Index", viewModel);
                 }
@@ -86,14 +99,18 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
             var settings = _services.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
 
-            if (!String.IsNullOrWhiteSpace(viewModel.General.WamsAccountName) && !String.IsNullOrEmpty(viewModel.General.WamsAccountKey)) {
+            if (!String.IsNullOrWhiteSpace(viewModel.General.WamsAccountName) && !String.IsNullOrEmpty(viewModel.General.WamsAccountKey))
+            {
                 // Test WAMS credentials if they were changed.
-                if (viewModel.General.WamsAccountName != settings.WamsAccountName || viewModel.General.WamsAccountKey != settings.WamsAccountKey || viewModel.General.StorageAccountKey != settings.StorageAccountKey) {
-                    if (!TestCredentialsInternal(viewModel.General.WamsAccountName, viewModel.General.WamsAccountKey, viewModel.General.StorageAccountKey)) {
+                if (viewModel.General.WamsAccountName != settings.WamsAccountName || viewModel.General.WamsAccountKey != settings.WamsAccountKey || viewModel.General.StorageAccountKey != settings.StorageAccountKey)
+                {
+                    if (!TestCredentialsInternal(viewModel.General.WamsAccountName, viewModel.General.WamsAccountKey, viewModel.General.StorageAccountKey))
+                    {
                         _services.Notifier.Error(T("The account credentials verification failed. The settings were not saved."));
                         return View("Index", viewModel);
                     }
-                    else {
+                    else
+                    {
                         _services.Notifier.Success(T("The new account credentials were successfully verified."));
                     }
                 }
@@ -116,9 +133,12 @@ namespace Orchard.Azure.MediaServices.Controllers {
             //settings.EncryptionLicenseAcquisitionUrl = viewModel.EncryptionSettings.LicenseAcquisitionUrl.TrimSafe();
 
             // Configure storage account for CORS if account key was specified and changed.
-            if (settings.IsValid() && !String.IsNullOrWhiteSpace(settings.StorageAccountKey)) {
-                if (settings.StorageAccountKey != previousStorageAccountKey) {
-                    try {
+            if (settings.IsValid() && !String.IsNullOrWhiteSpace(settings.StorageAccountKey))
+            {
+                if (settings.StorageAccountKey != previousStorageAccountKey)
+                {
+                    try
+                    {
                         Logger.Debug("Ensuring CORS support for the configured base URL and the current request URL.");
                         var originsToAdd = new List<string>();
                         var baseUrlOrigin = new Uri(_services.WorkContext.CurrentSite.BaseUrl).GetLeftPart(UriPartial.Authority);
@@ -130,12 +150,14 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
                         var addedOrigins = _wamsClient.EnsureCorsIsEnabledAsync(originsToAdd.ToArray()).Result;
 
-                        if (addedOrigins.Any()) {
+                        if (addedOrigins.Any())
+                        {
                             Logger.Information("CORS rules were added to the configured storage account for the following URLs: {0}.", String.Join("; ", addedOrigins));
                             _services.Notifier.Success(T("CORS rules have been configured on your storage account for the following URLs: {0}.", String.Join("; ", addedOrigins)));
                         }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Logger.Error(ex, "Error while ensuring CORS support.");
                         _services.Notifier.Warning(T("Failed to check or configure CORS support on your storage account."));
                     }
@@ -149,28 +171,34 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost]
-        public ActionResult TestCredentials(SettingsViewModel viewModel) {
+        public ActionResult TestCredentials(SettingsViewModel viewModel)
+        {
             if (!_services.Authorizer.Authorize(Permissions.ManageCloudMediaSettings, T("You are not authorized to manage Microsoft Azure Media settings.")))
                 return new HttpUnauthorizedResult();
 
             Logger.Debug("User requested to verify WAMS account credentials.");
 
-            if (TestCredentialsInternal(viewModel.General.WamsAccountName, viewModel.General.WamsAccountKey, viewModel.General.StorageAccountKey)) {
+            if (TestCredentialsInternal(viewModel.General.WamsAccountName, viewModel.General.WamsAccountKey, viewModel.General.StorageAccountKey))
+            {
                 _services.Notifier.Success(T("The account credentials were successfully verified."));
             }
-            else {
+            else
+            {
                 _services.Notifier.Error(T("The account credentials verification failed."));
             }
 
             return View("Index", viewModel);
         }
 
-        private bool TestCredentialsInternal(string wamsAccountName, string wamsAccountKey, string storageAccountKey) {
-            try {
+        private bool TestCredentialsInternal(string wamsAccountName, string wamsAccountKey, string storageAccountKey)
+        {
+            try
+            {
                 // This will trigger an authentication call to WAMS.
                 var ctx = new CloudMediaContext(wamsAccountName, wamsAccountKey);
 
-                if (!String.IsNullOrWhiteSpace(storageAccountKey)) {
+                if (!String.IsNullOrWhiteSpace(storageAccountKey))
+                {
                     // This will trigger an authentication call to Microsoft Azure Storage.
                     var storageAccount = new CloudStorageAccount(new StorageCredentials(ctx.DefaultStorageAccount.Name, storageAccountKey), false);
                     storageAccount.CreateCloudBlobClient().GetServiceProperties();
@@ -180,7 +208,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
                 Logger.Information("WAMS account credentials were verified.");
                 return true;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while verifying WAMS and storage account credentials.");
                 return false;
             }

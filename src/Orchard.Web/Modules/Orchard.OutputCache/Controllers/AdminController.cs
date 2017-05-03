@@ -15,9 +15,11 @@ using Orchard.Security;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 
-namespace Orchard.OutputCache.Controllers {
+namespace Orchard.OutputCache.Controllers
+{
     [Admin]
-    public class AdminController : Controller {
+    public class AdminController : Controller
+    {
         private readonly IEnumerable<Meta<IRouteProvider>> _routeProviders;
         private readonly ISignals _signals;
         private readonly ICacheService _cacheService;
@@ -26,24 +28,27 @@ namespace Orchard.OutputCache.Controllers {
             IOrchardServices services,
             IEnumerable<Meta<IRouteProvider>> routeProviders,
             ISignals signals,
-            ICacheService cacheService) {
+            ICacheService cacheService)
+        {
             _routeProviders = routeProviders;
             _signals = signals;
             _cacheService = cacheService;
             Services = services;
-            }
+        }
 
         public IOrchardServices Services { get; set; }
         public Localizer T { get; set; }
 
-        public ActionResult Index() {
+        public ActionResult Index()
+        {
             if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("You do not have permission to manage output cache.")))
                 return new HttpUnauthorizedResult();
 
             var routeConfigs = new List<CacheRouteConfig>();
             var settings = Services.WorkContext.CurrentSite.As<CacheSettingsPart>();
 
-            foreach (var routeProvider in _routeProviders) {
+            foreach (var routeProvider in _routeProviders)
+            {
                 // Right now, ignore generic routes.
                 if (routeProvider.Value is StandardExtensionRouteProvider) continue;
 
@@ -54,10 +59,12 @@ namespace Orchard.OutputCache.Controllers {
                 // If there is no feature, skip route.
                 if (feature == null) continue;
 
-                foreach (var routeDescriptor in routes) {
+                foreach (var routeDescriptor in routes)
+                {
                     var route = routeDescriptor.Route as Route;
 
-                    if(route == null) {
+                    if (route == null)
+                    {
                         continue;
                     }
 
@@ -69,7 +76,8 @@ namespace Orchard.OutputCache.Controllers {
                     var duration = cacheParameter == null ? default(int?) : cacheParameter.Duration;
                     var graceTime = cacheParameter == null ? default(int?) : cacheParameter.GraceTime;
 
-                    routeConfigs.Add(new CacheRouteConfig {
+                    routeConfigs.Add(new CacheRouteConfig
+                    {
                         RouteKey = cacheParameterKey,
                         Url = route.Url,
                         Priority = routeDescriptor.Priority,
@@ -83,7 +91,8 @@ namespace Orchard.OutputCache.Controllers {
                 }
             }
 
-            var model = new IndexViewModel {
+            var model = new IndexViewModel
+            {
                 RouteConfigs = routeConfigs,
                 DefaultCacheDuration = settings.DefaultCacheDuration,
                 DefaultCacheGraceTime = settings.DefaultCacheGraceTime,
@@ -104,15 +113,18 @@ namespace Orchard.OutputCache.Controllers {
         }
 
         [HttpPost, ActionName("Index")]
-        public ActionResult IndexPost() {
+        public ActionResult IndexPost()
+        {
             if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("You do not have permission to manage output cache.")))
                 return new HttpUnauthorizedResult();
 
-            var model = new IndexViewModel {
+            var model = new IndexViewModel
+            {
                 RouteConfigs = new List<CacheRouteConfig>()
             };
 
-            if(TryUpdateModel(model)) {
+            if (TryUpdateModel(model))
+            {
                 var settings = Services.WorkContext.CurrentSite.As<CacheSettingsPart>();
                 settings.DefaultCacheDuration = model.DefaultCacheDuration;
                 settings.DefaultCacheGraceTime = model.DefaultCacheGraceTime;
@@ -134,7 +146,8 @@ namespace Orchard.OutputCache.Controllers {
 
                 Services.Notifier.Success(T("Output cache settings saved successfully."));
             }
-            else {
+            else
+            {
                 Services.Notifier.Error(T("Could not save output cache settings."));
             }
 

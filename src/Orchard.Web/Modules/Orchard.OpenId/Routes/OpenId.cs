@@ -5,15 +5,19 @@ using System.Web.Routing;
 using Orchard.Mvc.Routes;
 using Orchard.OpenId.Services;
 
-namespace Orchard.Azure.Authentication {
-    public class OpenIdRoutes : IRouteProvider {
+namespace Orchard.Azure.Authentication
+{
+    public class OpenIdRoutes : IRouteProvider
+    {
         private readonly IEnumerable<IOpenIdProvider> _openIdProviders;
 
-        public OpenIdRoutes(IEnumerable<IOpenIdProvider> openIdProviders) {
+        public OpenIdRoutes(IEnumerable<IOpenIdProvider> openIdProviders)
+        {
             _openIdProviders = openIdProviders;
         }
 
-        public void GetRoutes(ICollection<RouteDescriptor> routes) {
+        public void GetRoutes(ICollection<RouteDescriptor> routes)
+        {
             if (IsAnyProviderSettingsValid() == false)
                 return;
 
@@ -69,12 +73,14 @@ namespace Orchard.Azure.Authentication {
                 }
             };
 
-            foreach (var routeDescriptor in routeDescriptors) {
+            foreach (var routeDescriptor in routeDescriptors)
+            {
                 routes.Add(routeDescriptor);
             }
         }
 
-        private bool IsAnyProviderSettingsValid() {
+        private bool IsAnyProviderSettingsValid()
+        {
             return _openIdProviders.Any(provider => provider.IsValid);
         }
     }

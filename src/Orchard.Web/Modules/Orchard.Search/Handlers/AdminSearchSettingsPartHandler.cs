@@ -4,17 +4,21 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Search.Models;
 
-namespace Orchard.Search.Handlers {
+namespace Orchard.Search.Handlers
+{
     [OrchardFeature("Orchard.Search.Content")]
-    public class AdminSearchSettingsPartHandler : ContentHandler {
-        public AdminSearchSettingsPartHandler() {
+    public class AdminSearchSettingsPartHandler : ContentHandler
+    {
+        public AdminSearchSettingsPartHandler()
+        {
             T = NullLocalizer.Instance;
             Filters.Add(new ActivatingFilter<AdminSearchSettingsPart>("Site"));
         }
 
         public Localizer T { get; set; }
 
-        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+        protected override void GetItemMetadata(GetContentItemMetadataContext context)
+        {
             if (context.ContentItem.ContentType != "Site")
                 return;
             base.GetItemMetadata(context);

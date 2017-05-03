@@ -10,10 +10,10 @@
     foreach (var item in items) {
         if (++index == items.Count) {
             item.Metadata.Type = "BreadcrumbItem_Last";
-            <li>@Display(item)</li>
+    <li>@Display(item)</li>
         }
         else {
-            <li>@Display(item) &#62;</li>
+    <li>@Display(item) &#62;</li>
         }
     }
     @tag.EndElement

@@ -3,10 +3,13 @@ using System.Collections.Concurrent;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Orchard.Environment.Extensions;
 
-namespace Orchard.OpenId.Services.AzureActiveDirectory {
+namespace Orchard.OpenId.Services.AzureActiveDirectory
+{
     [OrchardFeature("Orchard.OpenId.AzureActiveDirectory")]
-    public class InMemoryCache : TokenCache, ISingletonDependency {
-        public InMemoryCache() {
+    public class InMemoryCache : TokenCache, ISingletonDependency
+    {
+        public InMemoryCache()
+        {
             _inMemoryTokenCache = new ConcurrentDictionary<string, byte[]>();
 
             AfterAccess = AfterAccessNotification;
@@ -20,17 +23,21 @@ namespace Orchard.OpenId.Services.AzureActiveDirectory {
         private string _cacheId;
         private string _userObjectId;
 
-        public string UserObjectId {
-            get {
+        public string UserObjectId
+        {
+            get
+            {
                 return _userObjectId;
             }
-            set {
+            set
+            {
                 _userObjectId = value;
                 _cacheId = String.Concat(_userObjectId, CacheIdSuffix);
             }
         }
 
-        public override void Clear() {
+        public override void Clear()
+        {
             base.Clear();
 
             if (String.IsNullOrWhiteSpace(_cacheId))
@@ -40,11 +47,13 @@ namespace Orchard.OpenId.Services.AzureActiveDirectory {
             _inMemoryTokenCache.TryRemove(_cacheId, out oldData);
         }
 
-        private void Load() {
+        private void Load()
+        {
             if (String.IsNullOrWhiteSpace(_cacheId))
                 return;
 
-            if (_inMemoryTokenCache.ContainsKey(_cacheId)) {
+            if (_inMemoryTokenCache.ContainsKey(_cacheId))
+            {
                 byte[] data;
                 _inMemoryTokenCache.TryGetValue(_cacheId, out data);
 
@@ -53,7 +62,8 @@ namespace Orchard.OpenId.Services.AzureActiveDirectory {
             }
         }
 
-        private void Persist() {
+        private void Persist()
+        {
             if (String.IsNullOrWhiteSpace(_cacheId))
                 return;
 
@@ -62,12 +72,15 @@ namespace Orchard.OpenId.Services.AzureActiveDirectory {
             _inMemoryTokenCache.AddOrUpdate(_cacheId, Serialize(), (key, current) => { return Serialize(); });
         }
 
-        private void BeforeAccessNotification(TokenCacheNotificationArgs args) {
+        private void BeforeAccessNotification(TokenCacheNotificationArgs args)
+        {
             Load();
         }
 
-        private void AfterAccessNotification(TokenCacheNotificationArgs args) {
-            if (HasStateChanged) {
+        private void AfterAccessNotification(TokenCacheNotificationArgs args)
+        {
+            if (HasStateChanged)
+            {
                 Persist();
             }
         }

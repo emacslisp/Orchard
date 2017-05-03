@@ -1,6 +1,7 @@
 ﻿.navicon-tags {
-background-image:url(images/menu.tags.png) !important;
+    background-image: url(images/menu.tags.png) !important;
 }
-.navicon-tags:hover {
-background-position:0 -30px !important;
-}
+
+    .navicon-tags:hover {
+        background-position: 0 -30px !important;
+    }

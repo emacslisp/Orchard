@@ -5,8 +5,8 @@
     var statusText = (isShapeTracingActive ? "Active" : "Inactive");
     var statusCssClass = statusText.ToLowerInvariant();
 }
-<div id="shape-tracing-container"> 
-    <div id="shape-tracing-resize-handle" ></div>
+<div id="shape-tracing-container">
+    <div id="shape-tracing-resize-handle"></div>
     <div id="shape-tracing-toolbar">
         <div id="shape-tracing-toolbar-switch"></div>
         <div id="shape-tracing-toolbar-status" class="@statusCssClass">@T(statusText)</div>
@@ -15,9 +15,9 @@
         @if (!isShapeTracingActive) {
             <div id="shape-tracing-window-content-deactivated">
                 <div class="deactivated-content">
-                @using (Html.BeginFormAntiForgeryPost(Url.Action("ActivateTracing", "ShapeTracing", new { Area = "Orchard.DesignerTools" }), FormMethod.Post, new { @class = "inline link" })) {
-                    @Html.Hidden("ReturnUrl", Context.Request.RawUrl)
-                    <button type="submit" class="primaryAction">@T("Activate Shape Tracing").Text</button>
+                    @using (Html.BeginFormAntiForgeryPost(Url.Action("ActivateTracing", "ShapeTracing", new { Area = "Orchard.DesignerTools" }), FormMethod.Post, new { @class = "inline link" })) {
+                        @Html.Hidden("ReturnUrl", Context.Request.RawUrl)
+                        <button type="submit" class="primaryAction">@T("Activate Shape Tracing").Text</button>
                 }
                 </div>
             </div>
@@ -51,31 +51,33 @@
             <li class="sgd-ot"><div class="name">@T("Original Template").Text</div><div class="value">${shape.originalTemplate}</div></li>
             {{/if}}
             <li class="sgd-d"><div class="name">@T("Display Type").Text</div><div class="value">${shape.displayType}</div></li>
-            <li class="sgd-a"><div class="name">@T("Alternate ({0})", "${shape.alternates.length}").Text</div>
+            <li class="sgd-a">
+                <div class="name">@T("Alternate ({0})", "${shape.alternates.length}").Text</div>
                 <div class="value">&nbsp;</div>
                 <ul>
-                {{each shape.alternates}}
+                    {{each shape.alternates}}
                     <li>
                         <div class="name">
-                        @using (Html.BeginFormAntiForgeryPost(Url.Action("Create", "Alternate", new { Area = "Orchard.DesignerTools" }), FormMethod.Post, new { @class = "inline link" }))
-                        { 
-                            @Html.Hidden("Alternate", "${$value.alternate}")
-                            @Html.Hidden("Template", "${$value.template}")
-                            @Html.Hidden("ReturnUrl", "${$value.returnUrl}")
-                            <button type="submit" class="create-template">@T("Create").Text</button>
+                            @using (Html.BeginFormAntiForgeryPost(Url.Action("Create", "Alternate", new { Area = "Orchard.DesignerTools" }), FormMethod.Post, new { @class = "inline link" }))
+                        {
+                                @Html.Hidden("Alternate", "${$value.alternate}")
+                                @Html.Hidden("Template", "${$value.template}")
+                                @Html.Hidden("ReturnUrl", "${$value.returnUrl}")
+                                <button type="submit" class="create-template">@T("Create").Text</button>
                         }
                         </div>
                         <div class="value">${$value.filename}</div>
                     </li>
-                {{/each}}
+                    {{/each}}
                 </ul>
             </li>
-            <li class="sgd-w"><div class="name">@T("Wrappers ({0})", "${shape.wrappers.length}")</div>
+            <li class="sgd-w">
+                <div class="name">@T("Wrappers ({0})", "${shape.wrappers.length}")</div>
                 <div class="value">&nbsp;</div>
                 <ul>
-                {{each shape.wrappers}}
+                    {{each shape.wrappers}}
                     <li><div class="name">&nbsp;</div><div class="value">${$value.filename}</div></li>
-                {{/each}}
+                    {{/each}}
                 </ul>
             </li>
         </ul>
@@ -93,9 +95,9 @@
         <div class="name">${name}</div>
         <div class="value">${value}</div>
         {{if children}}
-            <ul style="display:none">
-                {{tmpl(children) "#shape-tracing-tabs-model-node-template"}}
-            </ul>
+        <ul style="display:none">
+            {{tmpl(children) "#shape-tracing-tabs-model-node-template"}}
+        </ul>
         {{/if}}
     </li>
 </script>

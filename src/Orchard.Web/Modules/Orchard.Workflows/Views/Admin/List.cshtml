@@ -3,11 +3,11 @@
 <h1>@Html.TitleForPage(T("Running workflows").ToString()) </h1>
 
 @using (Html.BeginFormAntiForgeryPost()) {
-    <fieldset>		
+    <fieldset>
         <table class="items">
             <thead>
                 <tr>
-                    <th scope="col" class="checkbox"><input type="checkbox" class="check-all"/></th>
+                    <th scope="col" class="checkbox"><input type="checkbox" class="check-all" /></th>
                     <th scope="col">@T("Worfklow Definition")</th>
                     <th scope="col">Blocking activities</th>
                     <th scope="col" class="actions">&nbsp;</th>
@@ -23,12 +23,12 @@
                         &nbsp;
                     </td>
                     <td>
-                        @Html.ActionLink(workflow.WorkflowDefinitionRecord.Name, "Edit", new {id = workflow.WorkflowDefinitionRecord.Id}) 
+                        @Html.ActionLink(workflow.WorkflowDefinitionRecord.Name, "Edit", new {id = workflow.WorkflowDefinitionRecord.Id})
                     </td>
                     <td>
                         @foreach (AwaitingActivityRecord awaiting in workflow.AwaitingActivities) {
                             @awaiting.ActivityRecord.Name.CamelFriendly()
-                            <br/>
+                            <br />
                         }
                         &nbsp;
                     </td>

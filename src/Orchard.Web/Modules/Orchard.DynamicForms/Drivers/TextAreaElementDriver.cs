@@ -6,14 +6,18 @@ using Orchard.Layouts.Services;
 using Orchard.Tokens;
 using DescribeContext = Orchard.Forms.Services.DescribeContext;
 
-namespace Orchard.DynamicForms.Drivers {
-    public class TextAreaElementDriver : FormsElementDriver<TextArea> {
+namespace Orchard.DynamicForms.Drivers
+{
+    public class TextAreaElementDriver : FormsElementDriver<TextArea>
+    {
         private readonly ITokenizer _tokenizer;
-        public TextAreaElementDriver(IFormsBasedElementServices formsServices, ITokenizer tokenizer) : base(formsServices) {
+        public TextAreaElementDriver(IFormsBasedElementServices formsServices, ITokenizer tokenizer) : base(formsServices)
+        {
             _tokenizer = tokenizer;
         }
 
-        protected override EditorResult OnBuildEditor(TextArea element, ElementEditorContext context) {
+        protected override EditorResult OnBuildEditor(TextArea element, ElementEditorContext context)
+        {
             var autoLabelEditor = BuildForm(context, "AutoLabel");
             var textAreaEditor = BuildForm(context, "TextArea");
             var textAreaValidation = BuildForm(context, "TextAreaValidation", "Validation:10");
@@ -21,8 +25,10 @@ namespace Orchard.DynamicForms.Drivers {
             return Editor(context, autoLabelEditor, textAreaEditor, textAreaValidation);
         }
 
-        protected override void DescribeForm(DescribeContext context) {
-            context.Form("TextArea", factory => {
+        protected override void DescribeForm(DescribeContext context)
+        {
+            context.Form("TextArea", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "TextArea",
@@ -48,7 +54,8 @@ namespace Orchard.DynamicForms.Drivers {
                 return form;
             });
 
-            context.Form("TextAreaValidation", factory => {
+            context.Form("TextAreaValidation", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "TextAreaValidation",
@@ -87,7 +94,8 @@ namespace Orchard.DynamicForms.Drivers {
             });
         }
 
-        protected override void OnDisplaying(TextArea element, ElementDisplayingContext context) {
+        protected override void OnDisplaying(TextArea element, ElementDisplayingContext context)
+        {
             var tokenData = context.GetTokenData();
             context.ElementShape.ProcessedName = _tokenizer.Replace(element.Name, tokenData);
             context.ElementShape.ProcessedLabel = _tokenizer.Replace(element.Label, tokenData, new ReplaceOptions { Encoding = ReplaceOptions.NoEncode });

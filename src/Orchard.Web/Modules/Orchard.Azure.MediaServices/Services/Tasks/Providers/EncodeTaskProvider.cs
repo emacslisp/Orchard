@@ -12,60 +12,74 @@ using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Logging;
 
-namespace Orchard.Azure.MediaServices.Services.Tasks.Providers {
-    public class EncodeTaskProvider : TaskProviderBase {
+namespace Orchard.Azure.MediaServices.Services.Tasks.Providers
+{
+    public class EncodeTaskProvider : TaskProviderBase
+    {
 
         private const string TaskName = "Encode";
 
-        public EncodeTaskProvider(IOrchardServices orchardServices, IAssetManager assetManager, IWamsClient wamsClient) : base(orchardServices, assetManager, wamsClient) {
+        public EncodeTaskProvider(IOrchardServices orchardServices, IAssetManager assetManager, IWamsClient wamsClient) : base(orchardServices, assetManager, wamsClient)
+        {
         }
 
-        public override bool CanExecute {
-            get {
+        public override bool CanExecute
+        {
+            get
+            {
                 var settings = _orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
                 return settings.WamsEncodingPresets.Any();
             }
         }
 
-        public override LocalizedString Description {
+        public override LocalizedString Description
+        {
             get { return T("Create a new encoding version of the cloud video item"); }
         }
 
-        public override TaskConfiguration Editor(dynamic shapeFactory) {
+        public override TaskConfiguration Editor(dynamic shapeFactory)
+        {
             return Editor(shapeFactory, null);
         }
 
-        public override TaskConfiguration Editor(dynamic shapeFactory, IUpdateModel updater) {
+        public override TaskConfiguration Editor(dynamic shapeFactory, IUpdateModel updater)
+        {
             var settings = _orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
-            var viewModel = new EncodeViewModel() {
+            var viewModel = new EncodeViewModel()
+            {
                 EncodingPresets = settings.WamsEncodingPresets.Select(x => x.Name),
                 SelectedEncodingPreset = settings.WamsEncodingPresets.Any() ? settings.WamsEncodingPresets.ToArray()[settings.DefaultWamsEncodingPresetIndex].Name : null
             };
 
-            if (updater != null) {
+            if (updater != null)
+            {
                 updater.TryUpdateModel(viewModel, Prefix, null, null);
             }
 
-            return new TaskConfiguration(this) {
+            return new TaskConfiguration(this)
+            {
                 Settings = viewModel,
                 EditorShape = shapeFactory.TaskSettingsEditor(TemplateName: TaskName, Model: viewModel, Prefix: Prefix)
             };
         }
 
-        public override string GetDisplayText(TaskConfiguration config) {
+        public override string GetDisplayText(TaskConfiguration config)
+        {
             var viewModel = (EncodeViewModel)config.Settings;
             return viewModel.SelectedEncodingPreset;
         }
 
-        public override TaskConnections GetConnections(TaskConfiguration config) {
+        public override TaskConnections GetConnections(TaskConfiguration config)
+        {
             var viewModel = (EncodeViewModel)config.Settings;
             return new TaskConnections(
                 new[] { new TaskInput(0, true, new[] { "VideoAsset" }) }, // Expects one video input asset.
-                new[] { new TaskOutput(0, "VideoAsset", viewModel.SelectedEncodingPreset ) } // Produces one video output asset.
+                new[] { new TaskOutput(0, "VideoAsset", viewModel.SelectedEncodingPreset) } // Produces one video output asset.
             );
         }
 
-        public override ITask CreateTask(TaskConfiguration config, TaskCollection tasks, IEnumerable<IAsset> inputAssets) {
+        public override ITask CreateTask(TaskConfiguration config, TaskCollection tasks, IEnumerable<IAsset> inputAssets)
+        {
             var settings = _orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
             var viewModel = (EncodeViewModel)config.Settings;
             var encodingPreset = settings.WamsEncodingPresets.Where(x => x.Name == viewModel.SelectedEncodingPreset).Single();
@@ -84,15 +98,18 @@ namespace Orchard.Azure.MediaServices.Services.Tasks.Providers {
             return task;
         }
 
-        public override XElement Serialize(dynamic settings) {
+        public override XElement Serialize(dynamic settings)
+        {
             var viewModel = (EncodeViewModel)settings;
             return new XElement("EncodeTask", new XAttribute("SelectedEncodingPreset", viewModel.SelectedEncodingPreset));
         }
 
-        public override dynamic Deserialize(XElement settingsXml) {
+        public override dynamic Deserialize(XElement settingsXml)
+        {
             var viewModel = new EncodeViewModel();
 
-            if (settingsXml != null) {
+            if (settingsXml != null)
+            {
                 viewModel.SelectedEncodingPreset = settingsXml.Attr<string>("SelectedEncodingPreset");
             }
 

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using Orchard.ContentManagement;
 
-namespace Orchard.Projections.Descriptors.Filter {
-    public class FilterContext {
-        public FilterContext() {
+namespace Orchard.Projections.Descriptors.Filter
+{
+    public class FilterContext
+    {
+        public FilterContext()
+        {
             Tokens = new Dictionary<string, object>();
         }
 

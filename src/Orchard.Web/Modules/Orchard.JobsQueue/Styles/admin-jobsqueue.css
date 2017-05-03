@@ -17,9 +17,9 @@ fieldset.summary ul li label {
     font-weight: bold;
 }
 
-fieldset.summary ul li label:after {
-    content: ":";
-}
+    fieldset.summary ul li label:after {
+        content: ":";
+    }
 
 span.queue-status {
     margin-right: 1.5em;
@@ -29,9 +29,9 @@ table.queues {
     clear: both;
 }
 
-table.queues td {
-    vertical-align: middle;
-}
+    table.queues td {
+        vertical-align: middle;
+    }
 
 ul.horizontal li {
     float: left;

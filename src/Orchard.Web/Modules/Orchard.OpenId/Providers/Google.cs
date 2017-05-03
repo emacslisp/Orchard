@@ -5,36 +5,45 @@ using Orchard.OpenId.Models;
 using Orchard.OpenId.Services;
 using Orchard.Settings;
 
-namespace Orchard.OpenId.Providers {
+namespace Orchard.OpenId.Providers
+{
     [OrchardFeature("Orchard.OpenId.Google")]
-    public class Google : IOpenIdProvider {
+    public class Google : IOpenIdProvider
+    {
         private readonly IWorkContextAccessor _workContextAccessor;
 
         public Google(
             IWorkContextAccessor workContextAccessor,
-            ISiteService siteService) {
+            ISiteService siteService)
+        {
 
             _workContextAccessor = workContextAccessor;
         }
 
-        public string AuthenticationType {
+        public string AuthenticationType
+        {
             get { return "Google"; }
         }
 
-        public string Name {
+        public string Name
+        {
             get { return "Google"; }
         }
 
-        public string DisplayName {
+        public string DisplayName
+        {
             get { return "Google"; }
         }
 
-        public bool IsValid {
+        public bool IsValid
+        {
             get { return IsProviderValid(); }
         }
 
-        private bool IsProviderValid() {
-            try {
+        private bool IsProviderValid()
+        {
+            try
+            {
                 GoogleSettingsPart settings;
                 ISite site;
 
@@ -45,7 +54,8 @@ namespace Orchard.OpenId.Providers {
 
                 return (settings != null && settings.IsValid);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }

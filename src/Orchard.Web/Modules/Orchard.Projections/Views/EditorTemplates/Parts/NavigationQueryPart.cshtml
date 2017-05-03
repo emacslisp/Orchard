@@ -10,7 +10,7 @@
     @Html.LabelFor(m => m.QueryRecordId, T("For Query"))
     <select id="@Html.FieldIdFor(m => m.QueryRecordId)" name="@Html.FieldNameFor(m => m.QueryRecordId)">
         @foreach (QueryPart queryRecord in Model.Queries.OrderBy(x => x.Name)) {
-                @Html.SelectOption(Model.QueryRecordId, queryRecord.Id.ToString(), @queryRecord.Name)
+            @Html.SelectOption(Model.QueryRecordId, queryRecord.Id.ToString(), @queryRecord.Name)
                 if (Model.QueryRecordId == queryRecord.Id.ToString()) {
                     selectedQueryRecordId = queryRecord.Id;
                 }

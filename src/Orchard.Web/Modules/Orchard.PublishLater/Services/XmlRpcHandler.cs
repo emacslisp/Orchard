@@ -10,8 +10,10 @@ using Orchard.PublishLater.Models;
 using Orchard.Security;
 using Orchard.Tasks.Scheduling;
 
-namespace Orchard.PublishLater.Services {
-    public class XmlRpcHandler : IXmlRpcHandler {
+namespace Orchard.PublishLater.Services
+{
+    public class XmlRpcHandler : IXmlRpcHandler
+    {
         private readonly IContentManager _contentManager;
         private readonly IPublishingTaskManager _publishingTaskManager;
         private readonly IMembershipService _membershipService;
@@ -20,7 +22,8 @@ namespace Orchard.PublishLater.Services {
         public XmlRpcHandler(IContentManager contentManager,
             IPublishingTaskManager publishingTaskManager,
             IMembershipService membershipService,
-            IAuthorizationService authorizationService) {
+            IAuthorizationService authorizationService)
+        {
             _contentManager = contentManager;
             _publishingTaskManager = publishingTaskManager;
             _membershipService = membershipService;
@@ -30,13 +33,16 @@ namespace Orchard.PublishLater.Services {
 
         public Localizer T { get; set; }
 
-        public void SetCapabilities(XElement options) {
+        public void SetCapabilities(XElement options)
+        {
             const string manifestUri = "http://schemas.microsoft.com/wlw/manifest/weblog";
             options.SetElementValue(XName.Get("supportsCustomDate", manifestUri), "Yes");
         }
 
-        public void Process(XmlRpcContext context) {
-            switch (context.Request.MethodName) {
+        public void Process(XmlRpcContext context)
+        {
+            switch (context.Request.MethodName)
+            {
                 case "metaWeblog.newPost":
                     MetaWeblogSetCustomPublishedDate(
                         GetId(context.Response),
@@ -76,11 +82,13 @@ namespace Orchard.PublishLater.Services {
             }
         }
 
-        private void MetaWeblogGetCustomPublishedDate(XRpcStruct postStruct, int itemId, string userName, string password, ICollection<IXmlRpcDriver> drivers) {
+        private void MetaWeblogGetCustomPublishedDate(XRpcStruct postStruct, int itemId, string userName, string password, ICollection<IXmlRpcDriver> drivers)
+        {
             if (itemId < 1)
                 return;
 
-            var driver = new XmlRpcDriver(item => {
+            var driver = new XmlRpcDriver(item =>
+            {
                 var post = item as XRpcStruct;
                 if (post == null)
                     return;
@@ -104,7 +112,8 @@ namespace Orchard.PublishLater.Services {
                 drivers.Add(driver);
         }
 
-        private void MetaWeblogSetCustomPublishedDate(int contentItemId, string appKey, string userName, string password, XRpcStruct content, bool publish, ICollection<IXmlRpcDriver> drivers) {
+        private void MetaWeblogSetCustomPublishedDate(int contentItemId, string appKey, string userName, string password, XRpcStruct content, bool publish, ICollection<IXmlRpcDriver> drivers)
+        {
             var user = ValidateUser(userName, password);
             if (user == null)
                 return;
@@ -113,7 +122,8 @@ namespace Orchard.PublishLater.Services {
             if (publishedUtc == null || publishedUtc <= DateTime.UtcNow) // only post-dating/scheduling of content with the PublishLaterPart
                 return;
 
-            var driver = new XmlRpcDriver(item => {
+            var driver = new XmlRpcDriver(item =>
+            {
                 if (!(item is int))
                     return;
 
@@ -134,35 +144,42 @@ namespace Orchard.PublishLater.Services {
                 drivers.Add(driver);
         }
 
-        private static XRpcStruct GetPost(XRpcMethodResponse response) {
+        private static XRpcStruct GetPost(XRpcMethodResponse response)
+        {
             return response != null && response.Params.Count == 1 && response.Params[0].Value is XRpcStruct
                        ? response.Params[0].Value as XRpcStruct
                        : null;
         }
 
-        private static int GetId(XRpcMethodResponse response) {
+        private static int GetId(XRpcMethodResponse response)
+        {
             return response != null && response.Params.Count == 1 && response.Params[0].Value is int
                        ? Convert.ToInt32(response.Params[0].Value)
                        : 0;
         }
 
-        private IUser ValidateUser(string userName, string password) {
+        private IUser ValidateUser(string userName, string password)
+        {
             IUser user = _membershipService.ValidateUser(userName, password);
-            if (user == null) {
+            if (user == null)
+            {
                 throw new OrchardCoreException(T("The username or e-mail or password provided is incorrect."));
             }
 
             return user;
         }
 
-        public class XmlRpcDriver : IXmlRpcDriver {
+        public class XmlRpcDriver : IXmlRpcDriver
+        {
             private readonly Action<object> _process;
 
-            public XmlRpcDriver(Action<object> process) {
+            public XmlRpcDriver(Action<object> process)
+            {
                 _process = process;
             }
 
-            public void Process(object item) {
+            public void Process(object item)
+            {
                 _process(item);
             }
         }

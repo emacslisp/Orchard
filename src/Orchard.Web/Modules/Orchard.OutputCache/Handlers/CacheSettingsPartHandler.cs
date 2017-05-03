@@ -8,17 +8,21 @@ using Orchard.Core.Common.Models;
 using Orchard.OutputCache.Models;
 using Orchard.OutputCache.Services;
 
-namespace Orchard.OutputCache.Handlers {
-    public class CacheSettingsPartHandler : ContentHandler {
+namespace Orchard.OutputCache.Handlers
+{
+    public class CacheSettingsPartHandler : ContentHandler
+    {
         private readonly ICacheService _cacheService;
 
         public CacheSettingsPartHandler(
-            ICacheService cacheService) {
+            ICacheService cacheService)
+        {
             _cacheService = cacheService;
             Filters.Add(new ActivatingFilter<CacheSettingsPart>("Site"));
 
             // Default cache settings values.
-            OnInitializing<CacheSettingsPart>((context, part) => {
+            OnInitializing<CacheSettingsPart>((context, part) =>
+            {
                 part.DefaultCacheDuration = 300;
                 part.DefaultCacheGraceTime = 60;
             });
@@ -32,20 +36,24 @@ namespace Orchard.OutputCache.Handlers {
             OnImporting<CacheSettingsPart>(ImportRouteSettings);
         }
 
-        private void Invalidate(IContent content) {
+        private void Invalidate(IContent content)
+        {
             // Remove any item tagged with this content item ID.
             _cacheService.RemoveByTag(content.ContentItem.Id.ToString(CultureInfo.InvariantCulture));
 
             // Search the cache for containers too.
             var commonPart = content.As<CommonPart>();
-            if (commonPart != null) {
-                if (commonPart.Container != null) {
+            if (commonPart != null)
+            {
+                if (commonPart.Container != null)
+                {
                     _cacheService.RemoveByTag(commonPart.Container.Id.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }
 
-        private void ExportRouteSettings(ExportContentContext context, CacheSettingsPart part) {
+        private void ExportRouteSettings(ExportContentContext context, CacheSettingsPart part)
+        {
             var routes = _cacheService.GetRouteConfigs();
             var routesElement = new XElement("Routes",
                 routes.Select(x => new XElement("Route")
@@ -60,7 +68,8 @@ namespace Orchard.OutputCache.Handlers {
             context.Element(part.PartDefinition.Name).Add(routesElement);
         }
 
-        private void ImportRouteSettings(ImportContentContext context, CacheSettingsPart part) {
+        private void ImportRouteSettings(ImportContentContext context, CacheSettingsPart part)
+        {
             var partElement = context.Data.Element(part.PartDefinition.Name);
 
             // Don't do anything if the tag is not specified.
@@ -72,7 +81,8 @@ namespace Orchard.OutputCache.Handlers {
             if (routesElement == null)
                 return;
 
-            var routeConfigs = routesElement.Elements().Select(x => new CacheRouteConfig {
+            var routeConfigs = routesElement.Elements().Select(x => new CacheRouteConfig
+            {
                 RouteKey = x.Attr("Key"),
                 Duration = x.Attr<int?>("Duration"),
                 Priority = x.Attr<int>("Priority"),

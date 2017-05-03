@@ -12,7 +12,7 @@
     var processedAction = (string)Model.ProcessedAction;
     var formAction = String.IsNullOrWhiteSpace(processedAction) ? Url.Action("Submit", "Form", new { area = "Orchard.DynamicForms"}) : processedAction;
     var formMethod = !String.IsNullOrWhiteSpace(element.Method) ? element.Method : "POST";
-    
+
     tagBuilder.AddCssClass("dynamic-form");
 
     if (element.EnableClientValidation == true) {

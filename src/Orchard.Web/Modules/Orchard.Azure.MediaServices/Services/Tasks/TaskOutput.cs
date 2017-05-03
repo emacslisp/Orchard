@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Orchard.Azure.MediaServices.Services.Tasks {
+namespace Orchard.Azure.MediaServices.Services.Tasks
+{
 
     /// <summary>
     /// Represents an output asset for a task.
     /// </summary>
-    public class TaskOutput {
+    public class TaskOutput
+    {
 
-        public TaskOutput(int index, string assetType, string assetName) {
+        public TaskOutput(int index, string assetType, string assetName)
+        {
             Index = index;
             AssetType = assetType;
             AssetName = assetName;
@@ -19,7 +22,8 @@ namespace Orchard.Azure.MediaServices.Services.Tasks {
         /// <summary>
         /// Gets the position of the output asset in relation to other output assets of the same task.
         /// </summary>
-        public int Index {
+        public int Index
+        {
             get;
             private set;
         }
@@ -27,7 +31,8 @@ namespace Orchard.Azure.MediaServices.Services.Tasks {
         /// <summary>
         /// Gets the type of the output asset.
         /// </summary>
-        public string AssetType {
+        public string AssetType
+        {
             get;
             private set;
         }
@@ -35,7 +40,8 @@ namespace Orchard.Azure.MediaServices.Services.Tasks {
         /// <summary>
         /// Gets the suggested name of the output asset.
         /// </summary>
-        public string AssetName {
+        public string AssetName
+        {
             get;
             private set;
         }

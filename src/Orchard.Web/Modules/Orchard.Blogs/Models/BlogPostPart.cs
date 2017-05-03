@@ -5,34 +5,43 @@ using Orchard.Core.Common.Models;
 using Orchard.Security;
 using Orchard.Core.Title.Models;
 
-namespace Orchard.Blogs.Models {
-    public class BlogPostPart : ContentPart {
-        public string Title {
+namespace Orchard.Blogs.Models
+{
+    public class BlogPostPart : ContentPart
+    {
+        public string Title
+        {
             get { return this.As<TitlePart>().Title; }
             set { this.As<TitlePart>().Title = value; }
         }
 
-        public string Text {
+        public string Text
+        {
             get { return this.As<BodyPart>().Text; }
             set { this.As<BodyPart>().Text = value; }
         }
 
-        public BlogPart BlogPart {
+        public BlogPart BlogPart
+        {
             get { return this.As<ICommonPart>().Container.As<BlogPart>(); }
             set { this.As<ICommonPart>().Container = value; }
         }
 
-        public IUser Creator {
+        public IUser Creator
+        {
             get { return this.As<ICommonPart>().Owner; }
             set { this.As<ICommonPart>().Owner = value; }
         }
 
-        public bool IsPublished {
+        public bool IsPublished
+        {
             get { return ContentItem.VersionRecord != null && ContentItem.VersionRecord.Published; }
         }
 
-        public bool HasDraft {
-            get {
+        public bool HasDraft
+        {
+            get
+            {
                 return (
                            (ContentItem.VersionRecord != null) && (
                                (ContentItem.VersionRecord.Published == false) ||
@@ -40,13 +49,16 @@ namespace Orchard.Blogs.Models {
             }
         }
 
-        public bool HasPublished {
-            get {
+        public bool HasPublished
+        {
+            get
+            {
                 return IsPublished || ContentItem.ContentManager.Get(Id, VersionOptions.Published) != null;
             }
         }
 
-        public DateTime? PublishedUtc {
+        public DateTime? PublishedUtc
+        {
             get { return this.As<ICommonPart>().PublishedUtc; }
         }
     }

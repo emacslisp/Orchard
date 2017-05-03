@@ -37,11 +37,14 @@ using Orchard.UI.Resources;
 using Orchard.UI.Zones;
 using IFilterProvider = Orchard.Mvc.Filters.IFilterProvider;
 
-namespace Orchard.Setup {
-    public class SetupMode : Module {
+namespace Orchard.Setup
+{
+    public class SetupMode : Module
+    {
         public Feature Feature { get; set; }
 
-        protected override void Load(ContainerBuilder builder) {
+        protected override void Load(ContainerBuilder builder)
+        {
 
             // standard services needed in setup mode
             builder.RegisterModule(new MvcModule());
@@ -100,23 +103,30 @@ namespace Orchard.Setup {
         }
 
 
-        internal class SetupBackgroundService : IBackgroundService {
-            public void Sweep() {
+        internal class SetupBackgroundService : IBackgroundService
+        {
+            public void Sweep()
+            {
                 // Don't run any background service in setup mode.
             }
         }
 
-        class SafeModeText : IText {
-            public LocalizedString Get(string textHint, params object[] args) {
-                if (args == null || args.Length == 0) {
+        class SafeModeText : IText
+        {
+            public LocalizedString Get(string textHint, params object[] args)
+            {
+                if (args == null || args.Length == 0)
+                {
                     return new LocalizedString(textHint);
                 }
                 return new LocalizedString(string.Format(textHint, args));
             }
         }
 
-        class SafeModeThemeService : IThemeManager {
-            private readonly ExtensionDescriptor _theme = new ExtensionDescriptor {
+        class SafeModeThemeService : IThemeManager
+        {
+            private readonly ExtensionDescriptor _theme = new ExtensionDescriptor
+            {
                 Id = "SafeMode",
                 Name = "SafeMode",
                 Location = "~/Themes",
@@ -125,9 +135,12 @@ namespace Orchard.Setup {
             public ExtensionDescriptor GetRequestTheme(RequestContext requestContext) { return _theme; }
         }
 
-        class SafeModeSiteWorkContextProvider : IWorkContextStateProvider {
-            public Func<WorkContext, T> Get<T>(string name) {
-                if (name == "CurrentSite") {
+        class SafeModeSiteWorkContextProvider : IWorkContextStateProvider
+        {
+            public Func<WorkContext, T> Get<T>(string name)
+            {
+                if (name == "CurrentSite")
+                {
                     ISite safeModeSite = new SafeModeSite();
                     return ctx => (T)safeModeSite;
                 }
@@ -135,8 +148,10 @@ namespace Orchard.Setup {
             }
         }
 
-        class SafeModeSiteService : ISiteService {
-            public ISite GetSiteSettings() {
+        class SafeModeSiteService : ISiteService
+        {
+            public ISite GetSiteSettings()
+            {
                 var siteType = new ContentTypeDefinitionBuilder().Named("Site").Build();
                 var site = new ContentItemBuilder(siteType)
                     .Weld<SafeModeSite>()
@@ -146,74 +161,90 @@ namespace Orchard.Setup {
             }
         }
 
-        class SafeModeSite : ContentPart, ISite {
-            public string PageTitleSeparator {
+        class SafeModeSite : ContentPart, ISite
+        {
+            public string PageTitleSeparator
+            {
                 get { return " - "; }
             }
 
-            public string SiteName {
+            public string SiteName
+            {
                 get { return "Orchard Setup"; }
             }
 
-            public string SiteSalt {
+            public string SiteSalt
+            {
                 get { return "42"; }
             }
 
-            public string SiteUrl {
+            public string SiteUrl
+            {
                 get { return "/"; }
             }
 
-            public string SuperUser {
+            public string SuperUser
+            {
                 get { return ""; }
             }
 
-            public string HomePage {
-                get { return ""; }
-                set { throw new NotImplementedException(); }
-            }
-
-            public string SiteCulture {
+            public string HomePage
+            {
                 get { return ""; }
                 set { throw new NotImplementedException(); }
             }
 
-            public string SiteCalendar {
+            public string SiteCulture
+            {
                 get { return ""; }
                 set { throw new NotImplementedException(); }
             }
 
-            public ResourceDebugMode ResourceDebugMode {
+            public string SiteCalendar
+            {
+                get { return ""; }
+                set { throw new NotImplementedException(); }
+            }
+
+            public ResourceDebugMode ResourceDebugMode
+            {
                 get { return ResourceDebugMode.FromAppSetting; }
                 set { throw new NotImplementedException(); }
             }
 
-            public bool UseCdn {
+            public bool UseCdn
+            {
                 get { return false; }
                 set { throw new NotImplementedException(); }
             }
 
-            public int PageSize {
+            public int PageSize
+            {
                 get { return SiteSettingsPart.DefaultPageSize; }
                 set { throw new NotImplementedException(); }
             }
 
-            public int MaxPageSize {
+            public int MaxPageSize
+            {
                 get { return SiteSettingsPart.DefaultPageSize; }
                 set { throw new NotImplementedException(); }
             }
 
-            public int MaxPagedCount {
+            public int MaxPagedCount
+            {
                 get { return 0; }
                 set { throw new NotImplementedException(); }
             }
 
-            public string BaseUrl {
+            public string BaseUrl
+            {
                 get { return ""; }
             }
 
-            public string SiteTimeZone {
+            public string SiteTimeZone
+            {
                 get { return TimeZoneInfo.Local.Id; }
-             }        
+            }
         }
     }
 }

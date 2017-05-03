@@ -1,5 +1,5 @@
 ﻿table.content-picker tr td:nth-child(1) {
-	background: url(images/move.gif) no-repeat 12px 14px;
+    background: url(images/move.gif) no-repeat 12px 14px;
     cursor: move;
 }
 

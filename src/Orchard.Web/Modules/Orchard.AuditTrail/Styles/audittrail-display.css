@@ -15,14 +15,14 @@
     margin-bottom: 6px;
 }
 
-.filter-control-group label {
-    padding-bottom: 0;
-}
+    .filter-control-group label {
+        padding-bottom: 0;
+    }
 
-.filter-control-group select {
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
-}
+    .filter-control-group select {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
 
 .audittrail-event-metadata-section {
     margin-bottom: 1em;

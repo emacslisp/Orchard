@@ -2,11 +2,14 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Orchard.Azure.MediaServices.Helpers {
+namespace Orchard.Azure.MediaServices.Helpers
+{
 
-    public class NamespaceHelper {
+    public class NamespaceHelper
+    {
 
-        public static XmlNamespaceManager CreateNamespaceManager(XElement xml) {
+        public static XmlNamespaceManager CreateNamespaceManager(XElement xml)
+        {
             var nav = xml.CreateNavigator();
             var nsm = new XmlNamespaceManager(nav.NameTable);
             nsm.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -15,7 +18,8 @@ namespace Orchard.Azure.MediaServices.Helpers {
             return nsm;
         }
 
-        public static XmlNamespaceManager CreateNamespaceManager(XDocument xml) {
+        public static XmlNamespaceManager CreateNamespaceManager(XDocument xml)
+        {
             var reader = xml.CreateReader();
             var nsm = new XmlNamespaceManager(reader.NameTable);
             nsm.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");

@@ -5,7 +5,8 @@ using System.ComponentModel.DataAnnotations;
 namespace Orchard.Users.ViewModels
 {
     [OrchardFeature("Orchard.Users.EditPasswordByAdmin")]
-    public class UserEditPasswordViewModel {
+    public class UserEditPasswordViewModel
+    {
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

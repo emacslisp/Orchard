@@ -3,8 +3,10 @@ using Orchard.Security;
 using System;
 using System.Collections.Generic;
 
-namespace Orchard.Users.Services {
-    public interface IUserService : IDependency {
+namespace Orchard.Users.Services
+{
+    public interface IUserService : IDependency
+    {
         bool VerifyUserUnicity(string userName, string email);
         bool VerifyUserUnicity(int id, string userName, string email);
 

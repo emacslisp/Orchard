@@ -31,21 +31,21 @@
 }
 
 @using(Script.Foot()){
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     $(function(){
         var $name = $("#@Html.FieldIdFor(m=>m.Name)");
         var $displayName = $("#@Html.FieldIdFor(m=>m.DisplayName)");
         var partName = "@Model.Part.Name";
-        
+
         var jsonUrl = "@Url.Action("FieldName", "Admin", new RouteValueDictionary { {"Area","Orchard.ContentTypes"} } )";
         var version = 0;
-        
+
         var nameAltered;
         $name.keypress(function() {
             nameAltered = true;
         });
-        
+
         var compute = function() {
             // stop processing automatically if altered by the user
             if(nameAltered) {
@@ -66,13 +66,13 @@
                 "json"
             );
         };
-        
+
         //pull technical name input from tab order
         $name.attr("tabindex", -1);
-        
+
         $displayName.keyup(compute);
         $displayName.blur(compute);
     })
 //]]>
-</script>
+    </script>
 }

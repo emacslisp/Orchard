@@ -18,7 +18,7 @@
         <input class="button" type="submit" name="submit.BulkEdit" value="@T("Apply")" />
     </fieldset>
     if (Authorizer.Authorize(Permissions.CreateTaxonomy)) {
-        <div class="manage">@Html.ActionLink(T("Add a taxonomy").Text, "Create", new { Area = "Orchard.Taxonomies", ReturnUrl = Request.RawUrl }, new { @class = "button primaryAction" })</div>
+    <div class="manage">@Html.ActionLink(T("Add a taxonomy").Text, "Create", new { Area = "Orchard.Taxonomies", ReturnUrl = Request.RawUrl }, new { @class = "button primaryAction" })</div>
     }
     <fieldset>
         <table class="items" summary="@T("This is a table of the taxonomies in your application")">
@@ -54,14 +54,14 @@
                     <td>
                         @if (!taxonomyEntry.IsInternal) {
                             if (Authorizer.Authorize(Permissions.CreateTaxonomy)) {
-                                @Html.ItemEditLink(T("Edit").Text, taxonomyEntry.ContentItem, new { ReturnUrl = Request.RawUrl }) <text>|</text>
+                            @Html.ItemEditLink(T("Edit").Text, taxonomyEntry.ContentItem, new { ReturnUrl = Request.RawUrl }) <text>|</text>
                             }
                             @Html.ActionLink(T("Terms").Text, "Index", "TermAdmin", new { taxonomyId = taxonomyEntry.Id }, new object { }) <text>|</text>
                             if (Authorizer.Authorize(Permissions.ManageTaxonomies)) {
-                                @Html.ActionLink(T("Delete").Text, "Delete", new { id = taxonomyEntry.Id }, new { itemprop = "RemoveUrl UnsafeUrl" }) <text>|</text>
+                            @Html.ActionLink(T("Delete").Text, "Delete", new { id = taxonomyEntry.Id }, new { itemprop = "RemoveUrl UnsafeUrl" }) <text>|</text>
                             }
                             if (Authorizer.Authorize(Permissions.CreateTaxonomy)) {
-                                @Html.ActionLink(T("Import").Text, "Import", new { id = taxonomyEntry.Id }, new object { })
+                            @Html.ActionLink(T("Import").Text, "Import", new { id = taxonomyEntry.Id }, new object { })
                             }
                         }
                     </td>

@@ -2,8 +2,10 @@
 using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions.Models;
 
-namespace Orchard.MultiTenancy.Services {
-    public interface ITenantService : IDependency {
+namespace Orchard.MultiTenancy.Services
+{
+    public interface ITenantService : IDependency
+    {
         /// <summary>
         /// Retrieves ShellSettings objects for all tenants.
         /// </summary>

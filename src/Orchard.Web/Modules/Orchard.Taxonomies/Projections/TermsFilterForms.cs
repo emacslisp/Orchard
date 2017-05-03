@@ -8,27 +8,33 @@ using Orchard.DisplayManagement;
 using Orchard.Events;
 using Orchard.Localization;
 
-namespace Orchard.Taxonomies.Projections {
-    public interface IFormProvider : IEventHandler {
+namespace Orchard.Taxonomies.Projections
+{
+    public interface IFormProvider : IEventHandler
+    {
         void Describe(dynamic context);
     }
 
-    public class TermsFilterForms : IFormProvider {
+    public class TermsFilterForms : IFormProvider
+    {
         private readonly ITaxonomyService _taxonomyService;
         protected dynamic Shape { get; set; }
         public Localizer T { get; set; }
 
         public TermsFilterForms(
             IShapeFactory shapeFactory,
-            ITaxonomyService taxonomyService) {
+            ITaxonomyService taxonomyService)
+        {
             _taxonomyService = taxonomyService;
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
         }
 
-        public void Describe(dynamic context) {
+        public void Describe(dynamic context)
+        {
             Func<IShapeFactory, object> form =
-                shape => {
+                shape =>
+                {
 
                     var f = Shape.Form(
                         Id: "SelectTerms",
@@ -51,12 +57,15 @@ namespace Orchard.Taxonomies.Projections {
                             )
                         );
 
-                    foreach (var taxonomy in _taxonomyService.GetTaxonomies()) {
+                    foreach (var taxonomy in _taxonomyService.GetTaxonomies())
+                    {
                         f._Terms.Add(new SelectListItem { Value = String.Empty, Text = taxonomy.Name });
-                        foreach (var term in _taxonomyService.GetTerms(taxonomy.Id)) {
+                        foreach (var term in _taxonomyService.GetTerms(taxonomy.Id))
+                        {
                             var gap = new string('-', term.GetLevels());
 
-                            if (gap.Length > 0) {
+                            if (gap.Length > 0)
+                            {
                                 gap += " ";
                             }
 
@@ -74,10 +83,12 @@ namespace Orchard.Taxonomies.Projections {
             );
         }
 
-        public void Export(dynamic state, ExportContentContext context) {
+        public void Export(dynamic state, ExportContentContext context)
+        {
             string termIds = Convert.ToString(state.TermIds);
 
-            if (!String.IsNullOrEmpty(termIds)) {
+            if (!String.IsNullOrEmpty(termIds))
+            {
                 var ids = termIds.Split(new[] { ',' }).Select(Int32.Parse).ToArray();
                 var terms = ids.Select(_taxonomyService.GetTerm).ToList();
                 var identities = terms.Select(context.ContentManager.GetItemMetadata).Select(x => x.Identity.ToString()).ToArray();
@@ -86,10 +97,12 @@ namespace Orchard.Taxonomies.Projections {
             }
         }
 
-        public void Import(dynamic state, ImportContentContext context) {
+        public void Import(dynamic state, ImportContentContext context)
+        {
             string termIdentities = Convert.ToString(state.TermIds);
 
-            if (!String.IsNullOrEmpty(termIdentities)) {
+            if (!String.IsNullOrEmpty(termIdentities))
+            {
                 var identities = termIdentities.Split(new[] { ',' }).ToArray();
                 var terms = identities.Select(context.GetItemFromSession).ToList();
                 var ids = terms.Select(x => x.Id).Select(x => x.ToString()).ToArray();

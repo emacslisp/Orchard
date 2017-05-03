@@ -2,5 +2,5 @@
 @if (Model.Any()) {
     foreach (var field in Model) {
         var f = field;
-        @Html.EditorFor(m => f, "TypePartField", f.Prefix) }
+    @Html.EditorFor(m => f, "TypePartField", f.Prefix) }
 }

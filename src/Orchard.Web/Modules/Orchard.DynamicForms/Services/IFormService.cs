@@ -10,8 +10,10 @@ using Orchard.DynamicForms.Models;
 using Orchard.DynamicForms.Services.Models;
 using Orchard.Layouts.Models;
 
-namespace Orchard.DynamicForms.Services {
-    public interface IFormService : IDependency {
+namespace Orchard.DynamicForms.Services
+{
+    public interface IFormService : IDependency
+    {
         Form FindForm(LayoutPart layoutPart, string formName = null);
         IEnumerable<FormElement> GetFormElements(Form form);
         IEnumerable<string> GetFormElementNames(Form form);

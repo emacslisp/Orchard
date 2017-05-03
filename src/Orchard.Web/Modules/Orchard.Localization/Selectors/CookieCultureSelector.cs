@@ -7,9 +7,11 @@ using Orchard.Localization.Services;
 using Orchard.Mvc;
 using Orchard.Services;
 
-namespace Orchard.Localization.Selectors {
+namespace Orchard.Localization.Selectors
+{
     [OrchardFeature("Orchard.Localization.CultureSelector")]
-    public class CookieCultureSelector : ICultureSelector, ICultureStorageProvider {
+    public class CookieCultureSelector : ICultureSelector, ICultureStorageProvider
+    {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IClock _clock;
         private readonly ShellSettings _shellSettings;
@@ -20,26 +22,30 @@ namespace Orchard.Localization.Selectors {
 
         public CookieCultureSelector(IHttpContextAccessor httpContextAccessor,
             IClock clock,
-            ShellSettings shellSettings) {
+            ShellSettings shellSettings)
+        {
             _httpContextAccessor = httpContextAccessor;
             _clock = clock;
             _shellSettings = shellSettings;
         }
 
-        public void SetCulture(string culture) {
+        public void SetCulture(string culture)
+        {
             var httpContext = _httpContextAccessor.Current();
 
             if (httpContext == null) return;
 
             var cookieName = ContextHelpers.IsRequestAdmin(httpContext) ? AdminCookieName : FrontEndCookieName;
 
-            var cookie = new HttpCookie(cookieName, culture) {
-                Expires = _clock.UtcNow.AddYears(DefaultExpireTimeYear), 
+            var cookie = new HttpCookie(cookieName, culture)
+            {
+                Expires = _clock.UtcNow.AddYears(DefaultExpireTimeYear),
             };
 
             cookie.Domain = !httpContext.Request.IsLocal ? httpContext.Request.Url.Host : null;
 
-            if (!String.IsNullOrEmpty(_shellSettings.RequestUrlPrefix)) {
+            if (!String.IsNullOrEmpty(_shellSettings.RequestUrlPrefix))
+            {
                 cookie.Path = GetCookiePath(httpContext);
             }
 
@@ -48,7 +54,8 @@ namespace Orchard.Localization.Selectors {
             httpContext.Response.Cookies.Add(cookie);
         }
 
-        public CultureSelectorResult GetCulture(HttpContextBase context) {
+        public CultureSelectorResult GetCulture(HttpContextBase context)
+        {
             if (context == null) return null;
 
             var cookieName = ContextHelpers.IsRequestAdmin(context) ? AdminCookieName : FrontEndCookieName;
@@ -61,9 +68,11 @@ namespace Orchard.Localization.Selectors {
             return null;
         }
 
-        private string GetCookiePath(HttpContextBase httpContext) {
+        private string GetCookiePath(HttpContextBase httpContext)
+        {
             var cookiePath = httpContext.Request.ApplicationPath;
-            if (cookiePath != null && cookiePath.Length > 1) {
+            if (cookiePath != null && cookiePath.Length > 1)
+            {
                 cookiePath += '/';
             }
 

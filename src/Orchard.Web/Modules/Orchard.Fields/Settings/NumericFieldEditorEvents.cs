@@ -6,23 +6,30 @@ using Orchard.ContentManagement.ViewModels;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Orchard.Fields.Settings {
-    public class NumericFieldListModeEvents : ContentDefinitionEditorEventsBase {
+namespace Orchard.Fields.Settings
+{
+    public class NumericFieldListModeEvents : ContentDefinitionEditorEventsBase
+    {
 
-        public override IEnumerable<TemplateViewModel> PartFieldEditor(ContentPartFieldDefinition definition) {
-            if (definition.FieldDefinition.Name == "NumericField") {
+        public override IEnumerable<TemplateViewModel> PartFieldEditor(ContentPartFieldDefinition definition)
+        {
+            if (definition.FieldDefinition.Name == "NumericField")
+            {
                 var model = definition.Settings.GetModel<NumericFieldSettings>();
                 yield return DefinitionTemplate(model);
             }
         }
 
-        public override IEnumerable<TemplateViewModel> PartFieldEditorUpdate(ContentPartFieldDefinitionBuilder builder, IUpdateModel updateModel) {
-            if (builder.FieldType != "NumericField") {
+        public override IEnumerable<TemplateViewModel> PartFieldEditorUpdate(ContentPartFieldDefinitionBuilder builder, IUpdateModel updateModel)
+        {
+            if (builder.FieldType != "NumericField")
+            {
                 yield break;
             }
 
             var model = new NumericFieldSettings();
-            if (updateModel.TryUpdateModel(model, "NumericFieldSettings", null, null)) {
+            if (updateModel.TryUpdateModel(model, "NumericFieldSettings", null, null))
+            {
                 builder.WithSetting("NumericFieldSettings.Hint", model.Hint);
                 builder.WithSetting("NumericFieldSettings.Required", model.Required.ToString(CultureInfo.InvariantCulture));
                 builder.WithSetting("NumericFieldSettings.Scale", model.Scale.ToString(CultureInfo.InvariantCulture));

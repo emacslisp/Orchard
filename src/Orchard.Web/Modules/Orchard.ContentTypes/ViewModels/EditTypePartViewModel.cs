@@ -2,13 +2,17 @@
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.ViewModels;
 
-namespace Orchard.ContentTypes.ViewModels {
-    public class EditTypePartViewModel {
-        public EditTypePartViewModel() {
+namespace Orchard.ContentTypes.ViewModels
+{
+    public class EditTypePartViewModel
+    {
+        public EditTypePartViewModel()
+        {
             Settings = new SettingsDictionary();
         }
 
-        public EditTypePartViewModel(int index, ContentTypePartDefinition part) {
+        public EditTypePartViewModel(int index, ContentTypePartDefinition part)
+        {
             Index = index;
             PartDefinition = new EditPartViewModel(part.PartDefinition);
             Settings = part.Settings;
@@ -25,7 +29,8 @@ namespace Orchard.ContentTypes.ViewModels {
         public IEnumerable<TemplateViewModel> Templates { get; set; }
         public ContentTypePartDefinition _Definition { get; private set; }
 
-        public string Description {
+        public string Description
+        {
             get { return PartSettings.ContainsKey("ContentPartSettings.Description") ? PartSettings["ContentPartSettings.Description"] : null; }
         }
     }

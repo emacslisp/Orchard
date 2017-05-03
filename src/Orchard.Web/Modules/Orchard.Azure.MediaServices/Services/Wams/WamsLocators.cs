@@ -1,6 +1,9 @@
-﻿namespace Orchard.Azure.MediaServices.Services.Wams {
-    public class WamsLocators {
-        public WamsLocators(WamsLocatorInfo sasLocator, WamsLocatorInfo onDemandLocator, string onDemandManifestFilename) {
+﻿namespace Orchard.Azure.MediaServices.Services.Wams
+{
+    public class WamsLocators
+    {
+        public WamsLocators(WamsLocatorInfo sasLocator, WamsLocatorInfo onDemandLocator, string onDemandManifestFilename)
+        {
             SasLocator = sasLocator;
             OnDemandLocator = onDemandLocator;
             OnDemandManifestFilename = onDemandManifestFilename;

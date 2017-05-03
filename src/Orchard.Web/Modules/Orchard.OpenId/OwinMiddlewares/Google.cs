@@ -8,23 +8,29 @@ using Orchard.OpenId.Models;
 using Orchard.Owin;
 using Owin;
 
-namespace Orchard.OpenId.OwinMiddlewares {
+namespace Orchard.OpenId.OwinMiddlewares
+{
     [OrchardFeature("Orchard.OpenId.Google")]
-    public class Google : IOwinMiddlewareProvider {
+    public class Google : IOwinMiddlewareProvider
+    {
         private readonly IWorkContextAccessor _workContextAccessor;
 
-        public Google(IWorkContextAccessor workContextAccessor) {
+        public Google(IWorkContextAccessor workContextAccessor)
+        {
             _workContextAccessor = workContextAccessor;
         }
 
-        public IEnumerable<OwinMiddlewareRegistration> GetOwinMiddlewares() {
+        public IEnumerable<OwinMiddlewareRegistration> GetOwinMiddlewares()
+        {
             var settings = _workContextAccessor.GetContext().CurrentSite.As<GoogleSettingsPart>();
 
-            if (settings == null || !settings.IsValid) {
+            if (settings == null || !settings.IsValid)
+            {
                 return Enumerable.Empty<OwinMiddlewareRegistration>();
             }
 
-            var authenticationOptions = new GoogleOAuth2AuthenticationOptions {
+            var authenticationOptions = new GoogleOAuth2AuthenticationOptions
+            {
                 ClientId = settings.ClientId,
                 ClientSecret = settings.ClientSecret,
                 CallbackPath = new PathString(settings.CallbackPath)

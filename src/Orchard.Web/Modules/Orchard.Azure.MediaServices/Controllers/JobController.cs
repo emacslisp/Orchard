@@ -23,10 +23,12 @@ using Orchard.Themes;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 
-namespace Orchard.Azure.MediaServices.Controllers {
+namespace Orchard.Azure.MediaServices.Controllers
+{
 
     [Admin]
-    public class JobController : Controller, IUpdateModel {
+    public class JobController : Controller, IUpdateModel
+    {
         private readonly ITransactionManager _transactionManager;
         private readonly IContentManager _contentManager;
         private readonly INotifier _notifier;
@@ -42,7 +44,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
             IJobManager jobManager,
             IEnumerable<ITaskProvider> taskProviders,
             IWamsClient wamsClient,
-            IClock clock) {
+            IClock clock)
+        {
 
             _transactionManager = transactionManager;
             _contentManager = services.ContentManager;
@@ -64,7 +67,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
         private dynamic New { get; set; }
 
-        public ActionResult Index() {
+        public ActionResult Index()
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaJobs, T("You are not authorized to manage cloud jobs.")))
                 return new HttpUnauthorizedResult();
 
@@ -73,22 +77,25 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult OpenJobsTable() {
+        public ActionResult OpenJobsTable()
+        {
             return new ShapeResult(this, GetOpenJobsTableShape());
         }
 
-        public ActionResult SelectTask(int id) {
+        public ActionResult SelectTask(int id)
+        {
             var taskProviders = _taskProviders.OrderBy(x => x.Name).ToArray();
 
             // Short-circuit in case there's just one task provider, saving the user from another mouse-click.
             if (taskProviders.Length == 1)
-                return RedirectToAction("Create", new {id = id, task = taskProviders.First().Name});
+                return RedirectToAction("Create", new { id = id, task = taskProviders.First().Name });
 
             var viewModel = New.ViewModel(CloudVideoPartId: id, TaskProviders: taskProviders);
             return View(viewModel);
         }
 
-        public ActionResult Create(int id, string task) {
+        public ActionResult Create(int id, string task)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaJobs, T("You are not authorized to manage cloud jobs.")))
                 return new HttpUnauthorizedResult();
 
@@ -108,14 +115,16 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Create(int id, string task, JobViewModel jobViewModel) {
+        public ActionResult Create(int id, string task, JobViewModel jobViewModel)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaJobs, T("You are not authorized to manage cloud jobs.")))
                 return new HttpUnauthorizedResult();
 
             Logger.Debug("User requested to create job with task of type {0} on cloud video item with ID {1}.", task, id);
 
             var cloudVideoPart = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
-            if (cloudVideoPart == null) {
+            if (cloudVideoPart == null)
+            {
                 Logger.Warning("User requested to create job on cloud video item with ID {0} but no such cloud video item exists.", id);
                 return HttpNotFound(String.Format("No cloud video item with ID {0} was found.", id));
             }
@@ -129,14 +138,17 @@ namespace Orchard.Azure.MediaServices.Controllers {
             var jobName = !String.IsNullOrWhiteSpace(jobViewModel.Name) ? jobViewModel.Name.TrimSafe() : !String.IsNullOrWhiteSpace(taskDisplayText) ? taskDisplayText : String.Format("{0} ({1})", videoName, taskProvider.Name);
             var jobDescription = jobViewModel.Description.TrimSafe();
 
-            if (ModelState.IsValid) {
-                try {
+            if (ModelState.IsValid)
+            {
+                try
+                {
                     var wamsJob = _wamsClient.CreateNewJob(jobName);
                     var wamsInputAsset = _wamsClient.GetAssetById(inputAsset.WamsAssetId);
                     var wamsTask = taskProvider.CreateTask(taskConfig, wamsJob.Tasks, new[] { wamsInputAsset });
                     wamsJob.Submit(); // Needs to be done here for job and tasks to get their WAMS ID values.
 
-                    var job = _jobManager.CreateJobFor(cloudVideoPart, j => {
+                    var job = _jobManager.CreateJobFor(cloudVideoPart, j =>
+                    {
                         j.WamsJobId = wamsJob.Id;
                         j.Name = jobName;
                         j.Description = jobDescription;
@@ -146,7 +158,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
                         j.OutputAssetDescription = jobViewModel.OutputAssetDescription.TrimSafe();
                     });
 
-                    _jobManager.CreateTaskFor(job, t => {
+                    _jobManager.CreateTaskFor(job, t =>
+                    {
                         t.HarvestAssetType = taskConnections.Outputs.First().AssetType;
                         t.HarvestAssetName = taskConnections.Outputs.First().AssetName;
                         t.Settings = taskProvider.Serialize(taskConfig.Settings);
@@ -160,7 +173,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
                     return Redirect(Url.ItemEditUrl(cloudVideoPart));
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     _transactionManager.Cancel();
 
                     Logger.Error(ex, "Error while creating job with task of type {0} on cloud video item with ID {1}.", task, id);
@@ -172,14 +186,16 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Archive(int id, string returnUrl = null) {
+        public ActionResult Archive(int id, string returnUrl = null)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaJobs, T("You are not authorized to manage cloud jobs.")))
                 return new HttpUnauthorizedResult();
 
             Logger.Debug("User requested to archive job with ID {0}.", id);
 
             var job = _jobManager.GetJobById(id);
-            if (job == null) {
+            if (job == null)
+            {
                 Logger.Warning("User requested to archive job with ID {0} but no such job exists.", id);
                 return HttpNotFound(String.Format("No job with ID {0} was found.", id));
             }
@@ -193,28 +209,32 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Cancel(int id, string returnUrl = null) {
+        public ActionResult Cancel(int id, string returnUrl = null)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaJobs, T("You are not authorized to manage cloud jobs.")))
                 return new HttpUnauthorizedResult();
 
             Logger.Debug("User requested to cancel job with ID {0}.", id);
 
             var job = _jobManager.GetJobById(id);
-            if (job == null) {
+            if (job == null)
+            {
                 Logger.Warning("User requested to cancel job with ID {0} but no such job exists.", id);
                 return HttpNotFound(String.Format("No job with ID {0} was found.", id));
             }
 
             job.Status = JobStatus.Canceling; // Set status to reflect in UI immediately - may be reset by JobProcessor later.
 
-            try {
+            try
+            {
                 var wamsJob = _wamsClient.GetJobById(job.WamsJobId);
                 wamsJob.Cancel();
 
                 Logger.Information("Job with ID {0} was canceled.", id);
                 _notifier.Success(T("The job '{0}' was successfully canceled.", job.Name));
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _transactionManager.Cancel();
 
                 Logger.Error(ex, "Error while canceling the job with ID {0}.", id);
@@ -225,31 +245,37 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult AssetsTable(int id) {
+        public ActionResult AssetsTable(int id)
+        {
             var videoPart = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
             return new ShapeResult(this, New.CloudVideo_Edit_Assets(CloudVideoPart: videoPart));
         }
 
         [Themed(false)]
-        public ActionResult JobsTable(int id) {
+        public ActionResult JobsTable(int id)
+        {
             var videoPart = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
             return new ShapeResult(this, New.CloudVideo_Edit_Jobs(CloudVideoPart: videoPart));
         }
 
-        private dynamic GetOpenJobsTableShape() {
+        private dynamic GetOpenJobsTableShape()
+        {
             var jobs = _jobManager.GetOpenJobs().ToArray();
             return New.OpenJobsTable(Jobs: jobs);
         }
 
-        private ActionResult RedirectToReturnUrl(string returnUrl, string defaultUrl) {
+        private ActionResult RedirectToReturnUrl(string returnUrl, string defaultUrl)
+        {
             return !String.IsNullOrEmpty(returnUrl) ? this.RedirectLocal(returnUrl) : Redirect(defaultUrl);
         }
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Orchard.Projections.Models {
-    public class PropertyRecord {
+namespace Orchard.Projections.Models
+{
+    public class PropertyRecord
+    {
         public virtual int Id { get; set; }
         public virtual string Description { get; set; }
         public virtual string Category { get; set; }

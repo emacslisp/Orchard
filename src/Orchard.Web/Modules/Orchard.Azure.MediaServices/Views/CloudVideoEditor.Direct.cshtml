@@ -23,11 +23,11 @@
         <input type="hidden" name="@String.Format("{0}.AssetId", prefix)" value="@wamsAssetViewModel.AssetId" />
 
         @if (wamsAssetViewModel.WamsAssetId == null) {
-            
+
             <div class="file-upload-wrapper">
-                <input class="async-upload-file-input @if (isRequired) { <text> required-upload </text> }" name="@fileUploadName" type="file" @if (prompt != null) { <text> data-prompt="@prompt" </text> } />
+                <input class="async-upload-file-input @if (isRequired) { <text> required-upload </text> }" name="@fileUploadName" type="file" @if (prompt != null) { <text> data-prompt="@prompt" </text>  } />
             </div>
-            
+
             <div class="selected-file-wrapper">
                 <div class="filename-text" data-text-template="@T("Ready to upload file '{filename}'.")"></div>
                 <input class="filename-input text medium" type="text" name="@(fileUploadName + "Name")" placeholder="@T("Optional: Enter a different name for the uploaded file")" />
@@ -47,12 +47,12 @@
             <div class="status uploaded" data-text-template="@T("Successfully uploaded file '{filename}'.")"></div>
             <div class="status cleanup">@T("Cleaning up...")</div>
 
-            if (extensions != null) { 
-                <span class="validation-text">@T("The selected file must have one of the following filename extensions: {0}", String.Join(", ", extensions))</span>
+            if (extensions != null) {
+            <span class="validation-text">@T("The selected file must have one of the following filename extensions: {0}", String.Join(", ", extensions))</span>
             }
 
             if (!ViewData.ModelState.IsValidField(wamsAssetFieldName)) {
-                <div>@T("You must upload a file.")</div>
+            <div>@T("You must upload a file.")</div>
             }
         }
         else {

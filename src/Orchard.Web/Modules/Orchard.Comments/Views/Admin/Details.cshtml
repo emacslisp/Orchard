@@ -7,19 +7,19 @@
 <div class="manage">
     @if (Model.CommentsClosedOnItem) {
         using (Html.BeginFormAntiForgeryPost(Url.Action("Enable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) {
-    <fieldset>
-        <button type="submit" title="@T("Enable Comments")">@T("Enable Comments")</button>
-    </fieldset>
+        <fieldset>
+            <button type="submit" title="@T("Enable Comments")">@T("Enable Comments")</button>
+        </fieldset>
         }
     } else {
-        using (Html.BeginFormAntiForgeryPost(Url.Action("Disable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) { 
-    <fieldset>
-        <button type="submit" class="primaryAction" title="@T("Disable Comments")">@T("Disable Comments")</button>
-    </fieldset>
+        using (Html.BeginFormAntiForgeryPost(Url.Action("Disable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) {
+        <fieldset>
+            <button type="submit" class="primaryAction" title="@T("Disable Comments")">@T("Disable Comments")</button>
+        </fieldset>
         }
-    } 
+    }
 </div>
-@using(Html.BeginFormAntiForgeryPost()) { 
+@using(Html.BeginFormAntiForgeryPost()) {
     @Html.ValidationSummary()
     <fieldset class="bulk-actions">
         <label for="publishActions">@T("Actions:")</label>
@@ -52,7 +52,7 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th scope="col"><input type="checkbox" class="check-all"/></th>
+                    <th scope="col"><input type="checkbox" class="check-all" /></th>
                     <th scope="col">@T("Status")</th>
                     <th scope="col">@T("Author")</th>
                     <th scope="col">@T("Comment")</th>
@@ -62,52 +62,52 @@
             </thead>
             @{var commentIndex = 0;}
             @foreach (var commentEntry in Model.Comments) {
-            <tr>
-                <td>
-                    <input type="hidden" value="@Model.Comments[commentIndex].Comment.Id" name="@Html.NameOf(m => m.Comments[commentIndex].Comment.Id)"/>
-                    <input type="checkbox" value="true" name="@Html.NameOf(m => m.Comments[commentIndex].IsChecked)"/>
-                    <input type="hidden" value="@Model.DisplayNameForCommentedItem" name="DisplayNameForCommentedtem" />
-                    <input type="hidden" value="@Model.CommentedItemId" name="CommentedItemId" />
-                </td>
-                <td>
-                    @if (commentEntry.Comment.Status == CommentStatus.Pending) { @T("Pending"); }
+                <tr>
+                    <td>
+                        <input type="hidden" value="@Model.Comments[commentIndex].Comment.Id" name="@Html.NameOf(m => m.Comments[commentIndex].Comment.Id)" />
+                        <input type="checkbox" value="true" name="@Html.NameOf(m => m.Comments[commentIndex].IsChecked)" />
+                        <input type="hidden" value="@Model.DisplayNameForCommentedItem" name="DisplayNameForCommentedtem" />
+                        <input type="hidden" value="@Model.CommentedItemId" name="CommentedItemId" />
+                    </td>
+                    <td>
+                        @if (commentEntry.Comment.Status == CommentStatus.Pending) { @T("Pending"); }
                     else { @T("Approved"); }
-                </td>
-                <td>@commentEntry.Comment.Author</td>
-                <td>
-                @if (commentEntry.Comment.CommentText != null) {
+                    </td>
+                    <td>@commentEntry.Comment.Author</td>
+                    <td>
+                        @if (commentEntry.Comment.CommentText != null) {
                     var text = commentEntry.Comment.CommentText.Length > 23 ? commentEntry.Comment.CommentText.Substring(0, 24) : (commentEntry.Comment.CommentText + T(" ..."));
-                    @text
-                } 
-                </td>
-                <td>@Display.DateTime(DateTimeUtc: commentEntry.Comment.CommentDateUtc.GetValueOrDefault())</td>
-                <td>
-                    <ul class="actions">
-                        <li class="construct">
-                            <a href="@Url.Action("Edit", new {commentEntry.Comment.Id})" title="@T("Edit Comment")">@T("Edit")</a>
-                        </li>
-                        <li class="destruct"></li>
-                    </ul>
-                </td>
-            </tr>
+                            @text
+                }
+                    </td>
+                    <td>@Display.DateTime(DateTimeUtc: commentEntry.Comment.CommentDateUtc.GetValueOrDefault())</td>
+                    <td>
+                        <ul class="actions">
+                            <li class="construct">
+                                <a href="@Url.Action("Edit", new {commentEntry.Comment.Id})" title="@T("Edit Comment")">@T("Edit")</a>
+                            </li>
+                            <li class="destruct"></li>
+                        </ul>
+                    </td>
+                </tr>
             commentIndex = commentIndex + 1;
-            } 
+            }
         </table>
     </fieldset>
-} 
+}
 <div class="manage">
     @if (Model.CommentsClosedOnItem) {
-        using (Html.BeginFormAntiForgeryPost(Url.Action("Enable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) 
-        { 
-    <fieldset>
-        <button type="submit" title="@T("Enable Comments")">@T("Enable Comments")</button>
-    </fieldset>
+        using (Html.BeginFormAntiForgeryPost(Url.Action("Enable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" }))
+        {
+        <fieldset>
+            <button type="submit" title="@T("Enable Comments")">@T("Enable Comments")</button>
+        </fieldset>
         }
     } else {
-        using (Html.BeginFormAntiForgeryPost(Url.Action("Disable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) { 
-    <fieldset>
-        <button type="submit" class="primaryAction" title="@T("Disable Comments")">@T("Disable Comments")</button>
-    </fieldset>
+        using (Html.BeginFormAntiForgeryPost(Url.Action("Disable", new { commentedItemId = Model.CommentedItemId }), FormMethod.Post, new { @class = "inline" })) {
+        <fieldset>
+            <button type="submit" class="primaryAction" title="@T("Disable Comments")">@T("Disable Comments")</button>
+        </fieldset>
         }
-    } 
+    }
 </div>

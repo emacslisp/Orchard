@@ -10,11 +10,14 @@ using Orchard.Projections.Models;
 using Orchard.Tokens;
 using Orchard.Utility.Extensions;
 
-namespace Orchard.Projections.Services {
-    public class PropertyShapes : IDependency {
+namespace Orchard.Projections.Services
+{
+    public class PropertyShapes : IDependency
+    {
         private readonly Work<ITokenizer> _tokenizerWork;
 
-        public PropertyShapes(Work<ITokenizer> tokenizerWork) {
+        public PropertyShapes(Work<ITokenizer> tokenizerWork)
+        {
             _tokenizerWork = tokenizerWork;
             T = NullLocalizer.Instance;
         }
@@ -22,9 +25,12 @@ namespace Orchard.Projections.Services {
         public Localizer T { get; set; }
 
         [Shape]
-        public void Properties(dynamic Display, TextWriter Output, HtmlHelper Html, IEnumerable<dynamic> Items) {
-            foreach (var item in Items) {
-                if((bool)item.Property.ExcludeFromDisplay) {
+        public void Properties(dynamic Display, TextWriter Output, HtmlHelper Html, IEnumerable<dynamic> Items)
+        {
+            foreach (var item in Items)
+            {
+                if ((bool)item.Property.ExcludeFromDisplay)
+                {
                     continue;
                 }
 
@@ -32,54 +38,65 @@ namespace Orchard.Projections.Services {
             }
         }
 
-        [Shape] 
-        public void LayoutGroup(dynamic Display, TextWriter Output, HtmlHelper Html, dynamic Key, dynamic List) {
-            Output.WriteLine(Display(Key)); 
+        [Shape]
+        public void LayoutGroup(dynamic Display, TextWriter Output, HtmlHelper Html, dynamic Key, dynamic List)
+        {
+            Output.WriteLine(Display(Key));
             Output.WriteLine(Display(List));
         }
 
         [Shape]
         public void PropertyWrapper(
-            dynamic Display, 
-            TextWriter Output, 
+            dynamic Display,
+            TextWriter Output,
             HtmlHelper Html,
-            UrlHelper Url, 
+            UrlHelper Url,
             dynamic Item,
             ContentItem ContentItem,
             ContentItemMetadata ContentItemMetadata,
             PropertyRecord Property
-            ) {
+            )
+        {
 
             // Display will encode any string which is not IHtmlString
             string resultOutput = Convert.ToString(Display(Item));
             var resultIsEmpty = String.IsNullOrEmpty(resultOutput) || (resultOutput == "0" && Property.ZeroIsEmpty);
 
-            if(Property.HideEmpty && resultIsEmpty) {
+            if (Property.HideEmpty && resultIsEmpty)
+            {
                 return;
             }
 
-            if(Property.RewriteOutput) {
+            if (Property.RewriteOutput)
+            {
                 resultOutput = _tokenizerWork.Value.Replace(Property.RewriteText, new Dictionary<string, object> { { "Text", resultOutput }, { "Content", ContentItem } });
             }
 
-            if(Property.StripHtmlTags) {
+            if (Property.StripHtmlTags)
+            {
                 resultOutput = resultOutput.RemoveTags();
             }
 
-            if(Property.TrimLength) {
+            if (Property.TrimLength)
+            {
                 var ellipsis = Property.AddEllipsis ? "&#160;&#8230;" : "";
                 resultOutput = resultOutput.Ellipsize(Property.MaxLength, ellipsis, Property.TrimOnWordBoundary);
             }
 
-            if(Property.TrimWhiteSpace) {
+            if (Property.TrimWhiteSpace)
+            {
                 resultOutput = resultOutput.Trim();
             }
 
-            if(Property.PreserveLines) {
-                using(var sw = new StringWriter()) {
-                    using(var sr = new StringReader(resultOutput)) {
+            if (Property.PreserveLines)
+            {
+                using (var sw = new StringWriter())
+                {
+                    using (var sr = new StringReader(resultOutput))
+                    {
                         string line;
-                        while(null != (line = sr.ReadLine())) {
+                        while (null != (line = sr.ReadLine()))
+                        {
                             sw.WriteLine(line);
                             sw.WriteLine("<br />");
                         }
@@ -89,63 +106,77 @@ namespace Orchard.Projections.Services {
             }
 
             var wrapperTag = new TagBuilder(Property.CustomizeWrapperHtml && !String.IsNullOrEmpty(Property.CustomWrapperTag) ? Property.CustomWrapperTag : "div");
-            
-            if (Property.CustomizeWrapperHtml && !String.IsNullOrEmpty(Property.CustomWrapperCss)) {
+
+            if (Property.CustomizeWrapperHtml && !String.IsNullOrEmpty(Property.CustomWrapperCss))
+            {
                 wrapperTag.AddCssClass(_tokenizerWork.Value.Replace(Property.CustomWrapperCss, new Dictionary<string, object>()));
             }
 
-            if (!(Property.CustomizeWrapperHtml && Property.CustomWrapperTag == "-")) {
+            if (!(Property.CustomizeWrapperHtml && Property.CustomWrapperTag == "-"))
+            {
                 Output.Write(wrapperTag.ToString(TagRenderMode.StartTag));
             }
 
-            if (Property.CreateLabel) {
+            if (Property.CreateLabel)
+            {
                 var labelTag = new TagBuilder(Property.CustomizeLabelHtml && !String.IsNullOrEmpty(Property.CustomLabelTag) ? Property.CustomLabelTag : "span");
 
-                if (Property.CustomizeLabelHtml && !String.IsNullOrEmpty(Property.CustomLabelCss)) {
+                if (Property.CustomizeLabelHtml && !String.IsNullOrEmpty(Property.CustomLabelCss))
+                {
                     labelTag.AddCssClass(_tokenizerWork.Value.Replace(Property.CustomLabelCss, new Dictionary<string, object>()));
                 }
 
-                if (!(Property.CustomizeLabelHtml && Property.CustomLabelTag == "-")) {
+                if (!(Property.CustomizeLabelHtml && Property.CustomLabelTag == "-"))
+                {
                     Output.Write(labelTag.ToString(TagRenderMode.StartTag));
                 }
 
                 Output.Write(_tokenizerWork.Value.Replace(Property.Label, new Dictionary<string, object>()));
 
-                if (!(Property.CustomizeLabelHtml && Property.CustomLabelTag == "-")) {
+                if (!(Property.CustomizeLabelHtml && Property.CustomLabelTag == "-"))
+                {
                     Output.Write(labelTag.ToString(TagRenderMode.EndTag));
-                } 
+                }
             }
 
             var propertyTag = new TagBuilder(Property.CustomizePropertyHtml && !String.IsNullOrEmpty(Property.CustomPropertyTag) ? Property.CustomPropertyTag : "span");
-            
-            if (Property.CustomizePropertyHtml && !String.IsNullOrEmpty(Property.CustomPropertyCss)) {
+
+            if (Property.CustomizePropertyHtml && !String.IsNullOrEmpty(Property.CustomPropertyCss))
+            {
                 propertyTag.AddCssClass(_tokenizerWork.Value.Replace(Property.CustomPropertyCss, new Dictionary<string, object>()));
             }
 
-            if (!(Property.CustomizePropertyHtml && Property.CustomPropertyTag == "-")) {
+            if (!(Property.CustomizePropertyHtml && Property.CustomPropertyTag == "-"))
+            {
                 Output.Write(propertyTag.ToString(TagRenderMode.StartTag));
             }
 
-            if (!resultIsEmpty) {
-                if (Property.LinkToContent) {
+            if (!resultIsEmpty)
+            {
+                if (Property.LinkToContent)
+                {
                     var linkTag = new TagBuilder("a");
                     linkTag.Attributes.Add("href", Url.RouteUrl(ContentItemMetadata.DisplayRouteValues));
                     linkTag.InnerHtml = resultOutput;
                     Output.Write(linkTag.ToString());
                 }
-                else {
+                else
+                {
                     Output.Write(resultOutput);
                 }
             }
-            else {
+            else
+            {
                 Output.Write(_tokenizerWork.Value.Replace(Property.NoResultText, new Dictionary<string, object>()));
             }
 
-            if (!(Property.CustomizePropertyHtml && Property.CustomPropertyTag == "-")) {
+            if (!(Property.CustomizePropertyHtml && Property.CustomPropertyTag == "-"))
+            {
                 Output.Write(propertyTag.ToString(TagRenderMode.EndTag));
             }
 
-            if (!(Property.CustomizeWrapperHtml && Property.CustomWrapperTag == "-")) {
+            if (!(Property.CustomizeWrapperHtml && Property.CustomWrapperTag == "-"))
+            {
                 Output.Write(wrapperTag.ToString(TagRenderMode.EndTag));
             }
         }

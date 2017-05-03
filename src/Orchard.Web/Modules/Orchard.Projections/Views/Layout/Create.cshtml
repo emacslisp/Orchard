@@ -1,7 +1,7 @@
 ﻿@model LayoutEditViewModel
 @using Orchard.Projections.Models;
 @using Orchard.Projections.ViewModels;
-           
+
 @{
     Layout.Title = T("Edit Layout - {0}", Model.Layout.Name);
 }
@@ -50,24 +50,24 @@
         </div>
     </fieldset>
 
-    @* Render the dynamic form *@    
+    @* Render the dynamic form *@
     <fieldset>
         @DisplayChildren(Model.Form)
     </fieldset>
-    
+
     @Display.TokenHint()
 
     <fieldset>
         <button class="primaryAction button" type="submit">@T("Save")</button>
-         @Html.ActionLink(T("Cancel").Text, "Edit", "Admin", new { id = Model.QueryId }, new { @class = "primaryAction button" })
+        @Html.ActionLink(T("Cancel").Text, "Edit", "Admin", new { id = Model.QueryId }, new { @class = "primaryAction button" })
     </fieldset>
 }
 
 @using (Script.Foot()) {
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     (function ($) {
         $("fieldset legend").expandoControl(function (controller) { return controller.nextAll(".expando > div"); }, { collapse: true, remember: false });
     })(jQuery);//]]>
-</script>
+    </script>
 }

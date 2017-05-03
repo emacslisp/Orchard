@@ -20,8 +20,8 @@
     }
 }
 
-<input type="hidden" id="image-editor-url" value="@Url.Content(mediaPart.MediaUrl)"/>
-<input type="hidden" id="image-editor-callback" value="@Model.CallBack"/>
+<input type="hidden" id="image-editor-url" value="@Url.Content(mediaPart.MediaUrl)" />
+<input type="hidden" id="image-editor-callback" value="@Model.CallBack" />
 
 <div id="image-editor">
 
@@ -30,7 +30,7 @@
             @Display(Model.Buttons)
         }
     </div>
-    
+
     <div id="image-editor-options-container">
         <div id="image-editor-options">
             @if (Model.Options != null) {
@@ -40,18 +40,18 @@
     </div>
 
     <div id="image-editor-container" class="editor-shadow">
-        <div id="image-editor-image-wrapper" >
-            @*<canvas id="image-editor-image" class="canvas-shadow"></canvas>*@        
-            <img id="image-editor-image" class="canvas-shadow" src="@Url.Action("Proxy", "Admin", new { url = Url.MakeAbsolute(Url.Content(mediaPart.MediaUrl)) })">    
+        <div id="image-editor-image-wrapper">
+            @*<canvas id="image-editor-image" class="canvas-shadow"></canvas>*@
+            <img id="image-editor-image" class="canvas-shadow" src="@Url.Action("Proxy", "Admin", new { url = Url.MakeAbsolute(Url.Content(mediaPart.MediaUrl)) })">
         </div>
     </div>
-    
+
 </div>
 <fieldset id="buttons-manage">
     <button id="button-save">@T("Save")</button>
     <a id="button-cancel" href="@returnUrl" class="button">@T("Close")</a>
 </fieldset>
 
-<input type="hidden" id="upload-image-url" value="@Url.Action("Upload", "Admin", new { id = media.Id })"/>
+<input type="hidden" id="upload-image-url" value="@Url.Action("Upload", "Admin", new { id = media.Id })" />
 @Html.AntiForgeryTokenOrchard()
 

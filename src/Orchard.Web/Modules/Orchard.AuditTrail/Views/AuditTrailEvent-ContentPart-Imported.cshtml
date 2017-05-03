@@ -16,7 +16,7 @@
 
 @if (diffNodes != null) {
     <section class="audittrail-contentpart-eventsummary">
-   
+
         <table class="items">
             <thead>
                 <tr>
@@ -34,12 +34,12 @@
                 }
                 else {
                     foreach (var node in diffNodes) {
-                        <tr>
-                            <td>@T(node.Type.ToString())</td>
-                            <td>@node.Context</td>
-                            <td>@node.Previous.OrIfEmpty(T("[Empty]"))</td>
-                            <td>@node.Current.OrIfEmpty(T("[Empty]"))</td>
-                        </tr>
+                    <tr>
+                        <td>@T(node.Type.ToString())</td>
+                        <td>@node.Context</td>
+                        <td>@node.Previous.OrIfEmpty(T("[Empty]"))</td>
+                        <td>@node.Current.OrIfEmpty(T("[Empty]"))</td>
+                    </tr>
                     }
                 }
             </tbody>

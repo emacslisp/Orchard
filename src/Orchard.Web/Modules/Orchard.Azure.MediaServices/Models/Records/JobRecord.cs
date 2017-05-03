@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Orchard.Azure.MediaServices.Models.Jobs;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Azure.MediaServices.Models.Records {
-    public class JobRecord {
+namespace Orchard.Azure.MediaServices.Models.Records
+{
+    public class JobRecord
+    {
 
-        public JobRecord() {
+        public JobRecord()
+        {
             Tasks = new List<TaskRecord>();
         }
         public virtual int Id { get; set; }
@@ -21,7 +24,7 @@ namespace Orchard.Azure.MediaServices.Models.Records {
         public virtual string ErrorMessage { get; set; }
         public virtual string OutputAssetName { get; set; }
         public virtual string OutputAssetDescription { get; set; }
-        
+
         [CascadeAllDeleteOrphan]
         public virtual IList<TaskRecord> Tasks { get; set; }
     }

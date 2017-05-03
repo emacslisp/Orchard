@@ -4,7 +4,8 @@ using System.Linq;
 using Orchard.Environment.Extensions;
 using Orchard.Localization.Services;
 
-namespace Orchard.Localization.Providers {
+namespace Orchard.Localization.Providers
+{
 
     /// <summary>
     /// Provides an implementation of IDateTimeFormatProvider which uses Localizer to obtain
@@ -14,116 +15,153 @@ namespace Orchard.Localization.Providers {
     /// </summary>
     [OrchardFeature("Orchard.Localization.DateTimeFormat")]
     [OrchardSuppressDependency("Orchard.Localization.Services.CultureDateTimeFormatProvider")]
-    public class LocalizationDateTimeFormatProvider : IDateTimeFormatProvider {
+    public class LocalizationDateTimeFormatProvider : IDateTimeFormatProvider
+    {
 
-        public LocalizationDateTimeFormatProvider() {
+        public LocalizationDateTimeFormatProvider()
+        {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public string[] MonthNames {
-            get {
-                return T("January, February, March, April, May, June, July, August, September, October, November, December").Text.Split(new string[] {", "}, StringSplitOptions.RemoveEmptyEntries);
+        public string[] MonthNames
+        {
+            get
+            {
+                return T("January, February, March, April, May, June, July, August, September, October, November, December").Text.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
-        public virtual string[] MonthNamesGenitive {
-            get {
+        public virtual string[] MonthNamesGenitive
+        {
+            get
+            {
                 return MonthNames;
             }
         }
 
-        public string[] MonthNamesShort {
-            get {
+        public string[] MonthNamesShort
+        {
+            get
+            {
                 return T("Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec").Text.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
-        public virtual string[] MonthNamesShortGenitive {
-            get {
+        public virtual string[] MonthNamesShortGenitive
+        {
+            get
+            {
                 return MonthNamesShort;
             }
         }
 
-        public string[] DayNames {
-            get {
+        public string[] DayNames
+        {
+            get
+            {
                 return T("Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday").Text.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
-        public string[] DayNamesShort {
-            get {
+        public string[] DayNamesShort
+        {
+            get
+            {
                 return T("Sun, Mon, Tue, Wed, Thu, Fri, Sat").Text.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
-        public string[] DayNamesMin {
-            get {
+        public string[] DayNamesMin
+        {
+            get
+            {
                 return T("Su, Mo, Tu, We, Th, Fr, Sa").Text.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 
-        public string ShortDateFormat {
-            get {
+        public string ShortDateFormat
+        {
+            get
+            {
                 return T("M/d/yyyy").Text;
             }
         }
 
-        public string ShortTimeFormat {
-            get {
+        public string ShortTimeFormat
+        {
+            get
+            {
                 return T("h:mm tt").Text;
             }
         }
 
-        public string ShortDateTimeFormat {
-            get {
+        public string ShortDateTimeFormat
+        {
+            get
+            {
                 return T("M/d/yyyy h:mm tt").Text;
             }
         }
 
-        public string LongDateFormat {
-            get {
+        public string LongDateFormat
+        {
+            get
+            {
                 return T("dddd, MMMM d, yyyy").Text;
             }
         }
 
-        public string LongTimeFormat {
-            get {
+        public string LongTimeFormat
+        {
+            get
+            {
                 return T("h:mm:ss tt").Text;
             }
         }
 
-        public string LongDateTimeFormat {
-            get {
+        public string LongDateTimeFormat
+        {
+            get
+            {
                 return T("dddd, MMMM d, yyyy h:mm:ss tt").Text;
             }
         }
 
-        public IEnumerable<string> AllDateFormats {
-            get {
+        public IEnumerable<string> AllDateFormats
+        {
+            get
+            {
                 return new[] { ShortDateFormat, LongDateFormat };
             }
         }
 
-        public IEnumerable<string> AllTimeFormats {
-            get {
+        public IEnumerable<string> AllTimeFormats
+        {
+            get
+            {
                 return new[] { ShortTimeFormat, LongTimeFormat };
             }
         }
 
-        public IEnumerable<string> AllDateTimeFormats {
-            get {
+        public IEnumerable<string> AllDateTimeFormats
+        {
+            get
+            {
                 return new[] { ShortDateTimeFormat, LongDateTimeFormat };
             }
         }
 
-        public int FirstDay {
-            get {
+        public int FirstDay
+        {
+            get
+            {
                 var firstDay = 1;
                 var t = T("firstDay: 1").Text;
                 var parts = t.Split(':');
-                if (parts.Length == 2) {
+                if (parts.Length == 2)
+                {
                     Int32.TryParse(parts[1], out firstDay);
                 }
 
@@ -131,12 +169,15 @@ namespace Orchard.Localization.Providers {
             }
         }
 
-        public bool Use24HourTime {
-            get {
+        public bool Use24HourTime
+        {
+            get
+            {
                 var use24HourTime = false;
                 var t = T("use24HourTime: false").Text;
                 var parts = t.Split(':');
-                if (parts.Length == 2) {
+                if (parts.Length == 2)
+                {
                     Boolean.TryParse(parts[1], out use24HourTime);
                 }
 
@@ -144,29 +185,38 @@ namespace Orchard.Localization.Providers {
             }
         }
 
-        public string DateSeparator {
-            get {
+        public string DateSeparator
+        {
+            get
+            {
                 return "/"; // Since we can't do it with TimeSeparator why do it with this one...
             }
         }
 
-        public string TimeSeparator {
-            get {
+        public string TimeSeparator
+        {
+            get
+            {
                 return ":"; // No good way to put a colon through a colon-separated translation process...
             }
         }
 
-        public string AmPmPrefix {
-            get {
+        public string AmPmPrefix
+        {
+            get
+            {
                 return " "; // No good way to put a single space through a string-based translation process...
             }
         }
 
-        public string[] AmPmDesignators {
-            get {
+        public string[] AmPmDesignators
+        {
+            get
+            {
                 var t = T("AM;PM").Text;
                 var parts = t.Split(';');
-                if (parts.Length == 2) {
+                if (parts.Length == 2)
+                {
                     return parts;
                 }
 
@@ -174,30 +224,36 @@ namespace Orchard.Localization.Providers {
             }
         }
 
-        public string GetEraName(int era) {
+        public string GetEraName(int era)
+        {
             var t = T("A.D.;A.D.").Text;
             var parts = t.Split(';');
-            if (parts.Length >= era + 1) {
+            if (parts.Length >= era + 1)
+            {
                 return parts[era];
             }
 
             return null;
         }
 
-        public string GetShortEraName(int era) {
+        public string GetShortEraName(int era)
+        {
             var t = T("AD;AD").Text;
             var parts = t.Split(';');
-            if (parts.Length >= era + 1) {
+            if (parts.Length >= era + 1)
+            {
                 return parts[era];
             }
 
             return null;
         }
 
-        public int GetEra(string eraName) {
+        public int GetEra(string eraName)
+        {
             var t = T("AD;AD").Text;
             var parts = t.ToLowerInvariant().Split(';');
-            if (parts.Contains(eraName.ToLowerInvariant())) {
+            if (parts.Contains(eraName.ToLowerInvariant()))
+            {
                 return parts.ToList().IndexOf(eraName.ToLowerInvariant());
             }
 

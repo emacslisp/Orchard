@@ -1,9 +1,12 @@
 ﻿using System;
 
-namespace Orchard.Azure.MediaServices.Helpers {
+namespace Orchard.Azure.MediaServices.Helpers
+{
     // Credits: http://blog.flimflan.com/FileSizeFormatProvider.html.
-    public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter {
-        public object GetFormat(Type formatType) {
+    public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
+    {
+        public object GetFormat(Type formatType)
+        {
             return formatType == typeof(ICustomFormatter) ? this : null;
         }
 
@@ -12,38 +15,47 @@ namespace Orchard.Azure.MediaServices.Helpers {
         private const Decimal OneMegaByte = OneKiloByte * 1024M;
         private const Decimal OneGigaByte = OneMegaByte * 1024M;
 
-        public string Format(string format, object arg, IFormatProvider formatProvider) {
-            if (format == null || !format.StartsWith(FileSizeFormat)) {
+        public string Format(string format, object arg, IFormatProvider formatProvider)
+        {
+            if (format == null || !format.StartsWith(FileSizeFormat))
+            {
                 return DefaultFormat(format, arg, formatProvider);
             }
 
-            if (arg is string) {
+            if (arg is string)
+            {
                 return DefaultFormat(format, arg, formatProvider);
             }
 
             Decimal size;
 
-            try {
+            try
+            {
                 size = Convert.ToDecimal(arg);
             }
-            catch (InvalidCastException) {
+            catch (InvalidCastException)
+            {
                 return DefaultFormat(format, arg, formatProvider);
             }
 
             string suffix;
-            if (size > OneGigaByte) {
+            if (size > OneGigaByte)
+            {
                 size /= OneGigaByte;
                 suffix = "GB";
             }
-            else if (size > OneMegaByte) {
+            else if (size > OneMegaByte)
+            {
                 size /= OneMegaByte;
                 suffix = "MB";
             }
-            else if (size > OneKiloByte) {
+            else if (size > OneKiloByte)
+            {
                 size /= OneKiloByte;
                 suffix = "kB";
             }
-            else {
+            else
+            {
                 suffix = " B";
             }
 
@@ -53,9 +65,11 @@ namespace Orchard.Azure.MediaServices.Helpers {
 
         }
 
-        private static string DefaultFormat(string format, object arg, IFormatProvider formatProvider) {
+        private static string DefaultFormat(string format, object arg, IFormatProvider formatProvider)
+        {
             var formattableArg = arg as IFormattable;
-            if (formattableArg != null) {
+            if (formattableArg != null)
+            {
                 return formattableArg.ToString(format, formatProvider);
             }
             return arg.ToString();

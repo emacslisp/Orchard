@@ -14,22 +14,22 @@
                     foreach (var index in indexes) {
                         var fieldEntries = Model.Entries.Single(x => x.Index == index).Fields;
                         var entryIndexClosure = entryIndex;
-                        @Html.HiddenFor(m => m.Entries[entryIndex].Index)
-                        <li>
-                            <h3>@index</h3>
-                            <ul>
-                                @{ var fieldIndex = 0; }
-                                @foreach (var fieldEntry in fieldEntries) {
+                    @Html.HiddenFor(m => m.Entries[entryIndex].Index)
+                    <li>
+                        <h3>@index</h3>
+                        <ul>
+                            @{ var fieldIndex = 0; }
+                            @foreach (var fieldEntry in fieldEntries) {
                                     var fieldIndexClosure = fieldIndex;
-                                    <li>
-                                        @Html.EditorFor(m => m.Entries[entryIndex].Fields[fieldIndex].Selected)
-                                        @Html.HiddenFor(m => m.Entries[entryIndex].Fields[fieldIndex].Field)
-                                        <label class="forcheckbox" for="@Html.FieldIdFor(m => m.Entries[entryIndexClosure].Fields[fieldIndexClosure].Selected)">@Model.Entries[entryIndex].Fields[fieldIndex].Field</label>
-                                    </li>
+                                <li>
+                                    @Html.EditorFor(m => m.Entries[entryIndex].Fields[fieldIndex].Selected)
+                                    @Html.HiddenFor(m => m.Entries[entryIndex].Fields[fieldIndex].Field)
+                                    <label class="forcheckbox" for="@Html.FieldIdFor(m => m.Entries[entryIndexClosure].Fields[fieldIndexClosure].Selected)">@Model.Entries[entryIndex].Fields[fieldIndex].Field</label>
+                                </li>
                                     fieldIndex++;
                                 }
-                            </ul>
-                        </li>
+                        </ul>
+                    </li>
                         entryIndex++;
                     }
                 }

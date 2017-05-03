@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Orchard;
 
-namespace Orchard.Azure.MediaServices.Services.Wams {
+namespace Orchard.Azure.MediaServices.Services.Wams
+{
     public delegate void UpdateProgressAction(WamsUploadProgressInfo progressInfo);
-    public interface IWamsClient : IDependency {
+    public interface IWamsClient : IDependency
+    {
         IMediaProcessor GetLatestMediaProcessorByName(MediaProcessorName mediaProcessorName);
         IAsset GetAssetById(string assetId);
         IEnumerable<IAsset> GetAssetsById(IEnumerable<string> assetIds);

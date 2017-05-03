@@ -14,11 +14,11 @@
     <div class="manage">
         @Html.ActionLink(T("Add a new Filter").Text, "Add", new { controller = "Filter", id = Model.Id }, new { @class = "button primaryAction" })
     </div>
-    
+
     <table class="items">
         <thead>
             <tr>
-                <th scope="col" >@T("Description")</th>
+                <th scope="col">@T("Description")</th>
                 <th scope="col" class="actions">&nbsp;</th>
             </tr>
         </thead>
@@ -36,13 +36,13 @@
                         @Html.ActionLink(T("Down").Text, "Move", new { controller = "Admin", id = Model.Id, direction = "down", filterId = filter.FilterRecordId })
                     }
 
-                </td>    
+                </td>
             </tr>
         }
     </table>
-    
+
     <span class="hint">@T("Usage example: ")@("@Display.MediaUrl(Profile: \"")@Model.Name@("\", Path: Model.ContentItem.Contact.Picture.Url)")</span>
-        
+
     <fieldset>
         @*@Html.ActionLink(T("Preview").ToString(), "Preview", new { Model.Id }, new { @class = "button" })*@
         @Html.ActionLink(T("Close").ToString(), "Index", new { }, new { @class = "button" })

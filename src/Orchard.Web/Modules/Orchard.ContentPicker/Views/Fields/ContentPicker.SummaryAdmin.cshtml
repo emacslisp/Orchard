@@ -12,9 +12,9 @@
     <span class="name">@name:</span>
     @if(contentItems.Any()) {
         foreach(var contentItem in contentItems) {
-            <span class="value">@Html.ItemEditLink(contentItem)</span>
+        <span class="value">@Html.ItemEditLink(contentItem)</span>
             if(contentItem != contentItems.Last()) {
-                <span>,</span>
+        <span>,</span>
             }
         }
     }
@@ -25,9 +25,9 @@
     @if (unpublishedContentItems.Any()) {
         <span>@T(" | ") @T("Not Published"):</span>
         foreach (var contentItem in unpublishedContentItems) {
-            <span class="value">@Html.ItemEditLink(contentItem)</span>
+        <span class="value">@Html.ItemEditLink(contentItem)</span>
             if (contentItem != unpublishedContentItems.Last()) {
-                <span>,</span>
+        <span>,</span>
             }
         }
     }

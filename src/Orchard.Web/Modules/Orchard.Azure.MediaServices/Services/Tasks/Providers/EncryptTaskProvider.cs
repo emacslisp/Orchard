@@ -66,7 +66,7 @@
 //            task.OutputAssets.AddNew(Guid.NewGuid().ToString());
 
 //            Logger.Information("New Encrypt task '{0}' was created.", task.Name);
-            
+
 //            return task;
 //        }
 

@@ -9,13 +9,16 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Admin;
 
-namespace Orchard.Email.Controllers {
+namespace Orchard.Email.Controllers
+{
     [Admin]
-    public class EmailAdminController : Controller {
+    public class EmailAdminController : Controller
+    {
         private readonly ISmtpChannel _smtpChannel;
         private readonly IOrchardServices _orchardServices;
 
-        public EmailAdminController(ISmtpChannel smtpChannel, IOrchardServices orchardServices) {
+        public EmailAdminController(ISmtpChannel smtpChannel, IOrchardServices orchardServices)
+        {
             _smtpChannel = smtpChannel;
             _orchardServices = orchardServices;
             T = NullLocalizer.Instance;
@@ -25,12 +28,15 @@ namespace Orchard.Email.Controllers {
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult TestSettings(TestSmtpSettings testSettings) {
+        public ActionResult TestSettings(TestSmtpSettings testSettings)
+        {
             ILogger logger = null;
-            try {
+            try
+            {
                 var fakeLogger = new FakeLogger();
                 var smtpChannelComponent = _smtpChannel as Component;
-                if (smtpChannelComponent != null) {
+                if (smtpChannelComponent != null)
+                {
                     logger = smtpChannelComponent.Logger;
                     smtpChannelComponent.Logger = fakeLogger;
                 }
@@ -47,28 +53,34 @@ namespace Orchard.Email.Controllers {
                 smtpSettings.UserName = testSettings.UserName;
                 smtpSettings.Password = testSettings.Password;
 
-                if (!smtpSettings.IsValid()) {
+                if (!smtpSettings.IsValid())
+                {
                     fakeLogger.Error("Invalid settings.");
                 }
-                else {
+                else
+                {
                     _smtpChannel.Process(new Dictionary<string, object> {
                         {"Recipients", testSettings.To},
                         {"Subject", T("Orchard CMS - SMTP settings test email").Text}
                     });
                 }
 
-                if (!String.IsNullOrEmpty(fakeLogger.Message)) {
+                if (!String.IsNullOrEmpty(fakeLogger.Message))
+                {
                     return Json(new { error = fakeLogger.Message });
                 }
 
                 return Json(new { status = T("Message sent.").Text });
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return Json(new { error = e.Message });
             }
-            finally {
+            finally
+            {
                 var smtpChannelComponent = _smtpChannel as Component;
-                if (smtpChannelComponent != null) {
+                if (smtpChannelComponent != null)
+                {
                     smtpChannelComponent.Logger = logger;
                 }
 
@@ -77,19 +89,23 @@ namespace Orchard.Email.Controllers {
             }
         }
 
-        private class FakeLogger : ILogger {
+        private class FakeLogger : ILogger
+        {
             public string Message { get; set; }
 
-            public bool IsEnabled(LogLevel level) {
+            public bool IsEnabled(LogLevel level)
+            {
                 return true;
             }
 
-            public void Log(LogLevel level, Exception exception, string format, params object[] args) {
+            public void Log(LogLevel level, Exception exception, string format, params object[] args)
+            {
                 Message = exception == null ? format : exception.Message;
             }
         }
 
-        public class TestSmtpSettings {
+        public class TestSmtpSettings
+        {
             public string From { get; set; }
             public string Host { get; set; }
             public int Port { get; set; }

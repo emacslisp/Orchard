@@ -2,9 +2,12 @@
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Projections.Models {
-    public class ProjectionPartRecord : ContentPartRecord {
-        public ProjectionPartRecord() {
+namespace Orchard.Projections.Models
+{
+    public class ProjectionPartRecord : ContentPartRecord
+    {
+        public ProjectionPartRecord()
+        {
             MaxItems = 20;
         }
 

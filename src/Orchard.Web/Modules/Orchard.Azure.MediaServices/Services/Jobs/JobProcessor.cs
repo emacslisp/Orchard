@@ -14,8 +14,10 @@ using Orchard.Logging;
 using Orchard.Tasks;
 using Orchard.Tasks.Locking.Services;
 
-namespace Orchard.Azure.MediaServices.Services.Jobs {
-    public class JobProcessor : Component, IBackgroundTask {
+namespace Orchard.Azure.MediaServices.Services.Jobs
+{
+    public class JobProcessor : Component, IBackgroundTask
+    {
 
         private readonly IWamsClient _wamsClient;
         private readonly IAssetManager _assetManager;
@@ -28,7 +30,8 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
             IAssetManager assetManager,
             IJobManager jobManager,
             IOrchardServices orchardServices,
-            IDistributedLockService distributedLockService) {
+            IDistributedLockService distributedLockService)
+        {
 
             _wamsClient = wamsClient;
             _assetManager = assetManager;
@@ -37,22 +40,28 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
             _distributedLockService = distributedLockService;
         }
 
-        public void Sweep() {
+        public void Sweep()
+        {
             Logger.Debug("Beginning sweep.");
 
-            try {
-                if (!_orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>().IsValid()) {
+            try
+            {
+                if (!_orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>().IsValid())
+                {
                     Logger.Debug("Settings are invalid; going back to sleep.");
                     return;
                 }
 
                 // Only allow this task to run on one farm node at a time.
                 IDistributedLock @lock;
-                if (_distributedLockService.TryAcquireLock(GetType().FullName, TimeSpan.FromHours(1), out @lock)) {
-                    using (@lock) {
+                if (_distributedLockService.TryAcquireLock(GetType().FullName, TimeSpan.FromHours(1), out @lock))
+                {
+                    using (@lock)
+                    {
                         var jobs = _jobManager.GetActiveJobs().ToDictionary(job => job.WamsJobId);
 
-                        if (!jobs.Any()) {
+                        if (!jobs.Any())
+                        {
                             Logger.Debug("No open jobs were found; going back to sleep.");
                             return;
                         }
@@ -61,14 +70,16 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
 
                         var wamsJobs = _wamsClient.GetJobsById(jobs.Keys);
 
-                        foreach (var wamsJob in wamsJobs) {
+                        foreach (var wamsJob in wamsJobs)
+                        {
                             Logger.Information("Processing job '{0}'...", wamsJob.Name);
 
                             var job = jobs[wamsJob.Id];
                             var tasks = job.Tasks.ToDictionary(task => task.WamsTaskId);
                             var wamsTasks = wamsJob.Tasks.ToArray();
 
-                            foreach (var wamsTask in wamsTasks) {
+                            foreach (var wamsTask in wamsTasks)
+                            {
                                 var task = tasks[wamsTask.Id];
                                 task.Status = MapWamsJobState(wamsTask.State);
                                 task.PercentComplete = (int)wamsTask.Progress;
@@ -85,8 +96,10 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
 
                             LogWamsJobErrors(wamsJobErrors);
 
-                            if (job.Status != previousStatus) {
-                                if (job.Status == JobStatus.Finished) {
+                            if (job.Status != previousStatus)
+                            {
+                                if (job.Status == JobStatus.Finished)
+                                {
                                     Logger.Information("Job '{0}' was finished in WAMS; creating locators.", wamsJob.Name);
 
                                     var lastTask = job.Tasks.Last();
@@ -103,8 +116,10 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
                                     // and only store and use the working ones.
                                     var forceNonDynamicAsset = lastWamsTask.Configuration.StartsWith("VC1");
 
-                                    if (wamsLocators.OnDemandLocator != null && !forceNonDynamicAsset) {
-                                        _assetManager.CreateAssetFor<DynamicVideoAsset>(cloudVideoPart, asset => {
+                                    if (wamsLocators.OnDemandLocator != null && !forceNonDynamicAsset)
+                                    {
+                                        _assetManager.CreateAssetFor<DynamicVideoAsset>(cloudVideoPart, asset =>
+                                        {
                                             asset.IncludeInPlayer = true;
                                             asset.Name = outputAssetName;
                                             asset.Description = outputAssetDescription;
@@ -120,8 +135,10 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
                                             asset.PublishState.Status = AssetPublishStatus.None;
                                         });
                                     }
-                                    else {
-                                        _assetManager.CreateAssetFor<VideoAsset>(cloudVideoPart, asset => {
+                                    else
+                                    {
+                                        _assetManager.CreateAssetFor<VideoAsset>(cloudVideoPart, asset =>
+                                        {
                                             asset.IncludeInPlayer = true;
                                             asset.Name = outputAssetName;
                                             asset.Description = outputAssetDescription;
@@ -135,11 +152,13 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
                                         });
                                     }
 
-                                    try {
+                                    try
+                                    {
                                         if (cloudVideoPart.IsPublished())
                                             _assetManager.PublishAssetsFor(cloudVideoPart);
                                     }
-                                    catch (Exception ex) {
+                                    catch (Exception ex)
+                                    {
                                         Logger.Warning(ex, "Processing of job '{0}' was completed but an error occurred while publishing the cloud video item with ID {1} after processing.", wamsJob.Name, cloudVideoPart.Id);
                                     }
                                 }
@@ -152,25 +171,31 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
                 else
                     Logger.Debug("Distributed lock could not be acquired; going back to sleep.");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error during sweep.");
             }
-            finally {
+            finally
+            {
                 Logger.Debug("Ending sweep.");
             }
         }
 
-        private static string GetAggregateErrorMessage(IEnumerable<Tuple<IJob, ITask, ErrorDetail>> tuples) {
+        private static string GetAggregateErrorMessage(IEnumerable<Tuple<IJob, ITask, ErrorDetail>> tuples)
+        {
             var sb = new StringBuilder();
-            foreach (var tuple in tuples) {
+            foreach (var tuple in tuples)
+            {
                 var errorDetail = tuple.Item3;
                 sb.AppendLine(errorDetail.Message);
             }
             return sb.ToString();
         }
 
-        private void LogWamsJobErrors(IEnumerable<Tuple<IJob, ITask, ErrorDetail>> tuples) {
-            foreach (var tuple in tuples) {
+        private void LogWamsJobErrors(IEnumerable<Tuple<IJob, ITask, ErrorDetail>> tuples)
+        {
+            foreach (var tuple in tuples)
+            {
                 var wamsJob = tuple.Item1;
                 var wamsTask = tuple.Item2;
                 var errorDetail = tuple.Item3;
@@ -178,14 +203,17 @@ namespace Orchard.Azure.MediaServices.Services.Jobs {
             }
         }
 
-        private IEnumerable<Tuple<IJob, ITask, ErrorDetail>> HarvestWamsJobErrors(IJob wamsJob) {
+        private IEnumerable<Tuple<IJob, ITask, ErrorDetail>> HarvestWamsJobErrors(IJob wamsJob)
+        {
             return from wamsTask in wamsJob.Tasks
                    from errorDetail in wamsTask.ErrorDetails
                    select new Tuple<IJob, ITask, ErrorDetail>(wamsJob, wamsTask, errorDetail);
         }
 
-        private JobStatus MapWamsJobState(JobState state) {
-            switch (state) {
+        private JobStatus MapWamsJobState(JobState state)
+        {
+            switch (state)
+            {
                 case JobState.Canceled:
                     return JobStatus.Canceled;
                 case JobState.Canceling:

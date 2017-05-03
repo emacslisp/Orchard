@@ -5,35 +5,44 @@ using Orchard.OpenId.Models;
 using Orchard.OpenId.Services;
 using Orchard.Settings;
 
-namespace Orchard.OpenId.Providers {
+namespace Orchard.OpenId.Providers
+{
     [OrchardFeature("Orchard.OpenId.Twitter")]
-    public class Twitter : IOpenIdProvider {
+    public class Twitter : IOpenIdProvider
+    {
         private readonly IWorkContextAccessor _workContextAccessor;
 
         public Twitter(
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor)
+        {
 
             _workContextAccessor = workContextAccessor;
         }
 
-        public string AuthenticationType {
+        public string AuthenticationType
+        {
             get { return "Twitter"; }
         }
 
-        public string Name {
+        public string Name
+        {
             get { return "Twitter"; }
         }
 
-        public string DisplayName {
+        public string DisplayName
+        {
             get { return "Twitter"; }
         }
 
-        public bool IsValid {
+        public bool IsValid
+        {
             get { return IsProviderValid(); }
         }
 
-        private bool IsProviderValid() {
-            try {
+        private bool IsProviderValid()
+        {
+            try
+            {
                 TwitterSettingsPart settings;
                 ISite site;
 
@@ -44,7 +53,8 @@ namespace Orchard.OpenId.Providers {
 
                 return (settings != null && settings.IsValid);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }

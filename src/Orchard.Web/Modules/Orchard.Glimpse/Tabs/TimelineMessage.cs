@@ -1,8 +1,10 @@
 ﻿using System;
 using Glimpse.Core.Message;
 
-namespace Orchard.Glimpse.Tabs {
-    public class TimelineMessage : MessageBase, ITimelineMessage {
+namespace Orchard.Glimpse.Tabs
+{
+    public class TimelineMessage : MessageBase, ITimelineMessage
+    {
         public TimeSpan Offset { get; set; }
         public TimeSpan Duration { get; set; }
         public DateTime StartTime { get; set; }

@@ -41,9 +41,9 @@
     <fieldset>
         <table class="items">
             <thead>
-                <tr>                    
+                <tr>
                     <th scope="col">@T("Alias")</th>
-                    <th scope="col">@T("Route")</th>                    
+                    <th scope="col">@T("Route")</th>
                 </tr>
             </thead>
             @foreach (var aliasEntry in Model.AliasEntries) {
@@ -63,7 +63,7 @@
                     </td>
                     <td>
                         @Html.Link(url, Href("~/" + urlPrefix + "/" + url))
-                    </td>                   
+                    </td>
                 </tr>
             }
         </table>

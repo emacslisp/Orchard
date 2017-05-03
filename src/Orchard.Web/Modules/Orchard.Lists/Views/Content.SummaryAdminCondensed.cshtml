@@ -7,10 +7,10 @@
 }
 <div class="summary-condensed" itemscope="itemscope" itemid="@contentItem.Id" itemtype="http://orchardproject.net/data/ContentItem">
     <div class="properties">
-        <input type="checkbox" value="@contentItem.Id" name="itemIds"/>
+        <input type="checkbox" value="@contentItem.Id" name="itemIds" />
         <h3>@Html.ItemAdminLink(contentItem)</h3> - <div class="contentType">@contentItem.TypeDefinition.DisplayName</div>
         @if (Model.Header != null) {
-        <div class="header">@Display(Model.Header)</div>
+            <div class="header">@Display(Model.Header)</div>
         }
     </div>
     <div class="related">
@@ -23,6 +23,6 @@
         }
     </div>
     @if (Model.Content != null) {
-    <div class="primary">@Display(Model.Content)</div>
+        <div class="primary">@Display(Model.Content)</div>
     }
 </div>

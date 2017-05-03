@@ -9,7 +9,7 @@
 		if (!String.IsNullOrEmpty(text)){
 			return text.Replace(Environment.NewLine, "\\\\n");
 		}
-	
+
 		return text;
     }
 }
@@ -19,7 +19,7 @@
 //]]>
 </script>
 @using(Script.Foot()) {
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     (function ($) {
         var currentLayerId = @Model.CurrentLayer.Id;
@@ -90,5 +90,5 @@
         visWrapper.append(visContainer);
     })(jQuery);
 //]]>
-</script>
+    </script>
 }

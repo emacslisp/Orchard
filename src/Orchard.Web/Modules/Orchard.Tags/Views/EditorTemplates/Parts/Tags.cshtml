@@ -12,7 +12,7 @@
 </fieldset>
 
 @using (Script.Foot()) {
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     $(function () {
         $.tagsAutocomplete.autocomplete(
@@ -20,5 +20,5 @@
             '@Url.Action("FetchSimilarTags", new { Controller = "Admin", Area = "Orchard.Tags" })', 1);
     });
 //]]>
-</script>
+    </script>
 }

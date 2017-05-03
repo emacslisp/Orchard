@@ -3,8 +3,10 @@ using Orchard.ContentManagement;
 using Orchard.ContentPicker.Models;
 using Orchard.Core.Navigation.Models;
 
-namespace Orchard.ContentPicker.ViewModels {
-    public class NavigationPartViewModel {
+namespace Orchard.ContentPicker.ViewModels
+{
+    public class NavigationPartViewModel
+    {
         public IEnumerable<MenuPart> ContentMenuItems { get; set; }
         public NavigationPart Part { get; set; }
         public IEnumerable<ContentItem> Menus { get; set; }

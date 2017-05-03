@@ -10,7 +10,8 @@ using System.Web.Mvc;
 namespace Orchard.Localization.Controllers
 {
     [ValidateInput(false)]
-    public class AdminController : Controller {
+    public class AdminController : Controller
+    {
         private readonly IContentManager _contentManager;
         private readonly ILocalizationService _localizationService;
         private readonly ICultureManager _cultureManager;
@@ -20,7 +21,8 @@ namespace Orchard.Localization.Controllers
             IContentManager contentManager,
             ILocalizationService localizationService,
             ICultureManager cultureManager,
-            IShapeFactory shapeFactory) {
+            IShapeFactory shapeFactory)
+        {
             _contentManager = contentManager;
             _localizationService = localizationService;
             _cultureManager = cultureManager;
@@ -34,7 +36,8 @@ namespace Orchard.Localization.Controllers
         public IOrchardServices Services { get; set; }
 
         [HttpPost]
-        public ActionResult Translate(int id, string to) {
+        public ActionResult Translate(int id, string to)
+        {
             var masterContentItem = _contentManager.Get(id, VersionOptions.Latest);
             if (masterContentItem == null)
                 return HttpNotFound();
@@ -48,7 +51,8 @@ namespace Orchard.Localization.Controllers
 
             // Check if current item still exists, and redirect.
             var existingTranslation = _localizationService.GetLocalizedContentItem(masterContentItem, to);
-            if (existingTranslation != null) {
+            if (existingTranslation != null)
+            {
                 var existingTranslationMetadata = _contentManager.GetItemMetadata(existingTranslation);
                 return RedirectToAction(
                     Convert.ToString(existingTranslationMetadata.EditorRouteValues["action"]),
@@ -64,7 +68,8 @@ namespace Orchard.Localization.Controllers
                 return new HttpUnauthorizedResult();
 
             var localizationPart = contentItemTranslation.As<LocalizationPart>();
-            if(localizationPart != null) {
+            if (localizationPart != null)
+            {
                 localizationPart.MasterContentItem = masterContentItem;
                 localizationPart.Culture = string.IsNullOrWhiteSpace(to) ? null : _cultureManager.GetCultureByName(to);
             }

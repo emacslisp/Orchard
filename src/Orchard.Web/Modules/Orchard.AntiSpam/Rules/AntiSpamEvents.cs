@@ -2,19 +2,24 @@
 using Orchard.Events;
 using Orchard.Localization;
 
-namespace Orchard.AntiSpam.Rules {
-    public interface IEventProvider : IEventHandler {
+namespace Orchard.AntiSpam.Rules
+{
+    public interface IEventProvider : IEventHandler
+    {
         void Describe(dynamic describe);
     }
 
-    public class AntiSpamEvents : IEventProvider {
-        public AntiSpamEvents() {
+    public class AntiSpamEvents : IEventProvider
+    {
+        public AntiSpamEvents()
+        {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public void Describe(dynamic describe) {
+        public void Describe(dynamic describe)
+        {
             Func<dynamic, bool> alwaysTrue = c => true;
 
             describe.For("AntiSpam", T("Anti-Spam"), T("Anti-Spam"))

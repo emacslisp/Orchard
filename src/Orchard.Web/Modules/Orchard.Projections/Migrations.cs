@@ -9,18 +9,22 @@ using Orchard.Data.Migration;
 using Orchard.Localization;
 using Orchard.Projections.Models;
 
-namespace Orchard.Projections {
-    public class Migrations : DataMigrationImpl {
+namespace Orchard.Projections
+{
+    public class Migrations : DataMigrationImpl
+    {
         private readonly IRepository<MemberBindingRecord> _memberBindingRepository;
 
-        public Migrations(IRepository<MemberBindingRecord> memberBindingRepository) {
+        public Migrations(IRepository<MemberBindingRecord> memberBindingRepository)
+        {
             _memberBindingRepository = memberBindingRepository;
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public int Create() {
+        public int Create()
+        {
 
             // Properties index
 
@@ -201,21 +205,24 @@ namespace Orchard.Projections {
 
             // Default Model Bindings - CommonPartRecord
 
-            _memberBindingRepository.Create(new MemberBindingRecord {
+            _memberBindingRepository.Create(new MemberBindingRecord
+            {
                 Type = typeof(CommonPartRecord).FullName,
                 Member = "CreatedUtc",
                 DisplayName = T("Creation date").Text,
                 Description = T("When the content item was created").Text
             });
 
-            _memberBindingRepository.Create(new MemberBindingRecord {
+            _memberBindingRepository.Create(new MemberBindingRecord
+            {
                 Type = typeof(CommonPartRecord).FullName,
                 Member = "ModifiedUtc",
                 DisplayName = T("Modification date").Text,
                 Description = T("When the content item was modified").Text
             });
 
-            _memberBindingRepository.Create(new MemberBindingRecord {
+            _memberBindingRepository.Create(new MemberBindingRecord
+            {
                 Type = typeof(CommonPartRecord).FullName,
                 Member = "PublishedUtc",
                 DisplayName = T("Publication date").Text,
@@ -224,7 +231,8 @@ namespace Orchard.Projections {
 
             // Default Model Bindings - TitlePartRecord
 
-            _memberBindingRepository.Create(new MemberBindingRecord {
+            _memberBindingRepository.Create(new MemberBindingRecord
+            {
                 Type = typeof(TitlePartRecord).FullName,
                 Member = "Title",
                 DisplayName = T("Title Part Title").Text,
@@ -233,7 +241,8 @@ namespace Orchard.Projections {
 
             // Default Model Bindings - BodyPartRecord
 
-            _memberBindingRepository.Create(new MemberBindingRecord {
+            _memberBindingRepository.Create(new MemberBindingRecord
+            {
                 Type = typeof(BodyPartRecord).FullName,
                 Member = "Text",
                 DisplayName = T("Body Part Text").Text,
@@ -243,7 +252,8 @@ namespace Orchard.Projections {
             return 1;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
             SchemaBuilder.CreateTable("NavigationQueryPartRecord",
                 table => table.ContentPartRecord()
                     .Column<int>("Items")
@@ -266,7 +276,8 @@ namespace Orchard.Projections {
             return 3;
         }
 
-        public int UpdateFrom2() {
+        public int UpdateFrom2()
+        {
             SchemaBuilder.AlterTable("ProjectionPartRecord", table => table
                 .AlterColumn("PagerSuffix", c => c.WithType(DbType.String).WithLength(255))
             );
@@ -274,7 +285,8 @@ namespace Orchard.Projections {
             return 3;
         }
 
-        public int UpdateFrom3() {
+        public int UpdateFrom3()
+        {
             ContentDefinitionManager.AlterTypeDefinition("NavigationQueryMenuItem",
                 cfg => cfg
                     .WithIdentity()

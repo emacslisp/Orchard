@@ -3,9 +3,12 @@ using System.Linq;
 using System.Web.Mvc;
 using Orchard.Environment.Configuration;
 
-namespace Orchard.MultiTenancy.Extensions {
-    public static class UrlHelperExtensions {
-        public static string Tenant(this UrlHelper urlHelper, ShellSettings tenantShellSettings) {
+namespace Orchard.MultiTenancy.Extensions
+{
+    public static class UrlHelperExtensions
+    {
+        public static string Tenant(this UrlHelper urlHelper, ShellSettings tenantShellSettings)
+        {
 
             var requestUrlHost = !String.IsNullOrEmpty(tenantShellSettings.RequestUrlHost) ? tenantShellSettings.RequestUrlHost.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).First() : null;
 

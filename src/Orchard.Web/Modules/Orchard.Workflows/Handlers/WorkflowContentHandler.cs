@@ -3,11 +3,14 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Workflows.Services;
 
-namespace Orchard.Workflows.Handlers {
+namespace Orchard.Workflows.Handlers
+{
 
-    public class WorkflowContentHandler : ContentHandler {
+    public class WorkflowContentHandler : ContentHandler
+    {
 
-        public WorkflowContentHandler(IWorkflowManager workflowManager) {
+        public WorkflowContentHandler(IWorkflowManager workflowManager)
+        {
 
             OnPublished<ContentPart>(
                 (context, part) =>
@@ -33,8 +36,10 @@ namespace Orchard.Workflows.Handlers {
                     () => new Dictionary<string, object> { { "Content", context.ContentItem } }));
 
             OnUpdated<ContentPart>(
-                (context, part) => {
-                    if(context.ContentItemRecord == null) {
+                (context, part) =>
+                {
+                    if (context.ContentItemRecord == null)
+                    {
                         return;
                     }
 

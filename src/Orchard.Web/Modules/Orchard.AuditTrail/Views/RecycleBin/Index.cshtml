@@ -19,7 +19,7 @@
             <label>@T("Actions:")</label>
             <select name="RecycleBinCommand">
                 <option></option>
-                <option value="@RecycleBinCommand.Restore" data-unsafe-action="@T("Are you sure you want to restore the selected items?")" @if(Model.RecycleBinCommand == RecycleBinCommand.Restore){<text>selected="selected"</text>}>@T("Restore")</option>
+                <option value="@RecycleBinCommand.Restore" data-unsafe-action="@T("Are you sure you want to restore the selected items?")" @if(Model.RecycleBinCommand == RecycleBinCommand.Restore){ <text> selected="selected" </text> }>@T("Restore")</option>
                 @**TODO: Decide wether or not to allow users to permanently delete items. Commented out for now.*@
                 @*<option value="@RecycleBinCommand.Destroy" data-unsafe-action="@T("WARNING: This will PERMANENTLY delete the selected content items, including related content part records, never to be seen again. Are you sure you want to do this?")" @if (Model.RecycleBinCommand == RecycleBinCommand.Destroy) { <text> selected="selected" </text>  }>@T("Remove Permanently ☠")</option>*@
             </select>
@@ -51,19 +51,19 @@
                                 var contentDisplayTextHtmlString = Html.ItemDisplayText(contentItem);
                                 var contentDisplayText = contentDisplayTextHtmlString != null ? contentDisplayTextHtmlString.ToString() : contentItem.ContentType;
                                 var contentDisplayUrl = Url.Action("Detail", "Content", new {id = contentItem.Id, version = contentItem.Version, area = "Orchard.AuditTrail"});
-                                <tr>
-                                    <td>
-                                        <input type="hidden" name="SelectedContentItems[@index].Id" value="@contentItem.Id" />
-                                        <input type="checkbox" name="SelectedContentItems[@index].Selected" value="true" @if(isSelected){<text>checked="checked"</text>} />
-                                    </td>
-                                    <td class="content-column"><a href="@contentDisplayUrl">@contentDisplayText</a></td>
-                                    <td class="content-removed-column">@removedText</td>
-                                    <td class="actions-column">
-                                        <a href="@contentDisplayUrl">@T("View")</a> @T(" | ")
-                                        @Html.ActionLink(T("View Audit Trail").Text, "Index", "Admin", new {content = contentItem.Id, area = "Orchard.AuditTrail"}, null) @T(" | ")
-                                        <a href="@Url.Action("Restore", "RecycleBin", new {id = contentItem.Id, area = "Orchard.AuditTrail"})" data-unsafe-url="@T("Are you sure you want to restore this item?")">@T("Restore")</a>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="SelectedContentItems[@index].Id" value="@contentItem.Id" />
+                                    <input type="checkbox" name="SelectedContentItems[@index].Selected" value="true" @if(isSelected){ <text> checked="checked" </text> } />
+                                </td>
+                                <td class="content-column"><a href="@contentDisplayUrl">@contentDisplayText</a></td>
+                                <td class="content-removed-column">@removedText</td>
+                                <td class="actions-column">
+                                    <a href="@contentDisplayUrl">@T("View")</a> @T(" | ")
+                                    @Html.ActionLink(T("View Audit Trail").Text, "Index", "Admin", new {content = contentItem.Id, area = "Orchard.AuditTrail"}, null) @T(" | ")
+                                    <a href="@Url.Action("Restore", "RecycleBin", new {id = contentItem.Id, area = "Orchard.AuditTrail"})" data-unsafe-url="@T("Are you sure you want to restore this item?")">@T("Restore")</a>
+                                </td>
+                            </tr>
                                 index++;
                             }
                         }

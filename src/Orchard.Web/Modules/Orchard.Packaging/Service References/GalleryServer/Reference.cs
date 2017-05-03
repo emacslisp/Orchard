@@ -12,7 +12,7 @@
 // Generation date: 8/13/2014 1:44:48 PM
 namespace Orchard.Packaging.GalleryServer
 {
-    
+
     /// <summary>
     /// There are no comments for GalleryFeedContext in the schema.
     /// </summary>
@@ -22,7 +22,7 @@ namespace Orchard.Packaging.GalleryServer
         /// Initialize a new GalleryFeedContext object.
         /// </summary>
         [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Services.Design", "1.0.0")]
-        public GalleryFeedContext(global::System.Uri serviceRoot) : 
+        public GalleryFeedContext(global::System.Uri serviceRoot) :
                 base(serviceRoot)
         {
             this.ResolveName = new global::System.Func<global::System.Type, string>(this.ResolveNameFromType);

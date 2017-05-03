@@ -10,16 +10,19 @@ using Orchard.Recipes.Models;
 using Orchard.Recipes.Services;
 using Orchard.Recipes.ViewModels;
 
-namespace Orchard.Recipes.Providers.Builders {
-    public class ContentStep : RecipeBuilderStep {
+namespace Orchard.Recipes.Providers.Builders
+{
+    public class ContentStep : RecipeBuilderStep
+    {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IOrchardServices _orchardServices;
         private readonly IContentDefinitionWriter _contentDefinitionWriter;
 
         public ContentStep(
-            IContentDefinitionManager contentDefinitionManager, 
-            IOrchardServices orchardServices, 
-            IContentDefinitionWriter contentDefinitionWriter) {
+            IContentDefinitionManager contentDefinitionManager,
+            IOrchardServices orchardServices,
+            IContentDefinitionWriter contentDefinitionWriter)
+        {
 
             _contentDefinitionManager = contentDefinitionManager;
             _orchardServices = orchardServices;
@@ -30,15 +33,18 @@ namespace Orchard.Recipes.Providers.Builders {
             DataContentTypes = new List<string>();
         }
 
-        public override string Name {
+        public override string Name
+        {
             get { return "Content"; }
         }
 
-        public override LocalizedString DisplayName {
+        public override LocalizedString DisplayName
+        {
             get { return T("Content and Content Definition"); }
         }
 
-        public override LocalizedString Description {
+        public override LocalizedString Description
+        {
             get { return T("Exports content items and content item definitions."); }
         }
 
@@ -49,21 +55,25 @@ namespace Orchard.Recipes.Providers.Builders {
         public IList<string> DataContentTypes { get; set; }
         public VersionHistoryOptions VersionHistoryOptions { get; set; }
 
-        public override dynamic BuildEditor(dynamic shapeFactory) {
+        public override dynamic BuildEditor(dynamic shapeFactory)
+        {
             return UpdateEditor(shapeFactory, null);
         }
 
-        public override dynamic UpdateEditor(dynamic shapeFactory, IUpdateModel updater) {
+        public override dynamic UpdateEditor(dynamic shapeFactory, IUpdateModel updater)
+        {
             var contentTypeViewModels = _contentDefinitionManager.ListTypeDefinitions()
                 .OrderBy(x => x.Name)
                 .Select(x => new ContentTypeEntry { Name = x.Name, DisplayName = x.DisplayName })
                 .ToList();
 
-            var viewModel = new ContentBuilderStepViewModel {
+            var viewModel = new ContentBuilderStepViewModel
+            {
                 ContentTypes = contentTypeViewModels
             };
 
-            if (updater != null && updater.TryUpdateModel(viewModel, Prefix, null, null)) {
+            if (updater != null && updater.TryUpdateModel(viewModel, Prefix, null, null))
+            {
                 DataContentTypes = viewModel.ContentTypes.Where(x => x.ExportData).Select(x => x.Name).ToList();
                 SchemaContentTypes = viewModel.ContentTypes.Where(x => x.ExportSchema).Select(x => x.Name).ToList();
                 VersionHistoryOptions = viewModel.VersionHistoryOptions;
@@ -72,13 +82,14 @@ namespace Orchard.Recipes.Providers.Builders {
             return shapeFactory.EditorTemplate(TemplateName: "BuilderSteps/Content", Model: viewModel, Prefix: Prefix);
         }
 
-        public override void Configure(RecipeBuilderStepConfigurationContext context) {
+        public override void Configure(RecipeBuilderStepConfigurationContext context)
+        {
             var schemaContentTypeNames = context.ConfigurationElement.Attr("SchemaContentTypes");
             var dataContentTypeNames = context.ConfigurationElement.Attr("DataContentTypes");
             var versionHistoryOptions = context.ConfigurationElement.Attr<VersionHistoryOptions>("VersionHistoryOptions");
 
             if (!String.IsNullOrWhiteSpace(schemaContentTypeNames))
-                SchemaContentTypes = schemaContentTypeNames.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                SchemaContentTypes = schemaContentTypeNames.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             if (!String.IsNullOrWhiteSpace(dataContentTypeNames))
                 DataContentTypes = dataContentTypeNames.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -86,13 +97,15 @@ namespace Orchard.Recipes.Providers.Builders {
             VersionHistoryOptions = versionHistoryOptions;
         }
 
-        public override void ConfigureDefault() {
+        public override void ConfigureDefault()
+        {
             var contentTypeDefinitions = _contentDefinitionManager.ListTypeDefinitions().OrderBy(x => x.Name).ToList();
             SchemaContentTypes = DataContentTypes = contentTypeDefinitions.Select(x => x.Name).ToList();
             VersionHistoryOptions = VersionHistoryOptions.Published;
         }
 
-        public override void Build(BuildContext context) {
+        public override void Build(BuildContext context)
+        {
             var dataContentTypes = DataContentTypes;
             var schemaContentTypes = SchemaContentTypes;
             var exportVersionOptions = GetContentExportVersionOptions(VersionHistoryOptions);
@@ -100,14 +113,15 @@ namespace Orchard.Recipes.Providers.Builders {
                 ? _orchardServices.ContentManager.Query(exportVersionOptions, dataContentTypes.ToArray()).List().ToArray()
                 : Enumerable.Empty<ContentItem>();
 
-            if(schemaContentTypes.Any())
+            if (schemaContentTypes.Any())
                 context.RecipeDocument.Element("Orchard").Add(ExportMetadata(schemaContentTypes));
 
-            if(contentItems.Any())
+            if (contentItems.Any())
                 context.RecipeDocument.Element("Orchard").Add(ExportData(dataContentTypes, contentItems));
         }
 
-        private XElement ExportMetadata(IEnumerable<string> contentTypes) {
+        private XElement ExportMetadata(IEnumerable<string> contentTypes)
+        {
             var typesElement = new XElement("Types");
             var partsElement = new XElement("Parts");
             var typesToExport = _contentDefinitionManager.ListTypeDefinitions()
@@ -115,9 +129,12 @@ namespace Orchard.Recipes.Providers.Builders {
                 .ToList();
             var partsToExport = new Dictionary<string, ContentPartDefinition>();
 
-            foreach (var contentTypeDefinition in typesToExport.OrderBy(x => x.Name)) {
-                foreach (var contentPartDefinition in contentTypeDefinition.Parts.OrderBy(x => x.PartDefinition.Name)) {
-                    if (partsToExport.ContainsKey(contentPartDefinition.PartDefinition.Name)) {
+            foreach (var contentTypeDefinition in typesToExport.OrderBy(x => x.Name))
+            {
+                foreach (var contentPartDefinition in contentTypeDefinition.Parts.OrderBy(x => x.PartDefinition.Name))
+                {
+                    if (partsToExport.ContainsKey(contentPartDefinition.PartDefinition.Name))
+                    {
                         continue;
                     }
                     partsToExport.Add(contentPartDefinition.PartDefinition.Name, contentPartDefinition.PartDefinition);
@@ -125,16 +142,18 @@ namespace Orchard.Recipes.Providers.Builders {
                 typesElement.Add(_contentDefinitionWriter.Export(contentTypeDefinition));
             }
 
-            foreach (var part in partsToExport.Values.OrderBy(x => x.Name)) {
+            foreach (var part in partsToExport.Values.OrderBy(x => x.Name))
+            {
                 partsElement.Add(_contentDefinitionWriter.Export(part));
             }
 
             return new XElement("ContentDefinition", typesElement, partsElement);
         }
 
-        private XElement ExportData(IEnumerable<string> contentTypes, IEnumerable<ContentItem> contentItems) {
+        private XElement ExportData(IEnumerable<string> contentTypes, IEnumerable<ContentItem> contentItems)
+        {
             var data = new XElement("Content");
-            
+
             var orderedContentItemsQuery =
                 from contentItem in contentItems
                 let identity = _orchardServices.ContentManager.GetItemMetadata(contentItem).Identity.ToString()
@@ -143,10 +162,12 @@ namespace Orchard.Recipes.Providers.Builders {
 
             var orderedContentItems = orderedContentItemsQuery.ToList();
 
-            foreach (var contentType in contentTypes.OrderBy(x => x)) {
+            foreach (var contentType in contentTypes.OrderBy(x => x))
+            {
                 var type = contentType;
                 var items = orderedContentItems.Where(i => i.ContentType == type);
-                foreach (var contentItem in items) {
+                foreach (var contentItem in items)
+                {
                     var contentItemElement = ExportContentItem(contentItem);
                     if (contentItemElement != null)
                         data.Add(contentItemElement);
@@ -156,8 +177,10 @@ namespace Orchard.Recipes.Providers.Builders {
             return data;
         }
 
-        private VersionOptions GetContentExportVersionOptions(VersionHistoryOptions versionHistoryOptions) {
-            switch (versionHistoryOptions) {
+        private VersionOptions GetContentExportVersionOptions(VersionHistoryOptions versionHistoryOptions)
+        {
+            switch (versionHistoryOptions)
+            {
                 case VersionHistoryOptions.Draft:
                     return VersionOptions.Draft;
                 case VersionHistoryOptions.Latest:
@@ -168,7 +191,8 @@ namespace Orchard.Recipes.Providers.Builders {
             }
         }
 
-        private XElement ExportContentItem(ContentItem contentItem) {
+        private XElement ExportContentItem(ContentItem contentItem)
+        {
             return _orchardServices.ContentManager.Export(contentItem);
         }
     }

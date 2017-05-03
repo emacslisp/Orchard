@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using Orchard.ContentManagement;
 
-namespace Orchard.Projections.Descriptors.SortCriterion {
-    public class SortCriterionContext {
-        public SortCriterionContext() {
+namespace Orchard.Projections.Descriptors.SortCriterion
+{
+    public class SortCriterionContext
+    {
+        public SortCriterionContext()
+        {
             Tokens = new Dictionary<string, object>();
         }
 

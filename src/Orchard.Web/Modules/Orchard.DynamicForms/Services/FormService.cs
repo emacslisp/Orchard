@@ -22,8 +22,10 @@ using Orchard.Layouts.Services;
 using Orchard.Localization.Services;
 using Orchard.Services;
 
-namespace Orchard.DynamicForms.Services {
-    public class FormService : IFormService {
+namespace Orchard.DynamicForms.Services
+{
+    public class FormService : IFormService
+    {
         private readonly ILayoutSerializer _serializer;
         private readonly IClock _clock;
         private readonly IRepository<Submission> _submissionRepository;
@@ -38,17 +40,18 @@ namespace Orchard.DynamicForms.Services {
         private readonly ICultureAccessor _cultureAccessor;
 
         public FormService(
-            ILayoutSerializer serializer, 
-            IClock clock, 
-            IRepository<Submission> submissionRepository, 
-            IFormElementEventHandler elementHandlers, 
-            IContentDefinitionManager contentDefinitionManager, 
-            IBindingManager bindingManager, 
-            IDynamicFormEventHandler formEventHandler, 
+            ILayoutSerializer serializer,
+            IClock clock,
+            IRepository<Submission> submissionRepository,
+            IFormElementEventHandler elementHandlers,
+            IContentDefinitionManager contentDefinitionManager,
+            IBindingManager bindingManager,
+            IDynamicFormEventHandler formEventHandler,
             Lazy<IEnumerable<IElementValidator>> validators,
-            IDateLocalizationServices dateLocalizationServices, 
-            IOrchardServices services, 
-            ICultureAccessor cultureAccessor) {
+            IDateLocalizationServices dateLocalizationServices,
+            IOrchardServices services,
+            ICultureAccessor cultureAccessor)
+        {
 
             _serializer = serializer;
             _clock = clock;
@@ -64,24 +67,29 @@ namespace Orchard.DynamicForms.Services {
             _cultureAccessor = cultureAccessor;
         }
 
-        public Form FindForm(LayoutPart layoutPart, string formName = null) {
+        public Form FindForm(LayoutPart layoutPart, string formName = null)
+        {
             var elements = _serializer.Deserialize(layoutPart.LayoutData, new DescribeElementsContext { Content = layoutPart });
             var forms = elements.Flatten().Where(x => x is Form).Cast<Form>();
             return String.IsNullOrWhiteSpace(formName) ? forms.FirstOrDefault() : forms.FirstOrDefault(x => x.Name == formName);
         }
 
-        public IEnumerable<FormElement> GetFormElements(Form form) {
+        public IEnumerable<FormElement> GetFormElements(Form form)
+        {
             return form.Elements.Flatten().Where(x => x is FormElement).Cast<FormElement>();
         }
 
-        public IEnumerable<string> GetFormElementNames(Form form) {
+        public IEnumerable<string> GetFormElementNames(Form form)
+        {
             return GetFormElements(form).Select(x => x.Name).Where(x => !String.IsNullOrWhiteSpace(x)).Distinct();
         }
 
-        public NameValueCollection SubmitForm(IContent content, Form form, IValueProvider valueProvider, ModelStateDictionary modelState, IUpdateModel updater) {
+        public NameValueCollection SubmitForm(IContent content, Form form, IValueProvider valueProvider, ModelStateDictionary modelState, IUpdateModel updater)
+        {
             var values = ReadElementValues(form, valueProvider);
 
-            _formEventHandler.Submitted(new FormSubmittedEventContext {
+            _formEventHandler.Submitted(new FormSubmittedEventContext
+            {
                 Content = content,
                 Form = form,
                 FormService = this,
@@ -90,7 +98,8 @@ namespace Orchard.DynamicForms.Services {
                 Updater = updater
             });
 
-            _formEventHandler.Validating(new FormValidatingEventContext {
+            _formEventHandler.Validating(new FormValidatingEventContext
+            {
                 Content = content,
                 Form = form,
                 FormService = this,
@@ -100,7 +109,8 @@ namespace Orchard.DynamicForms.Services {
                 Updater = updater
             });
 
-            _formEventHandler.Validated(new FormValidatedEventContext {
+            _formEventHandler.Validated(new FormValidatedEventContext
+            {
                 Content = content,
                 Form = form,
                 FormService = this,
@@ -113,8 +123,10 @@ namespace Orchard.DynamicForms.Services {
             return values;
         }
 
-        public Submission CreateSubmission(string formName, NameValueCollection values) {
-            var submission = new Submission {
+        public Submission CreateSubmission(string formName, NameValueCollection values)
+        {
+            var submission = new Submission
+            {
                 FormName = formName,
                 CreatedUtc = _clock.UtcNow,
                 FormData = values.ToQueryString()
@@ -124,16 +136,19 @@ namespace Orchard.DynamicForms.Services {
             return submission;
         }
 
-        public Submission CreateSubmission(Submission submission) {
+        public Submission CreateSubmission(Submission submission)
+        {
             _submissionRepository.Create(submission);
             return submission;
         }
 
-        public Submission GetSubmission(int id) {
+        public Submission GetSubmission(int id)
+        {
             return _submissionRepository.Get(id);
         }
 
-        public IPageOfItems<Submission> GetSubmissions(string formName = null, int? skip = null, int? take = null) {
+        public IPageOfItems<Submission> GetSubmissions(string formName = null, int? skip = null, int? take = null)
+        {
             var query = _submissionRepository.Table;
 
             if (!String.IsNullOrWhiteSpace(formName))
@@ -145,41 +160,49 @@ namespace Orchard.DynamicForms.Services {
             if (skip != null && take.GetValueOrDefault() > 0)
                 query = query.Skip(skip.Value).Take(take.GetValueOrDefault());
 
-            return new PageOfItems<Submission>(query) {
+            return new PageOfItems<Submission>(query)
+            {
                 PageNumber = skip.GetValueOrDefault() * take.GetValueOrDefault(),
                 PageSize = take ?? Int32.MaxValue,
                 TotalItemCount = totalItemCount
             };
         }
 
-        public void DeleteSubmission(Submission submission) {
+        public void DeleteSubmission(Submission submission)
+        {
             _submissionRepository.Delete(submission);
         }
 
-        public int DeleteSubmissions(IEnumerable<int> submissionIds) {
+        public int DeleteSubmissions(IEnumerable<int> submissionIds)
+        {
             var submissions = _submissionRepository.Table.Where(x => submissionIds.Contains(x.Id)).ToArray();
 
-            foreach (var submission in submissions) {
+            foreach (var submission in submissions)
+            {
                 DeleteSubmission(submission);
             }
 
             return submissions.Length;
         }
 
-        public void ReadElementValues(FormElement element, ReadElementValuesContext context) {
+        public void ReadElementValues(FormElement element, ReadElementValuesContext context)
+        {
             _elementHandlers.GetElementValue(element, context);
         }
 
-        public NameValueCollection ReadElementValues(Form form, IValueProvider valueProvider) {
+        public NameValueCollection ReadElementValues(Form form, IValueProvider valueProvider)
+        {
             var formElements = GetFormElements(form);
             var values = new NameValueCollection();
 
             // Let each element provide its values.
-            foreach (var element in formElements) {
+            foreach (var element in formElements)
+            {
                 var context = new ReadElementValuesContext { ValueProvider = valueProvider };
                 ReadElementValues(element, context);
 
-                foreach (var key in from string key in context.Output where !String.IsNullOrWhiteSpace(key) && values[key] == null select key) {
+                foreach (var key in from string key in context.Output where !String.IsNullOrWhiteSpace(key) && values[key] == null select key)
+                {
                     var value = context.Output[key];
 
                     if (form.HtmlEncode)
@@ -191,11 +214,12 @@ namespace Orchard.DynamicForms.Services {
 
             // Collect any remaining form values not handled by any specific element.
             var requestForm = _services.WorkContext.HttpContext.Request.Form;
-            var blackList = new[] {"__RequestVerificationToken", "formName", "contentId"};
-            foreach (var key in 
-                from string key in requestForm 
-                where !String.IsNullOrWhiteSpace(key) && !blackList.Contains(key) && values[key] == null 
-                select key) {
+            var blackList = new[] { "__RequestVerificationToken", "formName", "contentId" };
+            foreach (var key in
+                from string key in requestForm
+                where !String.IsNullOrWhiteSpace(key) && !blackList.Contains(key) && values[key] == null
+                select key)
+            {
 
                 values.Add(key, requestForm[key]);
             }
@@ -203,31 +227,37 @@ namespace Orchard.DynamicForms.Services {
             return values;
         }
 
-        public DataTable GenerateDataTable(IEnumerable<Submission> submissions) {
+        public DataTable GenerateDataTable(IEnumerable<Submission> submissions)
+        {
             var records = submissions.Select(x => Tuple.Create(x, x.ToNameValues())).ToArray();
             var columnNames = new HashSet<string>();
             var dataTable = new DataTable();
 
-            foreach (var key in 
-                from record in records 
-                from string key in record.Item2 where !columnNames.Contains(key) 
+            foreach (var key in
+                from record in records
+                from string key in record.Item2
+                where !columnNames.Contains(key)
                 where !String.IsNullOrWhiteSpace(key)
-                select key) {
+                select key)
+            {
                 columnNames.Add(key);
             }
 
             dataTable.Columns.Add("Id");
             dataTable.Columns.Add("Created");
-            foreach (var columnName in columnNames) {
+            foreach (var columnName in columnNames)
+            {
                 dataTable.Columns.Add(columnName);
             }
 
-            foreach (var record in records) {
+            foreach (var record in records)
+            {
                 var dataRow = dataTable.NewRow();
 
                 dataRow["Id"] = record.Item1.Id;
                 dataRow["Created"] = _dateLocalizationServices.ConvertToSiteTimeZone(record.Item1.CreatedUtc).ToString(_cultureAccessor.CurrentCulture);
-                foreach (var columnName in columnNames) {
+                foreach (var columnName in columnNames)
+                {
                     var value = record.Item2[columnName];
                     dataRow[columnName] = value;
                 }
@@ -238,7 +268,8 @@ namespace Orchard.DynamicForms.Services {
             return dataTable;
         }
 
-        public ContentItem CreateContentItem(Form form, IValueProvider valueProvider) {
+        public ContentItem CreateContentItem(Form form, IValueProvider valueProvider)
+        {
             var contentTypeDefinition = _contentDefinitionManager.GetTypeDefinition(form.FormBindingContentType);
 
             if (contentTypeDefinition == null)
@@ -248,7 +279,8 @@ namespace Orchard.DynamicForms.Services {
 
             // Create the version record before updating fields to prevent those field values from being lost when invoking Create.
             // If Create is invoked while VersionRecord is null, a new VersionRecord will be created, wiping out our field values.
-            contentItem.VersionRecord = new ContentItemVersionRecord {
+            contentItem.VersionRecord = new ContentItemVersionRecord
+            {
                 ContentItemRecord = new ContentItemRecord(),
                 Number = 1,
                 Latest = true,
@@ -258,18 +290,22 @@ namespace Orchard.DynamicForms.Services {
             var lookup = _bindingManager.DescribeBindingsFor(contentTypeDefinition);
             var formElements = GetFormElements(form);
 
-            foreach (var element in formElements) {
+            foreach (var element in formElements)
+            {
                 var context = new ReadElementValuesContext { ValueProvider = valueProvider };
                 ReadElementValues(element, context);
 
                 var value = context.Output[element.Name];
                 var bindingSettings = element.Data.GetModel<FormBindingSettings>();
 
-                if (bindingSettings != null) {
-                    foreach (var partBindingSettings in bindingSettings.Parts) {
+                if (bindingSettings != null)
+                {
+                    foreach (var partBindingSettings in bindingSettings.Parts)
+                    {
                         InvokePartBindings(contentItem, lookup, partBindingSettings, value);
 
-                        foreach (var fieldBindingSettings in partBindingSettings.Fields) {
+                        foreach (var fieldBindingSettings in partBindingSettings.Fields)
+                        {
                             InvokeFieldBindings(contentItem, lookup, partBindingSettings, fieldBindingSettings, value);
                         }
                     }
@@ -279,38 +315,45 @@ namespace Orchard.DynamicForms.Services {
             var contentTypeSettings = contentTypeDefinition.Settings.GetModel<ContentTypeSettings>();
             _contentManager.Create(contentItem, VersionOptions.Draft);
 
-            if (form.Publication == "Publish" || !contentTypeSettings.Draftable) {
+            if (form.Publication == "Publish" || !contentTypeSettings.Draftable)
+            {
                 _contentManager.Publish(contentItem);
             }
-            
+
             return contentItem;
         }
 
-        public IEnumerable<IElementValidator> GetValidators<TElement>() where TElement : FormElement {
+        public IEnumerable<IElementValidator> GetValidators<TElement>() where TElement : FormElement
+        {
             return GetValidators(typeof(TElement));
         }
 
-        public IEnumerable<IElementValidator> GetValidators(FormElement element) {
+        public IEnumerable<IElementValidator> GetValidators(FormElement element)
+        {
             return GetValidators(element.GetType());
         }
 
-        public IEnumerable<IElementValidator> GetValidators(Type elementType) {
+        public IEnumerable<IElementValidator> GetValidators(Type elementType)
+        {
             return _validators.Value.Where(x => IsFormElementType(x, elementType)).ToArray();
         }
 
-        public IEnumerable<IElementValidator> GetValidators() {
+        public IEnumerable<IElementValidator> GetValidators()
+        {
             return _validators.Value.ToArray();
         }
 
-        public void RegisterClientValidationAttributes(FormElement element, RegisterClientValidationAttributesContext context) {
+        public void RegisterClientValidationAttributes(FormElement element, RegisterClientValidationAttributesContext context)
+        {
             _elementHandlers.RegisterClientValidation(element, context);
         }
 
         private static void InvokePartBindings(
-            ContentItem contentItem, 
-            IEnumerable<ContentPartBindingDescriptor> lookup, 
+            ContentItem contentItem,
+            IEnumerable<ContentPartBindingDescriptor> lookup,
             PartBindingSettings partBindingSettings,
-            string value) {
+            string value)
+        {
 
             var part = contentItem.Parts.FirstOrDefault(x => x.PartDefinition.Name == partBindingSettings.Name);
             if (part == null)
@@ -325,9 +368,11 @@ namespace Orchard.DynamicForms.Services {
                 select binding;
             var partBindings = partBindingsQuery.ToArray();
 
-            foreach (var binding in partBindingSettings.Bindings.Where(x => x.Enabled)) {
+            foreach (var binding in partBindingSettings.Bindings.Where(x => x.Enabled))
+            {
                 var localBinding = binding;
-                foreach (var partBinding in partBindings.Where(x => x.Name == localBinding.Name)) {
+                foreach (var partBinding in partBindings.Where(x => x.Name == localBinding.Name))
+                {
                     partBinding.Setter.DynamicInvoke(contentItem, part, value);
                 }
             }
@@ -338,7 +383,8 @@ namespace Orchard.DynamicForms.Services {
             IEnumerable<ContentPartBindingDescriptor> lookup,
             PartBindingSettings partBindingSettings,
             FieldBindingSettings fieldBindingSettings,
-            string value) {
+            string value)
+        {
 
             var part = contentItem.Parts.FirstOrDefault(x => x.PartDefinition.Name == partBindingSettings.Name);
             if (part == null)
@@ -348,7 +394,7 @@ namespace Orchard.DynamicForms.Services {
             if (field == null)
                 return;
 
-            var fieldBindingDescriptorsQuery = 
+            var fieldBindingDescriptorsQuery =
                 from partBindingDescriptor in lookup
                 where partBindingDescriptor.Part.PartDefinition.Name == partBindingSettings.Name
                 from fieldBindingDescriptor in partBindingDescriptor.FieldBindings
@@ -363,15 +409,18 @@ namespace Orchard.DynamicForms.Services {
                 select binding;
             var fieldBindings = fieldBindingsQuery.ToArray();
 
-            foreach (var binding in fieldBindingSettings.Bindings.Where(x => x.Enabled)) {
+            foreach (var binding in fieldBindingSettings.Bindings.Where(x => x.Enabled))
+            {
                 var localBinding = binding;
-                foreach (var fieldBinding in fieldBindings.Where(x => x.Name == localBinding.Name)) {
+                foreach (var fieldBinding in fieldBindings.Where(x => x.Name == localBinding.Name))
+                {
                     fieldBinding.Setter.DynamicInvoke(contentItem, field, value);
                 }
             }
         }
 
-        private static bool IsFormElementType(IElementValidator validator, Type elementType) {
+        private static bool IsFormElementType(IElementValidator validator, Type elementType)
+        {
             var validatorType = validator.GetType();
             var validatorElementType = validatorType.BaseType.GenericTypeArguments[0];
             return validatorElementType == elementType || validatorElementType.IsAssignableFrom(elementType);

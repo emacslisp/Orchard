@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Orchard.MultiTenancy.ViewModels {
-    public class TenantResetViewModel  {
-        public TenantResetViewModel() {
+namespace Orchard.MultiTenancy.ViewModels
+{
+    public class TenantResetViewModel
+    {
+        public TenantResetViewModel()
+        {
             DatabaseTableNames = Enumerable.Empty<string>();
         }
 

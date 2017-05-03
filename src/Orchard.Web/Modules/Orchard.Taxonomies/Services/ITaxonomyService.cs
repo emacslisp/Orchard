@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Orchard.ContentManagement;
 using Orchard.Taxonomies.Models;
 
-namespace Orchard.Taxonomies.Services {
-    public interface ITaxonomyService : IDependency {
+namespace Orchard.Taxonomies.Services
+{
+    public interface ITaxonomyService : IDependency
+    {
         /// <summary>
         /// Returns all the <see cref="TaxonomyPart" /> content items.
         /// </summary>

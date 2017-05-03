@@ -14,7 +14,7 @@
 </fieldset>
 
 @using(Script.Foot()) {
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     jQuery('#btn-@Html.FieldIdFor(m => m.ContentItemId)').click(function() {
         jQuery('#btn-@Html.FieldIdFor(m => m.ContentItemId)').trigger("orchard-admin-contentpicker-open", {
@@ -34,5 +34,5 @@
         });
     });
 //]]>
-</script>
+    </script>
 }

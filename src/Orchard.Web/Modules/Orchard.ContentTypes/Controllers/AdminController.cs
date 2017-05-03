@@ -18,9 +18,11 @@ using Orchard.UI;
 using Orchard.UI.Notify;
 using Orchard.Utility.Extensions;
 
-namespace Orchard.ContentTypes.Controllers {
+namespace Orchard.ContentTypes.Controllers
+{
     [ValidateInput(false)]
-    public class AdminController : Controller, IUpdateModel {
+    public class AdminController : Controller, IUpdateModel
+    {
         private readonly IContentDefinitionService _contentDefinitionService;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IPlacementService _placementService;
@@ -28,13 +30,14 @@ namespace Orchard.ContentTypes.Controllers {
         private readonly ShellSettings _settings;
 
         public AdminController(
-            IOrchardServices orchardServices, 
-            IContentDefinitionService contentDefinitionService, 
+            IOrchardServices orchardServices,
+            IContentDefinitionService contentDefinitionService,
             IContentDefinitionManager contentDefinitionManager,
             IPlacementService placementService,
             Lazy<IEnumerable<IShellSettingsManagerEventHandler>> settingsManagerEventHandlers,
             ShellSettings settings
-            ) {
+            )
+        {
             Services = orchardServices;
             _contentDefinitionService = contentDefinitionService;
             _contentDefinitionManager = contentDefinitionManager;
@@ -51,16 +54,19 @@ namespace Orchard.ContentTypes.Controllers {
 
         #region Types
 
-        public ActionResult List() {
+        public ActionResult List()
+        {
             if (!Services.Authorizer.Authorize(Permissions.ViewContentTypes, T("Not allowed to view content types.")))
                 return new HttpUnauthorizedResult();
 
-            return View("List", new ListContentTypesViewModel {
+            return View("List", new ListContentTypesViewModel
+            {
                 Types = _contentDefinitionService.GetTypes()
             });
         }
 
-        public ActionResult Create(string suggestion) {
+        public ActionResult Create(string suggestion)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to create a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -68,40 +74,47 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("Create")]
-        public ActionResult CreatePOST(CreateTypeViewModel viewModel) {
+        public ActionResult CreatePOST(CreateTypeViewModel viewModel)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to create a content type.")))
                 return new HttpUnauthorizedResult();
 
             viewModel.DisplayName = viewModel.DisplayName ?? String.Empty;
             viewModel.Name = viewModel.Name ?? String.Empty;
 
-            if (String.IsNullOrWhiteSpace(viewModel.DisplayName)) {
+            if (String.IsNullOrWhiteSpace(viewModel.DisplayName))
+            {
                 ModelState.AddModelError("DisplayName", T("The Display Name name can't be empty.").ToString());
             }
 
-            if (String.IsNullOrWhiteSpace(viewModel.Name)) {
+            if (String.IsNullOrWhiteSpace(viewModel.Name))
+            {
                 ModelState.AddModelError("Name", T("The Content Type Id can't be empty.").ToString());
             }
 
-            if (_contentDefinitionService.GetTypes().Any(t => String.Equals(t.Name.Trim(), viewModel.Name.Trim(), StringComparison.OrdinalIgnoreCase))) {
+            if (_contentDefinitionService.GetTypes().Any(t => String.Equals(t.Name.Trim(), viewModel.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
                 ModelState.AddModelError("Name", T("A type with the same Id already exists.").ToString());
             }
 
-            if (!String.IsNullOrWhiteSpace(viewModel.Name) && !viewModel.Name[0].IsLetter()) {
+            if (!String.IsNullOrWhiteSpace(viewModel.Name) && !viewModel.Name[0].IsLetter())
+            {
                 ModelState.AddModelError("Name", T("The technical name must start with a letter.").ToString());
             }
 
-            if (_contentDefinitionService.GetTypes().Any(t => String.Equals(t.DisplayName.Trim(), viewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase))) {
+            if (_contentDefinitionService.GetTypes().Any(t => String.Equals(t.DisplayName.Trim(), viewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
                 ModelState.AddModelError("DisplayName", T("A type with the same Display Name already exists.").ToString());
             }
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 return View(viewModel);
             }
 
             var contentTypeDefinition = _contentDefinitionService.AddType(viewModel.Name, viewModel.DisplayName);
-            
+
             // adds CommonPart by default
             _contentDefinitionService.AddPartToType("CommonPart", viewModel.Name);
 
@@ -113,21 +126,26 @@ namespace Orchard.ContentTypes.Controllers {
             return RedirectToAction("AddPartsTo", new { id = typeViewModel.Name });
         }
 
-        public ActionResult ContentTypeName(string displayName, int version) {
-            return Json(new {
+        public ActionResult ContentTypeName(string displayName, int version)
+        {
+            return Json(new
+            {
                 result = _contentDefinitionService.GenerateContentTypeNameFromDisplayName(displayName),
                 version = version
             });
         }
 
-        public ActionResult FieldName(string partName, string displayName, int version) {
-            return Json(new {
+        public ActionResult FieldName(string partName, string displayName, int version)
+        {
+            return Json(new
+            {
                 result = _contentDefinitionService.GenerateFieldNameFromDisplayName(partName, displayName),
                 version = version
             });
         }
 
-        public ActionResult Edit(string id) {
+        public ActionResult Edit(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -139,7 +157,8 @@ namespace Orchard.ContentTypes.Controllers {
             return View(typeViewModel);
         }
 
-        public ActionResult EditPlacement(string id) {
+        public ActionResult EditPlacement(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -148,9 +167,10 @@ namespace Orchard.ContentTypes.Controllers {
             if (contentTypeDefinition == null)
                 return HttpNotFound();
 
-            var placementModel = new EditPlacementViewModel {
+            var placementModel = new EditPlacementViewModel
+            {
                 PlacementSettings = contentTypeDefinition.GetPlacement(PlacementType.Editor),
-                AllPlacements = _placementService.GetEditorPlacement(id).OrderBy(x => x.PlacementSettings.Position, new FlatPositionComparer()).ThenBy(x => x.PlacementSettings.ShapeType).ToList(), 
+                AllPlacements = _placementService.GetEditorPlacement(id).OrderBy(x => x.PlacementSettings.Position, new FlatPositionComparer()).ThenBy(x => x.PlacementSettings.ShapeType).ToList(),
                 ContentTypeDefinition = contentTypeDefinition,
             };
 
@@ -159,7 +179,8 @@ namespace Orchard.ContentTypes.Controllers {
 
         [HttpPost, ActionName("EditPlacement")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditPlacementPost(string id, EditPlacementViewModel viewModel) {
+        public ActionResult EditPlacementPost(string id, EditPlacementViewModel viewModel)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -173,15 +194,18 @@ namespace Orchard.ContentTypes.Controllers {
 
             contentTypeDefinition.ResetPlacement(PlacementType.Editor);
 
-            foreach(var driverPlacement in viewModel.AllPlacements) {
+            foreach (var driverPlacement in viewModel.AllPlacements)
+            {
                 // if the placement has changed, persist it
-                if (!allPlacements.Any(x => x.PlacementSettings.Equals(driverPlacement.PlacementSettings))) {
+                if (!allPlacements.Any(x => x.PlacementSettings.Equals(driverPlacement.PlacementSettings)))
+                {
                     result = result.Where(x => !x.IsSameAs(driverPlacement.PlacementSettings)).ToList();
                     result.Add(driverPlacement.PlacementSettings);
                 }
             }
 
-            foreach(var placementSetting in result) {
+            foreach (var placementSetting in result)
+            {
                 contentTypeDefinition.Placement(PlacementType.Editor,
                                 placementSetting.ShapeType,
                                 placementSetting.Differentiator,
@@ -195,12 +219,13 @@ namespace Orchard.ContentTypes.Controllers {
 
             _settingsManagerEventHandlers.Value.Invoke(x => x.Saved(_settings), Logger);
 
-            return RedirectToAction("EditPlacement", new {id});
+            return RedirectToAction("EditPlacement", new { id });
         }
 
         [HttpPost, ActionName("EditPlacement")]
         [FormValueRequired("submit.Restore")]
-        public ActionResult EditPlacementRestorePost(string id, EditPlacementViewModel viewModel) {
+        public ActionResult EditPlacementRestorePost(string id, EditPlacementViewModel viewModel)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -221,7 +246,8 @@ namespace Orchard.ContentTypes.Controllers {
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditPOST(string id) {
+        public ActionResult EditPOST(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -234,11 +260,13 @@ namespace Orchard.ContentTypes.Controllers {
             TryUpdateModel(edited);
             typeViewModel.DisplayName = edited.DisplayName ?? string.Empty;
 
-            if ( String.IsNullOrWhiteSpace(typeViewModel.DisplayName) ) {
+            if (String.IsNullOrWhiteSpace(typeViewModel.DisplayName))
+            {
                 ModelState.AddModelError("DisplayName", T("The Content Type name can't be empty.").ToString());
             }
 
-            if ( _contentDefinitionService.GetTypes().Any(t => String.Equals(t.DisplayName.Trim(), typeViewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase) && !String.Equals(t.Name, id)) ) {
+            if (_contentDefinitionService.GetTypes().Any(t => String.Equals(t.DisplayName.Trim(), typeViewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase) && !String.Equals(t.Name, id)))
+            {
                 ModelState.AddModelError("DisplayName", T("A type with the same name already exists.").ToString());
             }
 
@@ -247,7 +275,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             _contentDefinitionService.AlterType(typeViewModel, this);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 return View(typeViewModel);
             }
@@ -259,7 +288,8 @@ namespace Orchard.ContentTypes.Controllers {
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Delete")]
-        public ActionResult Delete(string id) {
+        public ActionResult Delete(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to delete a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -271,11 +301,12 @@ namespace Orchard.ContentTypes.Controllers {
             _contentDefinitionService.RemoveType(id, true);
 
             Services.Notifier.Success(T("\"{0}\" has been removed.", typeViewModel.DisplayName));
-            
+
             return RedirectToAction("List");
         }
 
-        public ActionResult AddPartsTo(string id) {
+        public ActionResult AddPartsTo(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -286,7 +317,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             var typePartNames = new HashSet<string>(typeViewModel.Parts.Select(tvm => tvm.PartDefinition.Name));
 
-            var viewModel = new AddPartsViewModel {
+            var viewModel = new AddPartsViewModel
+            {
                 Type = typeViewModel,
                 PartSelections = _contentDefinitionService.GetParts(false/*metadataPartsOnly*/)
                     .Where(cpd => !typePartNames.Contains(cpd.Name) && cpd.Settings.GetModel<ContentPartSettings>().Attachable)
@@ -298,7 +330,8 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("AddPartsTo")]
-        public ActionResult AddPartsToPOST(string id) {
+        public ActionResult AddPartsToPOST(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -312,20 +345,23 @@ namespace Orchard.ContentTypes.Controllers {
                 return AddPartsTo(id);
 
             var partsToAdd = viewModel.PartSelections.Where(ps => ps.IsSelected).Select(ps => ps.PartName);
-            foreach (var partToAdd in partsToAdd) {
+            foreach (var partToAdd in partsToAdd)
+            {
                 _contentDefinitionService.AddPartToType(partToAdd, typeViewModel.Name);
                 Services.Notifier.Success(T("The \"{0}\" part has been added.", partToAdd));
             }
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 return AddPartsTo(id);
             }
 
-            return RedirectToAction("Edit", new {id});
+            return RedirectToAction("Edit", new { id });
         }
 
-        public ActionResult RemovePartFrom(string id) {
+        public ActionResult RemovePartFrom(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -342,7 +378,8 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("RemovePartFrom")]
-        public ActionResult RemovePartFromPOST(string id) {
+        public ActionResult RemovePartFromPOST(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -356,7 +393,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             _contentDefinitionService.RemovePartFromType(viewModel.Name, typeViewModel.Name);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 viewModel.Type = typeViewModel;
                 return View(viewModel);
@@ -364,21 +402,24 @@ namespace Orchard.ContentTypes.Controllers {
 
             Services.Notifier.Success(T("The \"{0}\" part has been removed.", viewModel.Name));
 
-            return RedirectToAction("Edit", new {id});
+            return RedirectToAction("Edit", new { id });
         }
 
         #endregion
 
         #region Parts
 
-        public ActionResult ListParts() {
-            return View(new ListContentPartsViewModel {
+        public ActionResult ListParts()
+        {
+            return View(new ListContentPartsViewModel
+            {
                 // only user-defined parts (not code as they are not configurable)
                 Parts = _contentDefinitionService.GetParts(true/*metadataPartsOnly*/)
             });
         }
 
-        public ActionResult CreatePart(string suggestion) {
+        public ActionResult CreatePart(string suggestion)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to create a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -386,7 +427,8 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("CreatePart")]
-        public ActionResult CreatePartPOST(CreatePartViewModel viewModel) {
+        public ActionResult CreatePartPOST(CreatePartViewModel viewModel)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to create a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -398,7 +440,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             var partViewModel = _contentDefinitionService.AddPart(viewModel);
 
-            if (partViewModel == null) {
+            if (partViewModel == null)
+            {
                 Services.Notifier.Error(T("The content part could not be created."));
                 return View(viewModel);
             }
@@ -407,7 +450,8 @@ namespace Orchard.ContentTypes.Controllers {
             return RedirectToAction("EditPart", new { id = partViewModel.Name });
         }
 
-        public ActionResult EditPart(string id) {
+        public ActionResult EditPart(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -421,7 +465,8 @@ namespace Orchard.ContentTypes.Controllers {
 
         [HttpPost, ActionName("EditPart")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditPartPOST(string id) {
+        public ActionResult EditPartPOST(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -435,7 +480,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             _contentDefinitionService.AlterPart(partViewModel, this);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 return View(partViewModel);
             }
@@ -464,13 +510,15 @@ namespace Orchard.ContentTypes.Controllers {
             return RedirectToAction("ListParts");
         }
 
-        public ActionResult AddFieldTo(string id) {
+        public ActionResult AddFieldTo(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
             var partViewModel = _contentDefinitionService.GetPart(id);
 
-            if (partViewModel == null) {
+            if (partViewModel == null)
+            {
                 //id passed in might be that of a type w/ no implicit field
                 var typeViewModel = _contentDefinitionService.GetType(id);
                 if (typeViewModel != null)
@@ -479,7 +527,8 @@ namespace Orchard.ContentTypes.Controllers {
                     return HttpNotFound();
             }
 
-            var viewModel = new AddFieldViewModel {
+            var viewModel = new AddFieldViewModel
+            {
                 Part = partViewModel,
                 Fields = _contentDefinitionService.GetFields().OrderBy(x => x.FieldTypeName)
             };
@@ -488,20 +537,24 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("AddFieldTo")]
-        public ActionResult AddFieldToPOST(AddFieldViewModel viewModel, string id) {
+        public ActionResult AddFieldToPOST(AddFieldViewModel viewModel, string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
             var partViewModel = _contentDefinitionService.GetPart(id);
             var typeViewModel = _contentDefinitionService.GetType(id);
-            if (partViewModel == null) {
+            if (partViewModel == null)
+            {
                 // id passed in might be that of a type w/ no implicit field
-                if (typeViewModel != null) {
-                    partViewModel = new EditPartViewModel {Name = typeViewModel.Name};
-                    _contentDefinitionService.AddPart(new CreatePartViewModel {Name = partViewModel.Name});
+                if (typeViewModel != null)
+                {
+                    partViewModel = new EditPartViewModel { Name = typeViewModel.Name };
+                    _contentDefinitionService.AddPart(new CreatePartViewModel { Name = partViewModel.Name });
                     _contentDefinitionService.AddPartToType(partViewModel.Name, typeViewModel.Name);
                 }
-                else {
+                else
+                {
                     return HttpNotFound();
                 }
             }
@@ -510,31 +563,38 @@ namespace Orchard.ContentTypes.Controllers {
             viewModel.DisplayName = viewModel.DisplayName.Trim();
             viewModel.Name = viewModel.Name ?? String.Empty;
 
-            if (String.IsNullOrWhiteSpace(viewModel.DisplayName)) {
+            if (String.IsNullOrWhiteSpace(viewModel.DisplayName))
+            {
                 ModelState.AddModelError("DisplayName", T("The Display Name name can't be empty.").ToString());
             }
 
-            if (String.IsNullOrWhiteSpace(viewModel.Name)) {
+            if (String.IsNullOrWhiteSpace(viewModel.Name))
+            {
                 ModelState.AddModelError("Name", T("The Technical Name can't be empty.").ToString());
             }
 
-            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => String.Equals(t.Name.Trim(), viewModel.Name.Trim(), StringComparison.OrdinalIgnoreCase))) {
+            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => String.Equals(t.Name.Trim(), viewModel.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
                 ModelState.AddModelError("Name", T("A field with the same name already exists.").ToString());
             }
 
-            if (!String.IsNullOrWhiteSpace(viewModel.Name) && !viewModel.Name[0].IsLetter()) {
+            if (!String.IsNullOrWhiteSpace(viewModel.Name) && !viewModel.Name[0].IsLetter())
+            {
                 ModelState.AddModelError("Name", T("The technical name must start with a letter.").ToString());
             }
 
-            if (!String.Equals(viewModel.Name, viewModel.Name.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
+            if (!String.Equals(viewModel.Name, viewModel.Name.ToSafeName(), StringComparison.OrdinalIgnoreCase))
+            {
                 ModelState.AddModelError("Name", T("The technical name contains invalid characters.").ToString());
             }
 
-            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => String.Equals(t.DisplayName.Trim(), Convert.ToString(viewModel.DisplayName).Trim(), StringComparison.OrdinalIgnoreCase))) {
+            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => String.Equals(t.DisplayName.Trim(), Convert.ToString(viewModel.DisplayName).Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
                 ModelState.AddModelError("DisplayName", T("A field with the same Display Name already exists.").ToString());
             }
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 viewModel.Part = partViewModel;
                 viewModel.Fields = _contentDefinitionService.GetFields();
 
@@ -543,10 +603,12 @@ namespace Orchard.ContentTypes.Controllers {
                 return View(viewModel);
             }
 
-            try {
+            try
+            {
                 _contentDefinitionService.AddFieldToPart(viewModel.Name, viewModel.DisplayName, viewModel.FieldTypeName, partViewModel.Name);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Services.Notifier.Error(T("The \"{0}\" field was not added. {1}", viewModel.DisplayName, ex.Message));
                 Services.TransactionManager.Cancel();
                 return AddFieldTo(id);
@@ -554,30 +616,35 @@ namespace Orchard.ContentTypes.Controllers {
 
             Services.Notifier.Success(T("The \"{0}\" field has been added.", viewModel.DisplayName));
 
-            if (typeViewModel != null) {
-                return RedirectToAction("Edit", new {id});
+            if (typeViewModel != null)
+            {
+                return RedirectToAction("Edit", new { id });
             }
 
             return RedirectToAction("EditPart", new { id });
         }
 
-        public ActionResult EditField(string id, string name) {
+        public ActionResult EditField(string id, string name)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
             var partViewModel = _contentDefinitionService.GetPart(id);
 
-            if (partViewModel == null) {
+            if (partViewModel == null)
+            {
                 return HttpNotFound();
             }
 
             var fieldViewModel = partViewModel.Fields.FirstOrDefault(x => x.Name == name);
 
-            if(fieldViewModel == null) {
+            if (fieldViewModel == null)
+            {
                 return HttpNotFound();
             }
 
-            var viewModel = new EditFieldNameViewModel {
+            var viewModel = new EditFieldNameViewModel
+            {
                 Name = fieldViewModel.Name,
                 DisplayName = fieldViewModel.DisplayName
             };
@@ -587,7 +654,8 @@ namespace Orchard.ContentTypes.Controllers {
 
         [HttpPost, ActionName("EditField")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditFieldPOST(string id, EditFieldNameViewModel viewModel) {
+        public ActionResult EditFieldPOST(string id, EditFieldNameViewModel viewModel)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content type.")))
                 return new HttpUnauthorizedResult();
 
@@ -596,31 +664,36 @@ namespace Orchard.ContentTypes.Controllers {
 
             var partViewModel = _contentDefinitionService.GetPart(id);
 
-            if (partViewModel == null) {
+            if (partViewModel == null)
+            {
                 return HttpNotFound();
             }
 
             // prevent null reference exception in validation
             viewModel.DisplayName = viewModel.DisplayName ?? String.Empty;
-            
+
             // remove extra spaces
             viewModel.DisplayName = viewModel.DisplayName.Trim();
 
-            if (String.IsNullOrWhiteSpace(viewModel.DisplayName)) {
+            if (String.IsNullOrWhiteSpace(viewModel.DisplayName))
+            {
                 ModelState.AddModelError("DisplayName", T("The Display Name name can't be empty.").ToString());
             }
-            
-            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => t.Name != viewModel.Name && String.Equals(t.DisplayName.Trim(), viewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase))) {
+
+            if (_contentDefinitionService.GetPart(partViewModel.Name).Fields.Any(t => t.Name != viewModel.Name && String.Equals(t.DisplayName.Trim(), viewModel.DisplayName.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
                 ModelState.AddModelError("DisplayName", T("A field with the same Display Name already exists.").ToString());
             }
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 return View(viewModel);
             }
 
             var field = _contentDefinitionManager.GetPartDefinition(id).Fields.FirstOrDefault(x => x.Name == viewModel.Name);
 
-            if(field == null) {
+            if (field == null)
+            {
                 return HttpNotFound();
             }
 
@@ -630,14 +703,16 @@ namespace Orchard.ContentTypes.Controllers {
 
             // redirect to the type editor if a type exists with this name
             var typeViewModel = _contentDefinitionService.GetType(id);
-            if (typeViewModel != null) {
+            if (typeViewModel != null)
+            {
                 return RedirectToAction("Edit", new { id });
             }
 
             return RedirectToAction("EditPart", new { id });
         }
 
-        public ActionResult RemoveFieldFrom(string id) {
+        public ActionResult RemoveFieldFrom(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -654,7 +729,8 @@ namespace Orchard.ContentTypes.Controllers {
         }
 
         [HttpPost, ActionName("RemoveFieldFrom")]
-        public ActionResult RemoveFieldFromPOST(string id) {
+        public ActionResult RemoveFieldFromPOST(string id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.EditContentTypes, T("Not allowed to edit a content part.")))
                 return new HttpUnauthorizedResult();
 
@@ -668,7 +744,8 @@ namespace Orchard.ContentTypes.Controllers {
 
             _contentDefinitionService.RemoveFieldFromPart(viewModel.Name, partViewModel.Name);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 viewModel.Part = partViewModel;
                 return View(viewModel);
@@ -684,11 +761,13 @@ namespace Orchard.ContentTypes.Controllers {
 
         #endregion
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return base.TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

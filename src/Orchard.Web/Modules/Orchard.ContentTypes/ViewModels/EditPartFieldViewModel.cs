@@ -2,14 +2,18 @@
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.ViewModels;
 
-namespace Orchard.ContentTypes.ViewModels {
-    public class EditPartFieldViewModel {
+namespace Orchard.ContentTypes.ViewModels
+{
+    public class EditPartFieldViewModel
+    {
 
-        public EditPartFieldViewModel() {
+        public EditPartFieldViewModel()
+        {
             Settings = new SettingsDictionary();
         }
 
-        public EditPartFieldViewModel(int index, ContentPartFieldDefinition field) {
+        public EditPartFieldViewModel(int index, ContentPartFieldDefinition field)
+        {
             Index = index;
             Name = field.Name;
             DisplayName = field.DisplayName;

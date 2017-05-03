@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Web.Routing;
 
-namespace Orchard.Alias {
-    public interface IAliasService : IDependency {
+namespace Orchard.Alias
+{
+    public interface IAliasService : IDependency
+    {
         RouteValueDictionary Get(string aliasPath);
         void Set(string aliasPath, RouteValueDictionary routeValues, string aliasSource, bool isManaged = false);
         void Set(string aliasPath, string routePath, string aliasSource, bool isManaged = false);

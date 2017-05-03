@@ -1,7 +1,7 @@
 ﻿@model BindingSelectViewModel
 @using Orchard.Projections.Models;
 @using Orchard.Projections.ViewModels;
-           
+
 @{
     Layout.Title = T("Add a Binding");
 }
@@ -15,9 +15,9 @@
     if (!record.Members.Any()) {
         continue;
     }
-    
+
     <h2>@record.FullName</h2>
-    
+
     <table class="items">
         <thead>
             <tr>
@@ -25,9 +25,9 @@
             </tr>
         </thead>
         @foreach (var member in record.Members) {
-        <tr>
-            <td>@Html.ActionLink(member.Member, "Create", new { fullName = record.FullName, member = member.Member })</td>
-        </tr>
+            <tr>
+                <td>@Html.ActionLink(member.Member, "Create", new { fullName = record.FullName, member = member.Member })</td>
+            </tr>
         }
     </table>
 }

@@ -14,10 +14,12 @@ using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 using Orchard.Settings;
 
-namespace Orchard.Blogs.Controllers {
+namespace Orchard.Blogs.Controllers
+{
 
     [ValidateInput(false), Admin]
-    public class BlogAdminController : Controller, IUpdateModel {
+    public class BlogAdminController : Controller, IUpdateModel
+    {
         private readonly IBlogService _blogService;
         private readonly IBlogPostService _blogPostService;
         private readonly IContentManager _contentManager;
@@ -31,7 +33,8 @@ namespace Orchard.Blogs.Controllers {
             IContentManager contentManager,
             ITransactionManager transactionManager,
             ISiteService siteService,
-            IShapeFactory shapeFactory) {
+            IShapeFactory shapeFactory)
+        {
             Services = services;
             _blogService = blogService;
             _blogPostService = blogPostService;
@@ -46,7 +49,8 @@ namespace Orchard.Blogs.Controllers {
         public Localizer T { get; set; }
         public IOrchardServices Services { get; set; }
 
-        public ActionResult Create() {
+        public ActionResult Create()
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, T("Not allowed to create blogs")))
                 return new HttpUnauthorizedResult();
 
@@ -59,7 +63,8 @@ namespace Orchard.Blogs.Controllers {
         }
 
         [HttpPost, ActionName("Create")]
-        public ActionResult CreatePOST() {
+        public ActionResult CreatePOST()
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, T("Couldn't create blog")))
                 return new HttpUnauthorizedResult();
 
@@ -68,7 +73,8 @@ namespace Orchard.Blogs.Controllers {
             _contentManager.Create(blog, VersionOptions.Draft);
             var model = _contentManager.UpdateEditor(blog, this);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 _transactionManager.Cancel();
                 return View(model);
             }
@@ -77,7 +83,8 @@ namespace Orchard.Blogs.Controllers {
             return Redirect(Url.BlogForAdmin(blog));
         }
 
-        public ActionResult Edit(int blogId) {
+        public ActionResult Edit(int blogId)
+        {
             var blog = _blogService.Get(blogId, VersionOptions.Latest);
 
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, blog, T("Not allowed to edit blog")))
@@ -92,7 +99,8 @@ namespace Orchard.Blogs.Controllers {
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Delete")]
-        public ActionResult EditDeletePOST(int blogId) {
+        public ActionResult EditDeletePOST(int blogId)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, T("Couldn't delete blog")))
                 return new HttpUnauthorizedResult();
 
@@ -109,7 +117,8 @@ namespace Orchard.Blogs.Controllers {
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditPOST(int blogId) {
+        public ActionResult EditPOST(int blogId)
+        {
             var blog = _blogService.Get(blogId, VersionOptions.DraftRequired);
 
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, blog, T("Couldn't edit blog")))
@@ -119,7 +128,8 @@ namespace Orchard.Blogs.Controllers {
                 return HttpNotFound();
 
             var model = Services.ContentManager.UpdateEditor(blog, this);
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 Services.TransactionManager.Cancel();
                 return View(model);
             }
@@ -131,7 +141,8 @@ namespace Orchard.Blogs.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Remove(int blogId) {
+        public ActionResult Remove(int blogId)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageBlogs, T("Couldn't delete blog")))
                 return new HttpUnauthorizedResult();
 
@@ -146,22 +157,25 @@ namespace Orchard.Blogs.Controllers {
             return Redirect(Url.BlogsForAdmin());
         }
 
-        public ActionResult List() {
+        public ActionResult List()
+        {
             var list = Services.New.List();
             list.AddRange(_blogService.Get(VersionOptions.Latest)
                 .Where(x => Services.Authorizer.Authorize(Permissions.MetaListOwnBlogs, x))
-                .Select(b => {
-                            var blog = Services.ContentManager.BuildDisplay(b, "SummaryAdmin");
-                            blog.TotalPostCount = _blogPostService.PostCount(b, VersionOptions.Latest);
-                            return blog;
-                        }));
+                .Select(b =>
+                {
+                    var blog = Services.ContentManager.BuildDisplay(b, "SummaryAdmin");
+                    blog.TotalPostCount = _blogPostService.PostCount(b, VersionOptions.Latest);
+                    return blog;
+                }));
 
             var viewModel = Services.New.ViewModel()
                 .ContentItems(list);
             return View(viewModel);
         }
 
-        public ActionResult Item(int blogId, PagerParameters pagerParameters) {
+        public ActionResult Item(int blogId, PagerParameters pagerParameters)
+        {
             Pager pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             BlogPart blogPart = _blogService.Get(blogId, VersionOptions.Latest).As<BlogPart>();
 
@@ -183,11 +197,13 @@ namespace Orchard.Blogs.Controllers {
             return View(blog);
         }
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

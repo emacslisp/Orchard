@@ -1,6 +1,9 @@
-﻿namespace Orchard.Azure.MediaServices.Models.Assets {
-    public class DisplayLocator {
-        public DisplayLocator(string name, string id, string url) {
+﻿namespace Orchard.Azure.MediaServices.Models.Assets
+{
+    public class DisplayLocator
+    {
+        public DisplayLocator(string name, string id, string url)
+        {
             Name = name;
             Id = id;
             Url = url;

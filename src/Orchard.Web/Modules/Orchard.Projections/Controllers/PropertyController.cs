@@ -14,9 +14,11 @@ using Orchard.Security;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 
-namespace Orchard.Projections.Controllers {
+namespace Orchard.Projections.Controllers
+{
     [ValidateInput(false), Admin]
-    public class PropertyController : Controller {
+    public class PropertyController : Controller
+    {
         public IOrchardServices Services { get; set; }
         private readonly IFormManager _formManager;
         private readonly IProjectionManager _projectionManager;
@@ -32,7 +34,8 @@ namespace Orchard.Projections.Controllers {
             IRepository<PropertyRecord> repository,
             IRepository<LayoutRecord> layoutRepository,
             IPropertyService propertyService,
-            IQueryService queryService) {
+            IQueryService queryService)
+        {
             Services = services;
             _formManager = formManager;
             _projectionManager = projectionManager;
@@ -45,7 +48,8 @@ namespace Orchard.Projections.Controllers {
         public Localizer T { get; set; }
         public dynamic Shape { get; set; }
 
-        public ActionResult Add(int id) {
+        public ActionResult Add(int id)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageQueries, T("Not authorized to manage queries")))
                 return new HttpUnauthorizedResult();
 
@@ -54,12 +58,14 @@ namespace Orchard.Projections.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Delete(int id, int propertyId) {
+        public ActionResult Delete(int id, int propertyId)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageQueries, T("Not authorized to manage queries")))
                 return new HttpUnauthorizedResult();
 
             var property = _repository.Get(propertyId);
-            if(property == null) {
+            if (property == null)
+            {
                 return HttpNotFound();
             }
 
@@ -71,35 +77,42 @@ namespace Orchard.Projections.Controllers {
             return RedirectToAction("Edit", "Layout", new { id });
         }
 
-        public ActionResult Edit(int id, string category, string type, int propertyId = -1) {
+        public ActionResult Edit(int id, string category, string type, int propertyId = -1)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageQueries, T("Not authorized to manage queries")))
                 return new HttpUnauthorizedResult();
 
             var property = _projectionManager.DescribeProperties().SelectMany(x => x.Descriptors).Where(x => x.Category == category && x.Type == type).FirstOrDefault();
 
-            if (property == null) {
+            if (property == null)
+            {
                 return HttpNotFound();
             }
 
-            var viewModel = new PropertyEditViewModel {
-                Id = id, 
-                Description = String.Empty, 
+            var viewModel = new PropertyEditViewModel
+            {
+                Id = id,
+                Description = String.Empty,
                 Property = property
             };
 
             dynamic form = null;
             // build the form, and let external components alter it
-            if (property.Form != null) {
+            if (property.Form != null)
+            {
                 form = _formManager.Build(property.Form);
                 viewModel.Form = form;
             }
 
             // bind form with existing values.
-            if (propertyId != -1) {
+            if (propertyId != -1)
+            {
                 var propertyRecord = _repository.Get(propertyId);
-                if (propertyRecord != null) {
+                if (propertyRecord != null)
+                {
                     viewModel.Description = propertyRecord.Description;
-                    if (property.Form != null) {
+                    if (property.Form != null)
+                    {
                         var parameters = FormParametersHelper.FromString(propertyRecord.State);
                         _formManager.Bind(form, new DictionaryValueProvider<string>(parameters, CultureInfo.InvariantCulture));
                     }
@@ -139,7 +152,8 @@ namespace Orchard.Projections.Controllers {
         }
 
         [HttpPost, ActionName("Edit")]
-        public ActionResult EditPost(int id, string category, string type, [DefaultValue(-1)]int propertyId, FormCollection formCollection) {
+        public ActionResult EditPost(int id, string category, string type, [DefaultValue(-1)]int propertyId, FormCollection formCollection)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageQueries, T("Not authorized to manage queries")))
                 return new HttpUnauthorizedResult();
             var layout = _layoutRepository.Get(id);
@@ -152,14 +166,17 @@ namespace Orchard.Projections.Controllers {
             // validating form values
             _formManager.Validate(new ValidatingContext { FormName = property.Form, ModelState = ModelState, ValueProvider = ValueProvider });
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 var propertyRecord = layout.Properties.Where(f => f.Id == propertyId).FirstOrDefault();
 
                 // add new property record if it's a newly created property
-                if (propertyRecord == null) {
-                    propertyRecord = new PropertyRecord {
-                        Category = category, 
-                        Type = type, 
+                if (propertyRecord == null)
+                {
+                    propertyRecord = new PropertyRecord
+                    {
+                        Category = category,
+                        Type = type,
                         Position = layout.Properties.Count
                     };
                     layout.Properties.Add(propertyRecord);
@@ -212,14 +229,18 @@ namespace Orchard.Projections.Controllers {
             return View(viewModel);
         }
 
-        public ActionResult Move(string direction, int id, int layoutId) {
+        public ActionResult Move(string direction, int id, int layoutId)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageQueries, T("Not authorized to manage queries")))
                 return new HttpUnauthorizedResult();
 
-            switch (direction) {
-                case "up": _propertyService.MoveUp(id);
+            switch (direction)
+            {
+                case "up":
+                    _propertyService.MoveUp(id);
                     break;
-                case "down": _propertyService.MoveDown(id);
+                case "down":
+                    _propertyService.MoveDown(id);
                     break;
                 default:
                     throw new ArgumentException("direction");

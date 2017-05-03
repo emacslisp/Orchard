@@ -14,22 +14,22 @@
     @Html.HiddenFor(m => m.ExtensionDescriptor.Id)
 
     if (Model.Recipes != null && Model.Recipes.Count > 0) {
-        <fieldset>
-            <legend>@T("Pick the recipes you want to run").ToString()</legend>
+    <fieldset>
+        <legend>@T("Pick the recipes you want to run").ToString()</legend>
 
-            @{ var recipeIndex = 0; }
-            @foreach (PackagingInstallRecipeViewModel recipe in Model.Recipes) {
-                <div>
-                    @Html.HiddenFor(m => m.Recipes[recipeIndex].Recipe.Name)
+        @{ var recipeIndex = 0; }
+        @foreach (PackagingInstallRecipeViewModel recipe in Model.Recipes) {
+            <div>
+                @Html.HiddenFor(m => m.Recipes[recipeIndex].Recipe.Name)
 
-                    @Html.EditorFor(m => m.Recipes[recipeIndex].Execute)
+                @Html.EditorFor(m => m.Recipes[recipeIndex].Execute)
 
-                    <label class="forcheckbox" for="@Html.FieldIdFor(m => m.Recipes[recipeIndex].Execute)">@recipe.Recipe.Name</label>
+                <label class="forcheckbox" for="@Html.FieldIdFor(m => m.Recipes[recipeIndex].Execute)">@recipe.Recipe.Name</label>
 
-                    @{ recipeIndex++; }
-                </div>
+                @{ recipeIndex++; }
+            </div>
             }
-        </fieldset>
+    </fieldset>
     }
 
     <fieldset>

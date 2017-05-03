@@ -1,7 +1,9 @@
 ﻿using Orchard.ContentManagement;
 
-namespace Orchard.DesignerTools.Models {
-    public class ShapeTracingSiteSettingsPart : ContentPart {
+namespace Orchard.DesignerTools.Models
+{
+    public class ShapeTracingSiteSettingsPart : ContentPart
+    {
         public bool IsShapeTracingActive
         {
             get { return this.Retrieve(x => x.IsShapeTracingActive); }

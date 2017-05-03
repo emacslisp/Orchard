@@ -13,20 +13,20 @@
 
             if (Model.ContentLocalizations.Localizations.Any())
             {
-                <dl class="content-localization">
-                    <dt>@T("Other translations:")</dt>
-                    <dd class="content-localizations">
-                        @Html.UnorderedList(Model.ContentLocalizations.Localizations, (c, i) =>
+            <dl class="content-localization">
+                <dt>@T("Other translations:")</dt>
+                <dd class="content-localizations">
+                    @Html.UnorderedList(Model.ContentLocalizations.Localizations, (c, i) =>
                             Html.ItemEditLink(c.Culture.Culture, c), "localizations")
-                    </dd>
-                </dl>
+                </dd>
+            </dl>
             }
 
             if (Model.MissingCultures.Any())
             {
                 var contentItemId = Model.MasterContentItem != null ? Model.MasterContentItem.Id : Model.ContentItem.Id;
 
-                <div class="add-localization">@Html.ActionLink(T("+ New translation").Text, "Translate", "Admin", new { area = "Orchard.Localization", id = contentItemId }, new { itemprop = "UnsafeUrl" })</div>
+            <div class="add-localization">@Html.ActionLink(T("+ New translation").Text, "Translate", "Admin", new { area = "Orchard.Localization", id = contentItemId }, new { itemprop = "UnsafeUrl" })</div>
             }
 
             @Html.Hidden(Html.FieldNameFor(m => m.SelectedCulture), Model.SelectedCulture)
@@ -43,13 +43,13 @@
 
             if (Model.ContentLocalizations.Localizations.Any())
             {
-                <dl class="content-localization">
-                    <dt>@T("Other translations:")</dt>
-                    <dd class="content-localizations">
-                        @Html.UnorderedList(Model.ContentLocalizations.Localizations, (c, i) =>
+            <dl class="content-localization">
+                <dt>@T("Other translations:")</dt>
+                <dd class="content-localizations">
+                    @Html.UnorderedList(Model.ContentLocalizations.Localizations, (c, i) =>
                             Html.ItemEditLink(c.Culture.Culture, c), "localizations")
-                    </dd>
-                </dl>
+                </dd>
+            </dl>
             }
         }
         else

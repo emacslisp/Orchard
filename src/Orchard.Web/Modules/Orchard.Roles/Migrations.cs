@@ -1,16 +1,20 @@
 ﻿using Orchard.Data.Migration;
 using Orchard.Roles.Services;
 
-namespace Orchard.Roles {
-    public class RolesDataMigration : DataMigrationImpl {
+namespace Orchard.Roles
+{
+    public class RolesDataMigration : DataMigrationImpl
+    {
         private readonly IRoleService _roleService;
 
-        public RolesDataMigration(IRoleService roleService) {
+        public RolesDataMigration(IRoleService roleService)
+        {
             _roleService = roleService;
         }
 
-        public int Create() {
-            SchemaBuilder.CreateTable("PermissionRecord", 
+        public int Create()
+        {
+            SchemaBuilder.CreateTable("PermissionRecord",
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<string>("Name")
@@ -18,13 +22,13 @@ namespace Orchard.Roles {
                     .Column<string>("Description")
                 );
 
-            SchemaBuilder.CreateTable("RoleRecord", 
+            SchemaBuilder.CreateTable("RoleRecord",
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<string>("Name")
                 );
 
-            SchemaBuilder.CreateTable("RolesPermissionsRecord", 
+            SchemaBuilder.CreateTable("RolesPermissionsRecord",
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<int>("Role_id")
@@ -32,7 +36,7 @@ namespace Orchard.Roles {
                     .Column<int>("RoleRecord_Id")
                 );
 
-            SchemaBuilder.CreateTable("UserRolesPartRecord", 
+            SchemaBuilder.CreateTable("UserRolesPartRecord",
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())
                     .Column<int>("UserId")
@@ -42,7 +46,8 @@ namespace Orchard.Roles {
             return 2;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
 
             // creates default permissions for Orchard v1.4 instances and earlier
             _roleService.CreatePermissionForRole("Anonymous", Orchard.Core.Contents.Permissions.ViewContent.Name);

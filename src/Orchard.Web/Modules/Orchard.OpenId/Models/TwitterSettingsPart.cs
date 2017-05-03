@@ -2,26 +2,33 @@
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 
-namespace Orchard.OpenId.Models {
+namespace Orchard.OpenId.Models
+{
     [OrchardFeature("Orchard.OpenId.Twitter")]
-    public class TwitterSettingsPart : ContentPart {
+    public class TwitterSettingsPart : ContentPart
+    {
 
-        public string ConsumerKey {
+        public string ConsumerKey
+        {
             get { return this.Retrieve(x => x.ConsumerKey, () => Constants.Twitter.DefaultConsumerKey); }
             set { this.Store(x => x.ConsumerKey, value); }
         }
 
-        public string ConsumerSecret {
+        public string ConsumerSecret
+        {
             get { return this.Retrieve(x => x.ConsumerSecret, () => Constants.Twitter.DefaultConsumerSecret); }
             set { this.Store(x => x.ConsumerSecret, value); }
         }
 
-        public bool IsValid {
-            get {
+        public bool IsValid
+        {
+            get
+            {
                 if (String.IsNullOrWhiteSpace(ConsumerKey) ||
                     String.CompareOrdinal(ConsumerKey, Constants.Twitter.DefaultConsumerKey) == 0 ||
                     String.IsNullOrWhiteSpace(ConsumerSecret) ||
-                    String.CompareOrdinal(ConsumerSecret, Constants.Twitter.DefaultConsumerSecret) == 0) {
+                    String.CompareOrdinal(ConsumerSecret, Constants.Twitter.DefaultConsumerSecret) == 0)
+                {
 
                     return false;
                 }

@@ -5,15 +5,19 @@ using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Widgets.Models;
 
-namespace Orchard.Widgets.Handlers {
-    public class WidgetPartHandler : ContentHandler {
-        public WidgetPartHandler(IRepository<WidgetPartRecord> widgetsRepository) {
+namespace Orchard.Widgets.Handlers
+{
+    public class WidgetPartHandler : ContentHandler
+    {
+        public WidgetPartHandler(IRepository<WidgetPartRecord> widgetsRepository)
+        {
             Filters.Add(StorageFilter.For(widgetsRepository));
 
             OnInitializing<WidgetPart>((context, part) => part.RenderTitle = true);
         }
 
-        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+        protected override void GetItemMetadata(GetContentItemMetadataContext context)
+        {
             var widget = context.ContentItem.As<WidgetPart>();
 
             if (widget == null)

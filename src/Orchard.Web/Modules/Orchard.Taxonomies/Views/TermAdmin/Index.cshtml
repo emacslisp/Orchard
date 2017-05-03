@@ -22,7 +22,7 @@
         <input class="button" type="submit" name="submit.BulkEdit" value="@T("Apply")" />
     </fieldset>
     if (Authorizer.Authorize(Permissions.CreateTerm)) {
-        <div class="manage">@Html.ActionLink(T("Add a term").ToString(), "SelectTerm", new { taxonomyId = Model.Taxonomy.Id }, new { @class = "button primaryAction" })</div>
+    <div class="manage">@Html.ActionLink(T("Add a term").ToString(), "SelectTerm", new { taxonomyId = Model.Taxonomy.Id }, new { @class = "button primaryAction" })</div>
     }
     <fieldset>
         <table class="items" summary="@T("This is a table of the terms in your application")">

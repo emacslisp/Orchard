@@ -9,18 +9,24 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Orchard.Fields.Settings {
-    public class DateTimeFieldEditorEvents : ContentDefinitionEditorEventsBase {
+namespace Orchard.Fields.Settings
+{
+    public class DateTimeFieldEditorEvents : ContentDefinitionEditorEventsBase
+    {
         private readonly IDateLocalizationServices _dateLocalizationServices;
 
-        public DateTimeFieldEditorEvents(IDateLocalizationServices dateLocalizationServices) {
+        public DateTimeFieldEditorEvents(IDateLocalizationServices dateLocalizationServices)
+        {
             _dateLocalizationServices = dateLocalizationServices;
         }
 
-        public override IEnumerable<TemplateViewModel> PartFieldEditor(ContentPartFieldDefinition definition) {
-            if (definition.FieldDefinition.Name == "DateTimeField") {
+        public override IEnumerable<TemplateViewModel> PartFieldEditor(ContentPartFieldDefinition definition)
+        {
+            if (definition.FieldDefinition.Name == "DateTimeField")
+            {
                 var model = definition.Settings.GetModel<DateTimeFieldSettings>();
-                model.Editor = new DateTimeEditor() {
+                model.Editor = new DateTimeEditor()
+                {
                     ShowDate = true,
                     ShowTime = true,
                     Date = _dateLocalizationServices.ConvertToLocalizedDateString(model.DefaultValue),
@@ -30,13 +36,16 @@ namespace Orchard.Fields.Settings {
             }
         }
 
-        public override IEnumerable<TemplateViewModel> PartFieldEditorUpdate(ContentPartFieldDefinitionBuilder builder, IUpdateModel updateModel) {
-            if (builder.FieldType != "DateTimeField") {
+        public override IEnumerable<TemplateViewModel> PartFieldEditorUpdate(ContentPartFieldDefinitionBuilder builder, IUpdateModel updateModel)
+        {
+            if (builder.FieldType != "DateTimeField")
+            {
                 yield break;
             }
 
             var model = new DateTimeFieldSettings();
-            if(updateModel.TryUpdateModel(model, "DateTimeFieldSettings", null, null)) {
+            if (updateModel.TryUpdateModel(model, "DateTimeFieldSettings", null, null))
+            {
                 builder.WithSetting("DateTimeFieldSettings.Display", model.Display.ToString());
                 builder.WithSetting("DateTimeFieldSettings.Hint", model.Hint);
                 builder.WithSetting("DateTimeFieldSettings.Required", model.Required.ToString(CultureInfo.InvariantCulture));

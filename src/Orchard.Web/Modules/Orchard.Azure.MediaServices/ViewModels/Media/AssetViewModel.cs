@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using Orchard.Azure.MediaServices.Infrastructure.Assets;
 using Orchard.Azure.MediaServices.Models.Assets;
 
-namespace Orchard.Azure.MediaServices.ViewModels.Media {
-    public class AssetViewModel {
+namespace Orchard.Azure.MediaServices.ViewModels.Media
+{
+    public class AssetViewModel
+    {
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }

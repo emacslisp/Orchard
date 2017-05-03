@@ -11,16 +11,18 @@ using Microsoft.Azure;
 namespace Orchard.Azure.Services.Environment.Configuration
 {
 
-	/// <summary>
-	/// Provides an IShellSettingsManager implementation that uses Microsoft Azure Blob Storage as the
-	/// underlying storage system.
-	/// </summary>
-	public class AzureBlobShellSettingsManager : IShellSettingsManager {
+    /// <summary>
+    /// Provides an IShellSettingsManager implementation that uses Microsoft Azure Blob Storage as the
+    /// underlying storage system.
+    /// </summary>
+    public class AzureBlobShellSettingsManager : IShellSettingsManager
+    {
 
         private readonly AzureFileSystem _fileSystem;
         private readonly IShellSettingsManagerEventHandler _events;
 
-        public AzureBlobShellSettingsManager(IMimeTypeProvider mimeTypeProvider, IShellSettingsManagerEventHandler events) {
+        public AzureBlobShellSettingsManager(IMimeTypeProvider mimeTypeProvider, IShellSettingsManagerEventHandler events)
+        {
             _events = events;
             Logger = NullLogger.Instance;
 
@@ -32,14 +34,16 @@ namespace Orchard.Azure.Services.Environment.Configuration
 
             _fileSystem = new AzureFileSystem(connectionString, containerName, String.Empty, true, mimeTypeProvider);
 
-            if (!_fileSystem.Container.Exists()) {
+            if (!_fileSystem.Container.Exists())
+            {
                 _fileSystem.Container.Create();
             }
         }
 
         public ILogger Logger { get; set; }
 
-        public virtual IEnumerable<ShellSettings> LoadSettings() {
+        public virtual IEnumerable<ShellSettings> LoadSettings()
+        {
             Logger.Debug("Reading ShellSettings...");
             var settingsList = LoadSettingsInternal().ToArray();
 
@@ -51,7 +55,8 @@ namespace Orchard.Azure.Services.Environment.Configuration
             return settingsList;
         }
 
-        public virtual void SaveSettings(ShellSettings settings) {
+        public virtual void SaveSettings(ShellSettings settings)
+        {
             if (settings == null)
                 throw new ArgumentNullException("settings");
             if (String.IsNullOrEmpty(settings.Name))
@@ -62,8 +67,10 @@ namespace Orchard.Azure.Services.Environment.Configuration
             var filePath = _fileSystem.Combine(settings.Name, Constants.ShellSettingsFileName);
             var file = _fileSystem.FileExists(filePath) ? _fileSystem.GetFile(filePath) : _fileSystem.CreateFile(filePath);
 
-            using (var stream = file.OpenWrite()) {
-                using (var writer = new StreamWriter(stream)) {
+            using (var stream = file.OpenWrite())
+            {
+                using (var writer = new StreamWriter(stream))
+                {
                     writer.Write(content);
                 }
             }
@@ -72,12 +79,16 @@ namespace Orchard.Azure.Services.Environment.Configuration
             _events.Saved(settings);
         }
 
-        private IEnumerable<ShellSettings> LoadSettingsInternal() {
-            foreach (var folder in _fileSystem.ListFolders(null)) {
-                foreach (var file in _fileSystem.ListFiles(folder.GetPath())) {
+        private IEnumerable<ShellSettings> LoadSettingsInternal()
+        {
+            foreach (var folder in _fileSystem.ListFolders(null))
+            {
+                foreach (var file in _fileSystem.ListFiles(folder.GetPath()))
+                {
                     if (!String.Equals(file.GetName(), Constants.ShellSettingsFileName))
                         continue;
-                    using (var stream = file.OpenRead()) {
+                    using (var stream = file.OpenRead())
+                    {
                         using (var reader = new StreamReader(stream))
                             yield return ShellSettingsSerializer.ParseSettings(reader.ReadToEnd());
                     }

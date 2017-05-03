@@ -1,7 +1,10 @@
 ﻿
-namespace Orchard.Tags.Models {
-    public class TagCount {
-        public TagCount() {
+namespace Orchard.Tags.Models
+{
+    public class TagCount
+    {
+        public TagCount()
+        {
             Bucket = 1;
         }
 

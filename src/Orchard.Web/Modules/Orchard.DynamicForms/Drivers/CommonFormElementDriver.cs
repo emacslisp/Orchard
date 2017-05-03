@@ -6,25 +6,32 @@ using Orchard.Layouts.Framework.Display;
 using Orchard.Layouts.Framework.Drivers;
 using Orchard.Layouts.Services;
 
-namespace Orchard.DynamicForms.Drivers {
-    public class CommonFormElementDriver : FormsElementDriver<FormElement> {
+namespace Orchard.DynamicForms.Drivers
+{
+    public class CommonFormElementDriver : FormsElementDriver<FormElement>
+    {
 
-        public CommonFormElementDriver(IFormsBasedElementServices formsServices, IShapeFactory shapeFactory) : base(formsServices) {
+        public CommonFormElementDriver(IFormsBasedElementServices formsServices, IShapeFactory shapeFactory) : base(formsServices)
+        {
             New = shapeFactory;
         }
 
-        public override int Priority {
+        public override int Priority
+        {
             get { return 500; }
         }
 
-        protected override IEnumerable<string> FormNames {
+        protected override IEnumerable<string> FormNames
+        {
             get { yield return "CommonFormElement"; }
         }
 
         public dynamic New { get; set; }
 
-        protected override void DescribeForm(DescribeContext context) {
-            context.Form("CommonFormElement", factory => {
+        protected override void DescribeForm(DescribeContext context)
+        {
+            context.Form("CommonFormElement", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Fieldset(
                     Id: "CommonFormElement",
@@ -42,7 +49,8 @@ namespace Orchard.DynamicForms.Drivers {
             });
         }
 
-        protected override void OnDisplaying(FormElement element, ElementDisplayingContext context) {
+        protected override void OnDisplaying(FormElement element, ElementDisplayingContext context)
+        {
             context.ElementShape.Metadata.Wrappers.Add("FormElement_Wrapper");
             context.ElementShape.Child.Add(New.PlaceChildContent(Source: context.ElementShape));
         }

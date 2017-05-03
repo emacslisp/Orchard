@@ -1,5 +1,7 @@
-namespace Orchard.Azure.MediaServices.ViewModels.Tasks {
-    public class EncryptViewModel {
+namespace Orchard.Azure.MediaServices.ViewModels.Tasks
+{
+    public class EncryptViewModel
+    {
         public bool AdjustSubSamples { get; set; }
         public string ContentKey { get; set; }
         public string CustomAttributes { get; set; }
@@ -9,5 +11,5 @@ namespace Orchard.Azure.MediaServices.ViewModels.Tasks {
         public string LicenseAcquisitionUrl { get; set; } // This should propably come from site settings.
         public bool UseSencBox { get; set; }
         public string ServiceId { get; set; }
-	}
+    }
 }

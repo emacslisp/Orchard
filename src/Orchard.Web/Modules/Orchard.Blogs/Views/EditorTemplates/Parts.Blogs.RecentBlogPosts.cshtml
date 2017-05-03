@@ -7,10 +7,10 @@
     <div>
         @Html.LabelFor(m => m.BlogId, T("For Blog"))
         <select id="@Html.FieldIdFor(m => m.BlogId)" name="@Html.FieldNameFor(m => m.BlogId)">
-		@foreach(BlogPart blog in Model.Blogs) {
-            @Html.SelectOption(Model.BlogId, blog.ContentItem.Id, blog.Name)
+            @foreach(BlogPart blog in Model.Blogs) {
+                @Html.SelectOption(Model.BlogId, blog.ContentItem.Id, blog.Name)
 		}
-		</select>
+        </select>
         <span class="hint">@T("Select which blog you want to display the recent posts for")</span>
     </div>
     <div>

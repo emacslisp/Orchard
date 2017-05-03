@@ -4,12 +4,12 @@
     Script.Require("ShapesBase");
 
     Layout.Title = "Manage Microsoft Azure Media Jobs";
-    
+
     var jobs = (IEnumerable<Job>)Model.Jobs;
 }
 @helper ShortDateTime(DateTime? value) {
     if (value != null) {
-        @Display.DateTime(DateTimeUtc: value)
+    @Display.DateTime(DateTimeUtc: value)
     }
 }
 <table class="items" style="width: auto">
@@ -36,37 +36,37 @@
         }
         else {
             foreach (var job in jobs) {
-                <tr>
-                    <td>@job.Name</td>
-                    <td>@job.Description</td>
-                    <td>@Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText(job.CloudVideoPart).ToString(), job.CloudVideoPart)</td>
-                    <td>@ShortDateTime(job.CreatedUtc)</td>
-                    <td>
-                        @if (job.Status == JobStatus.Processing) {
+            <tr>
+                <td>@job.Name</td>
+                <td>@job.Description</td>
+                <td>@Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText(job.CloudVideoPart).ToString(), job.CloudVideoPart)</td>
+                <td>@ShortDateTime(job.CreatedUtc)</td>
+                <td>
+                    @if (job.Status == JobStatus.Processing) {
                             var percentComplete = Convert.ToInt32(job.PercentComplete);
-                            <span class="progress-text">
-                                @String.Format("Processing ({0}%)...", percentComplete)
-                            </span>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: @percentComplete%"></div>
-                            </div>
+                        <span class="progress-text">
+                            @String.Format("Processing ({0}%)...", percentComplete)
+                        </span>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: @percentComplete%"></div>
+                        </div>
                         }
                         else {
-                            @T(job.Status.ToString())
+                        @T(job.Status.ToString())
                         }
-                    </td>
-                    <td>@ShortDateTime(job.StartedUtc)</td>
-                    <td>@ShortDateTime(job.FinishedUtc)</td>
-                    <td>@job.ErrorMessage</td>
-                    <td>
-                        @if (job.CanArchive) {
-                            @Html.ActionLink(T("Archive").ToString(), "Archive", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices", ReturnUrl = Url.Action("Index") }, new { itemprop = "UnsafeUrl RemoveUrl" })
+                </td>
+                <td>@ShortDateTime(job.StartedUtc)</td>
+                <td>@ShortDateTime(job.FinishedUtc)</td>
+                <td>@job.ErrorMessage</td>
+                <td>
+                    @if (job.CanArchive) {
+                        @Html.ActionLink(T("Archive").ToString(), "Archive", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices", ReturnUrl = Url.Action("Index") }, new { itemprop = "UnsafeUrl RemoveUrl" })
                         }
-                        @if (job.CanCancel) {
-                            @Html.ActionLink(T("Cancel").ToString(), "Cancel", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices", ReturnUrl = Url.Action("Index") }, new { itemprop = "UnsafeUrl RemoveUrl" })
+                    @if (job.CanCancel) {
+                        @Html.ActionLink(T("Cancel").ToString(), "Cancel", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices", ReturnUrl = Url.Action("Index") }, new { itemprop = "UnsafeUrl RemoveUrl" })
                         }
-                    </td>
-                </tr>
+                </td>
+            </tr>
             }
         }
     </tbody>

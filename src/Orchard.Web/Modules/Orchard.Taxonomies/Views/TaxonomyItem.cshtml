@@ -16,21 +16,21 @@
     var tag = Tag(Model, "li");
     @tag.StartElement
 
-        @*
-            - morphing the shape to keep Model untouched and
-            - provide a simple way to customize the shape
-        *@
+    @*
+        - morphing the shape to keep Model untouched and
+        - provide a simple way to customize the shape
+    *@
 
         Model.Metadata.Alternates.Clear();
         Model.Metadata.Type = "TaxonomyItemLink";
-        @Display(Model)
+    @Display(Model)
 
-        @* render child elements *@
+    @* render child elements *@
 
         if (items.Any()) {
-            <ul>
-                @DisplayChildren(Model)
-            </ul>
+    <ul>
+        @DisplayChildren(Model)
+    </ul>
         }
     @tag.EndElement
 }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Orchard.Taxonomies.Models;
 
-namespace Orchard.Taxonomies.Settings {
-    public class TaxonomyFieldSettings {
+namespace Orchard.Taxonomies.Settings
+{
+    public class TaxonomyFieldSettings
+    {
         /// <summary>
         /// Wether the field allows the user to add new Terms to the taxonomy (similar to tags)
         /// </summary>

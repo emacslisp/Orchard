@@ -12,9 +12,9 @@
     background-position: 10px 10px;
 }
 
-.toolbox-branch div {
-    margin-left: 36px;
-}
+    .toolbox-branch div {
+        margin-left: 36px;
+    }
 
 .exclusive-branch {
     width: 36px;
@@ -30,9 +30,9 @@
     background-position: 10px 10px;
 }
 
-.toolbox-exclusive-branch div {
-    margin-left: 36px;
-}
+    .toolbox-exclusive-branch div {
+        margin-left: 36px;
+    }
 
 .merge-branch {
     width: 36px;
@@ -48,6 +48,6 @@
     background-position: 10px 10px;
 }
 
-.toolbox-merge-branch div {
-    margin-left: 36px;
-}
+    .toolbox-merge-branch div {
+        margin-left: 36px;
+    }

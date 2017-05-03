@@ -2,12 +2,16 @@
 using Glimpse.Core.Extensions;
 using System.Linq;
 
-namespace Orchard.Glimpse.Tabs.Widgets {
-    public class WidgetTab : TabBase, ITabSetup, IKey {
-        public override object GetData(ITabContext context) {
+namespace Orchard.Glimpse.Tabs.Widgets
+{
+    public class WidgetTab : TabBase, ITabSetup, IKey
+    {
+        public override object GetData(ITabContext context)
+        {
             var messages = context.GetMessages<WidgetMessage>().ToList();
 
-            if (!messages.Any()) {
+            if (!messages.Any())
+            {
                 return null;
             }
 
@@ -16,7 +20,8 @@ namespace Orchard.Glimpse.Tabs.Widgets {
 
         public override string Name => "Widgets";
 
-        public void Setup(ITabSetupContext context) {
+        public void Setup(ITabSetupContext context)
+        {
             context.PersistMessages<WidgetMessage>();
         }
 

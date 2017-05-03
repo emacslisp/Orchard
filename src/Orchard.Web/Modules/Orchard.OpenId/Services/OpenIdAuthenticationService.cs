@@ -9,9 +9,11 @@ using Orchard.Security;
 using Orchard.Security.Providers;
 using Orchard.Services;
 
-namespace Orchard.OpenId.Services {
+namespace Orchard.OpenId.Services
+{
     [OrchardFeature("Orchard.OpenId")]
-    public class OpenIdAuthenticationService : IAuthenticationService {
+    public class OpenIdAuthenticationService : IAuthenticationService
+    {
         private readonly ShellSettings _settings;
         private readonly IClock _clock;
         private readonly IMembershipService _membershipService;
@@ -23,8 +25,10 @@ namespace Orchard.OpenId.Services {
         private IUser _localAuthenticationUser;
 
         IAuthenticationService _fallbackAuthenticationService;
-        private IAuthenticationService FallbackAuthenticationService {
-            get {
+        private IAuthenticationService FallbackAuthenticationService
+        {
+            get
+            {
                 if (_fallbackAuthenticationService == null)
                     _fallbackAuthenticationService = new FormsAuthenticationService(_settings, _clock, _membershipService, _httpContextAccessor, _sslSettingsProvider, _membershipValidationService);
 
@@ -39,7 +43,8 @@ namespace Orchard.OpenId.Services {
             ISslSettingsProvider sslSettingsProvider,
             IHttpContextAccessor httpContextAccessor,
             IMembershipValidationService membershipValidationService,
-            IEnumerable<IOpenIdProvider> openIdProviders) {
+            IEnumerable<IOpenIdProvider> openIdProviders)
+        {
 
             _httpContextAccessor = httpContextAccessor;
             _membershipService = membershipService;
@@ -50,37 +55,47 @@ namespace Orchard.OpenId.Services {
             _openIdProviders = openIdProviders;
         }
 
-        public void SignIn(IUser user, bool createPersistentCookie) {
-            if (IsFallbackNeeded()) {
+        public void SignIn(IUser user, bool createPersistentCookie)
+        {
+            if (IsFallbackNeeded())
+            {
                 FallbackAuthenticationService.SignIn(user, createPersistentCookie);
             }
         }
 
-        public void SignOut() {
-            if (IsFallbackNeeded()) {
+        public void SignOut()
+        {
+            if (IsFallbackNeeded())
+            {
                 FallbackAuthenticationService.SignOut();
             }
         }
 
-        public void SetAuthenticatedUserForRequest(IUser user) {
-            if (IsFallbackNeeded()) {
+        public void SetAuthenticatedUserForRequest(IUser user)
+        {
+            if (IsFallbackNeeded())
+            {
                 FallbackAuthenticationService.SetAuthenticatedUserForRequest(user);
             }
         }
 
-        public IUser GetAuthenticatedUser() {
-            if (IsFallbackNeeded()) {
+        public IUser GetAuthenticatedUser()
+        {
+            if (IsFallbackNeeded())
+            {
                 return FallbackAuthenticationService.GetAuthenticatedUser();
             }
 
             var user = _httpContextAccessor.Current().GetOwinContext().Authentication.User;
 
-            if (!user.Identity.IsAuthenticated) {
+            if (!user.Identity.IsAuthenticated)
+            {
                 return null;
             }
 
             // In memory caching of sorts since this method gets called many times per request
-            if (_localAuthenticationUser != null) {
+            if (_localAuthenticationUser != null)
+            {
                 return _localAuthenticationUser;
             }
 
@@ -96,21 +111,25 @@ namespace Orchard.OpenId.Services {
             return _localAuthenticationUser = localUser;
         }
 
-        private bool IsLocalUser() {
+        private bool IsLocalUser()
+        {
             var anyClaim = _httpContextAccessor.Current().GetOwinContext().Authentication.User.Claims.FirstOrDefault();
 
-            if (anyClaim == null || anyClaim.Issuer == Constants.General.LocalIssuer || anyClaim.Issuer == Constants.General.FormsIssuer) {
+            if (anyClaim == null || anyClaim.Issuer == Constants.General.LocalIssuer || anyClaim.Issuer == Constants.General.FormsIssuer)
+            {
                 return true;
             }
 
             return false;
         }
 
-        private bool IsAnyProviderSettingsValid() {
+        private bool IsAnyProviderSettingsValid()
+        {
             return _openIdProviders.Any(provider => provider.IsValid);
         }
 
-        private bool IsFallbackNeeded() {
+        private bool IsFallbackNeeded()
+        {
             return IsLocalUser() || !IsAnyProviderSettingsValid();
         }
     }

@@ -6,8 +6,10 @@ using Orchard.Logging;
 using Orchard.Recipes.Events;
 using Orchard.Recipes.Models;
 
-namespace Orchard.Recipes.Services {
-    public class RecipeManager : Component, IRecipeManager {
+namespace Orchard.Recipes.Services
+{
+    public class RecipeManager : Component, IRecipeManager
+    {
         private readonly IRecipeStepQueue _recipeStepQueue;
         private readonly IRecipeScheduler _recipeScheduler;
         private readonly IRecipeExecuteEventHandler _recipeExecuteEventHandler;
@@ -17,7 +19,8 @@ namespace Orchard.Recipes.Services {
             IRecipeStepQueue recipeStepQueue,
             IRecipeScheduler recipeScheduler,
             IRecipeExecuteEventHandler recipeExecuteEventHandler,
-            IRepository<RecipeStepResultRecord> recipeStepResultRecordRepository) {
+            IRepository<RecipeStepResultRecord> recipeStepResultRecordRepository)
+        {
 
             _recipeStepQueue = recipeStepQueue;
             _recipeScheduler = recipeScheduler;
@@ -25,12 +28,15 @@ namespace Orchard.Recipes.Services {
             _recipeStepResultRecordRepository = recipeStepResultRecordRepository;
         }
 
-        public string Execute(Recipe recipe) {
-            if (recipe == null) {
+        public string Execute(Recipe recipe)
+        {
+            if (recipe == null)
+            {
                 throw new ArgumentNullException("recipe");
             }
 
-            if (!recipe.RecipeSteps.Any()) {
+            if (!recipe.RecipeSteps.Any())
+            {
                 Logger.Information("Recipe '{0}' contains no steps. No work has been scheduled.");
                 return null;
             }
@@ -38,13 +44,16 @@ namespace Orchard.Recipes.Services {
             var executionId = Guid.NewGuid().ToString("n");
             ThreadContext.Properties["ExecutionId"] = executionId;
 
-            try {
+            try
+            {
                 Logger.Information("Executing recipe '{0}'.", recipe.Name);
                 _recipeExecuteEventHandler.ExecutionStart(executionId, recipe);
 
-                foreach (var recipeStep in recipe.RecipeSteps) {
+                foreach (var recipeStep in recipe.RecipeSteps)
+                {
                     _recipeStepQueue.Enqueue(executionId, recipeStep);
-                    _recipeStepResultRecordRepository.Create(new RecipeStepResultRecord {
+                    _recipeStepResultRecordRepository.Create(new RecipeStepResultRecord
+                    {
                         ExecutionId = executionId,
                         RecipeName = recipe.Name,
                         StepId = recipeStep.Id,
@@ -55,7 +64,8 @@ namespace Orchard.Recipes.Services {
 
                 return executionId;
             }
-            finally {
+            finally
+            {
                 ThreadContext.Properties["ExecutionId"] = null;
             }
         }

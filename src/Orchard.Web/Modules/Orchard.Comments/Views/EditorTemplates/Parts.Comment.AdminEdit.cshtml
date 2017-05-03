@@ -20,7 +20,7 @@
             <span class="hint">@T("The website url the author has provided with the comment.")</span>
         </li>
     </ol>
-    </fieldset>
+</fieldset>
 <fieldset class="what">
     <div>
         @Html.LabelFor(m => m.CommentText, T("Comment"))
@@ -32,12 +32,12 @@
 </fieldset>
 
 <fieldset>
-    <button class="primaryAction" type="submit" name="submit.Save" value="save" >@T("Save")</button>
+    <button class="primaryAction" type="submit" name="submit.Save" value="save">@T("Save")</button>
     <button class="primaryAction" type="submit" name="submit.Save" value="delete" itemprop="RemoveUrl">@T("Delete")</button>
     @if (Model.Status == CommentStatus.Approved) {
         <button class="primaryAction" type="submit" name="submit.Save" value="moderate">@T("Moderate")</button>
     }
-    
+
     @if (Model.Status == CommentStatus.Pending) {
         <button class="primaryAction" type="submit" name="submit.Save" value="approve">@T("Approve")</button>
     }

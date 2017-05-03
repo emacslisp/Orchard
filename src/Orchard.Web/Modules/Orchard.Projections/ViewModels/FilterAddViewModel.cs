@@ -2,8 +2,10 @@
 using Orchard.Projections.Descriptors;
 using Orchard.Projections.Descriptors.Filter;
 
-namespace Orchard.Projections.ViewModels {
-    public class FilterAddViewModel {
+namespace Orchard.Projections.ViewModels
+{
+    public class FilterAddViewModel
+    {
         public int Id { get; set; }
         public int Group { get; set; }
 

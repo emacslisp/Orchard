@@ -14,7 +14,7 @@
 </p>
 <fieldset>
     <label for="RecipeFile">@T("Recipe File")</label>
-    <input type="file" id="RecipeFile" size="64" name="RecipeFile" value="@T("Browse...")"/>
+    <input type="file" id="RecipeFile" size="64" name="RecipeFile" value="@T("Browse...")" />
 </fieldset>
 <fieldset>
     <legend>
@@ -24,7 +24,7 @@
         @foreach (var option in importOptions) {
                 var importOptionId = String.Format("{0}_{1}", Html.FieldIdFor(m => m.ResetSite), option.Value);
             <li>
-                <input type="radio" id="@importOptionId" name="@Html.FieldNameFor(m => m.ResetSite)" value="@option.Value" @if (option.Selected) { <text> checked="checked" </text> } />
+                <input type="radio" id="@importOptionId" name="@Html.FieldNameFor(m => m.ResetSite)" value="@option.Value" @if (option.Selected) { <text> checked="checked" </text>     } />
                 <label for="@importOptionId" class="forradiobutton">@option.Text</label>
             </li>
         }
@@ -49,18 +49,18 @@
     foreach (var step in Model.RecipeExecutionSteps) {
         var stepId = Html.FieldIdFor(m => m.RecipeExecutionSteps[stepIndex].IsSelected);
         if (stepIndex <= Model.RecipeExecutionSteps.Count) {
-            <hr />
+    <hr />
         }
-        <fieldset class="recipe-builder-step recipe-builder-step-@step.Name.HtmlClassify()">
-            <legend>
-                <input type="hidden" name="@Html.FieldNameFor(m => m.RecipeExecutionSteps[stepIndex].Name)" value="@Model.RecipeExecutionSteps[stepIndex].Name" />
-                <label for="@stepId" class="forcheckbox">@step.DisplayName</label>
-            </legend>
-            @Html.Hint(step.Description)
-            <div data-controllerid="@stepId">
-                @Display(step.Editor)
-            </div>
-        </fieldset>
+    <fieldset class="recipe-builder-step recipe-builder-step-@step.Name.HtmlClassify()">
+        <legend>
+            <input type="hidden" name="@Html.FieldNameFor(m => m.RecipeExecutionSteps[stepIndex].Name)" value="@Model.RecipeExecutionSteps[stepIndex].Name" />
+            <label for="@stepId" class="forcheckbox">@step.DisplayName</label>
+        </legend>
+        @Html.Hint(step.Description)
+        <div data-controllerid="@stepId">
+            @Display(step.Editor)
+        </div>
+    </fieldset>
         stepIndex++;
     }
 }

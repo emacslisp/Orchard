@@ -3,10 +3,13 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.Environment.Extensions;
 using Orchard.Core.Navigation.Models;
 
-namespace Orchard.Alias {
+namespace Orchard.Alias
+{
     [OrchardFeature("Orchard.Alias.BreadcrumbLink")]
-    public class AliasBreadcrumbMigration : DataMigrationImpl {
-        public int Create() {
+    public class AliasBreadcrumbMigration : DataMigrationImpl
+    {
+        public int Create()
+        {
             ContentDefinitionManager.AlterTypeDefinition("AliasBreadcrumbMenuItem",
                 cfg => cfg
                     .WithPart("BreadcrumbMenuItemPart")

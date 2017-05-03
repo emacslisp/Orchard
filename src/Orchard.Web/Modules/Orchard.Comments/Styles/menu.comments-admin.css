@@ -1,6 +1,7 @@
 ﻿.navicon-comments {
-background-image:url(images/menu.comments.png) !important;
+    background-image: url(images/menu.comments.png) !important;
 }
-.navicon-comments:hover {
-background-position:0 -30px !important;
-}
+
+    .navicon-comments:hover {
+        background-position: 0 -30px !important;
+    }

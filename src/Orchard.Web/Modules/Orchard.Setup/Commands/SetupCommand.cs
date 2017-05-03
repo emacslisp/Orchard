@@ -5,12 +5,15 @@ using Orchard.Commands;
 using Orchard.Recipes.Services;
 using Orchard.Setup.Services;
 
-namespace Orchard.Setup.Commands {
-    public class SetupCommand : DefaultOrchardCommandHandler {
+namespace Orchard.Setup.Commands
+{
+    public class SetupCommand : DefaultOrchardCommandHandler
+    {
         private readonly ISetupService _setupService;
         private readonly IRecipeHarvester _recipeHarvester;
 
-        public SetupCommand(ISetupService setupService, IRecipeHarvester recipeHarvester) {
+        public SetupCommand(ISetupService setupService, IRecipeHarvester recipeHarvester)
+        {
             _setupService = setupService;
             _recipeHarvester = recipeHarvester;
         }
@@ -39,15 +42,17 @@ namespace Orchard.Setup.Commands {
         [OrchardSwitch]
         public string Recipe { get; set; }
 
-        [CommandHelp("setup /SiteName:<siteName> /AdminUsername:<username> /AdminPassword:<password> /DatabaseProvider:<SqlCe|SQLServer|MySql|PostgreSql> " + 
+        [CommandHelp("setup /SiteName:<siteName> /AdminUsername:<username> /AdminPassword:<password> /DatabaseProvider:<SqlCe|SQLServer|MySql|PostgreSql> " +
             "/DatabaseConnectionString:<connection_string> /DatabaseTablePrefix:<table_prefix> /EnabledFeatures:<feature1,feature2,...> " +
-            "/Recipe:<recipe>" + 
+            "/Recipe:<recipe>" +
             "\r\n\tRuns first time setup for the site or for a given tenant.")]
         [CommandName("setup")]
         [OrchardSwitches("SiteName,AdminUsername,AdminPassword,DatabaseProvider,DatabaseConnectionString,DatabaseTablePrefix,EnabledFeatures,Recipe")]
-        public void Setup() {
+        public void Setup()
+        {
             IEnumerable<string> enabledFeatures = null;
-            if (!String.IsNullOrEmpty(EnabledFeatures)) {
+            if (!String.IsNullOrEmpty(EnabledFeatures))
+            {
                 enabledFeatures = EnabledFeatures
                     .Split(',')
                     .Select(s => s.Trim())
@@ -56,7 +61,8 @@ namespace Orchard.Setup.Commands {
             Recipe = String.IsNullOrEmpty(Recipe) ? "Default" : Recipe;
             var recipe = _setupService.Recipes().GetRecipeByName(Recipe);
 
-            var setupContext = new SetupContext {
+            var setupContext = new SetupContext
+            {
                 SiteName = SiteName,
                 AdminUsername = AdminUsername,
                 AdminPassword = AdminPassword,

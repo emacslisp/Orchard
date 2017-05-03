@@ -3,9 +3,12 @@ using System.Xml.Serialization;
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
-namespace Orchard.MediaProcessing.Models {
-    public class ImageProfilePartRecord : ContentPartRecord {
-        public ImageProfilePartRecord() {
+namespace Orchard.MediaProcessing.Models
+{
+    public class ImageProfilePartRecord : ContentPartRecord
+    {
+        public ImageProfilePartRecord()
+        {
             Filters = new List<FilterRecord>();
             FileNames = new List<FileNameRecord>();
         }

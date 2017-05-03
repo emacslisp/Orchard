@@ -5,35 +5,44 @@ using Orchard.OpenId.Models;
 using Orchard.OpenId.Services;
 using Orchard.Settings;
 
-namespace Orchard.OpenId.Providers {
+namespace Orchard.OpenId.Providers
+{
     [OrchardFeature("Orchard.OpenId.AzureActiveDirectory")]
-    public class AzureActiveDirectory : IOpenIdProvider {
+    public class AzureActiveDirectory : IOpenIdProvider
+    {
         private readonly IWorkContextAccessor _workContextAccessor;
 
         public AzureActiveDirectory(
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor)
+        {
 
             _workContextAccessor = workContextAccessor;
         }
 
-        public string AuthenticationType {
+        public string AuthenticationType
+        {
             get { return "OpenIdConnect"; }
         }
 
-        public string Name {
+        public string Name
+        {
             get { return "AzureAD"; }
         }
 
-        public string DisplayName {
+        public string DisplayName
+        {
             get { return "Azure Active Directory"; }
         }
 
-        public bool IsValid {
+        public bool IsValid
+        {
             get { return IsProviderValid(); }
         }
 
-        private bool IsProviderValid() {
-            try {
+        private bool IsProviderValid()
+        {
+            try
+            {
                 AzureActiveDirectorySettingsPart settings;
                 ISite site;
 
@@ -44,7 +53,8 @@ namespace Orchard.OpenId.Providers {
 
                 return (settings != null && settings.IsValid);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }

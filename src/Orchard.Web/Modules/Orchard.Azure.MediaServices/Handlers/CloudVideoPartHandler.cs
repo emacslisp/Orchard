@@ -6,8 +6,10 @@ using Orchard.ContentManagement.Handlers;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 
-namespace Orchard.Azure.MediaServices.Handlers {
-    public class CloudVideoPartHandler : ContentHandler {
+namespace Orchard.Azure.MediaServices.Handlers
+{
+    public class CloudVideoPartHandler : ContentHandler
+    {
         private readonly IAssetManager _assetManager;
         private readonly IJobManager _jobManager;
         private readonly INotifier _notifier;
@@ -15,7 +17,8 @@ namespace Orchard.Azure.MediaServices.Handlers {
         public CloudVideoPartHandler(
             IAssetManager assetManager,
             IJobManager jobManager,
-            INotifier notifier) {
+            INotifier notifier)
+        {
 
             _assetManager = assetManager;
             _jobManager = jobManager;
@@ -29,13 +32,16 @@ namespace Orchard.Azure.MediaServices.Handlers {
 
         public Localizer T { get; set; }
 
-        private void SetupFields(ActivatedContentContext context, CloudVideoPart part) {
+        private void SetupFields(ActivatedContentContext context, CloudVideoPart part)
+        {
             part._assetManager = _assetManager;
             part._jobManager = _jobManager;
-        } 
-        
-        private void DeferOrPublishAssets(PublishContentContext context, CloudVideoPart part) {
-            if (part.MezzanineAsset != null && part.MezzanineAsset.UploadState.Status != AssetUploadStatus.Uploaded) {
+        }
+
+        private void DeferOrPublishAssets(PublishContentContext context, CloudVideoPart part)
+        {
+            if (part.MezzanineAsset != null && part.MezzanineAsset.UploadState.Status != AssetUploadStatus.Uploaded)
+            {
                 part.PublishOnUpload = true;
                 _notifier.Warning(T("The cloud video item was saved, but will not be published until the primary video asset has finished uploading to Microsoft Azure Media Services."));
                 context.Cancel = true;
@@ -44,12 +50,14 @@ namespace Orchard.Azure.MediaServices.Handlers {
                 _assetManager.PublishAssetsFor(part);
         }
 
-        private void CancelAndUnpublishAssets(PublishContentContext context, CloudVideoPart part) {
+        private void CancelAndUnpublishAssets(PublishContentContext context, CloudVideoPart part)
+        {
             part.PublishOnUpload = false;
             _assetManager.UnpublishAssetsFor(part);
         }
 
-        private void RemoveAssets(RemoveContentContext context, CloudVideoPart part) {
+        private void RemoveAssets(RemoveContentContext context, CloudVideoPart part)
+        {
             _assetManager.DeleteAssetsFor(part);
             _jobManager.CloseJobsFor(part);
         }

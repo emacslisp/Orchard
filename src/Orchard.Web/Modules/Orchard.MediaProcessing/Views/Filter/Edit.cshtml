@@ -1,4 +1,4 @@
-﻿@model Orchard.MediaProcessing.ViewModels.FilterEditViewModel          
+﻿@model Orchard.MediaProcessing.ViewModels.FilterEditViewModel
 @{
     Layout.Title = T("Edit Filter - {0}", Model.Filter.Name);
 }
@@ -10,22 +10,22 @@
 
 @using (Html.BeginFormAntiForgeryPost()) {
 
-<fieldset>
-    @Html.LabelFor(m => m.Description, T("Description"))
-    @Html.TextBoxFor(m => m.Description, new { @class = "text medium" })
-    <span class="hint">@T("You may optionally give a description to this filter, to be used in the dashboard screens.")</span>
-</fieldset>
+    <fieldset>
+        @Html.LabelFor(m => m.Description, T("Description"))
+        @Html.TextBoxFor(m => m.Description, new { @class = "text medium" })
+        <span class="hint">@T("You may optionally give a description to this filter, to be used in the dashboard screens.")</span>
+    </fieldset>
 
-    @* Render the dynamic form *@    
+    @* Render the dynamic form *@
     if (Model.Form != null) {
-        <fieldset>
-            @DisplayChildren(Model.Form)
-        </fieldset>
+    <fieldset>
+        @DisplayChildren(Model.Form)
+    </fieldset>
     }
 
     @Display.TokenHint()
 
-<fieldset>
-    <button class="primaryAction" type="submit">@T("Save")</button>
-</fieldset>
+    <fieldset>
+        <button class="primaryAction" type="submit">@T("Save")</button>
+    </fieldset>
 }

@@ -2,9 +2,11 @@
 using Orchard.ContentManagement;
 using Orchard.ContentPicker.Fields;
 
-namespace Orchard.ContentPicker.ViewModels {
+namespace Orchard.ContentPicker.ViewModels
+{
 
-    public class ContentPickerFieldViewModel {
+    public class ContentPickerFieldViewModel
+    {
 
         public ICollection<ContentItem> ContentItems { get; set; }
         public string SelectedIds { get; set; }

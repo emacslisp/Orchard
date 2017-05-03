@@ -3,11 +3,14 @@ using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 
-namespace Orchard.Localization {
-    public class Migrations : DataMigrationImpl {
+namespace Orchard.Localization
+{
+    public class Migrations : DataMigrationImpl
+    {
 
-        public int Create() {
-            SchemaBuilder.CreateTable("LocalizationPartRecord", 
+        public int Create()
+        {
+            SchemaBuilder.CreateTable("LocalizationPartRecord",
                 table => table
                     .ContentPartRecord()
                     .Column<int>("CultureId")
@@ -19,7 +22,8 @@ namespace Orchard.Localization {
             return 1;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
             ContentDefinitionManager.AlterPartDefinition("LocalizationPart", builder => builder
                 .WithDescription("Provides the user interface to localize content items."));
 
@@ -28,9 +32,11 @@ namespace Orchard.Localization {
     }
 
     [OrchardFeature("Orchard.Localization.Transliteration")]
-    public class TransliterationMigrations : DataMigrationImpl {
+    public class TransliterationMigrations : DataMigrationImpl
+    {
 
-        public int Create() {
+        public int Create()
+        {
             SchemaBuilder.CreateTable("TransliterationSpecificationRecord",
                 table => table
                     .Column<int>("Id", column => column.PrimaryKey().Identity())

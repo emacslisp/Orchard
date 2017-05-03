@@ -1,10 +1,13 @@
 ﻿using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
 
-namespace Orchard.Taxonomies {
-    public class Migrations : DataMigrationImpl {
+namespace Orchard.Taxonomies
+{
+    public class Migrations : DataMigrationImpl
+    {
 
-        public int Create() {
+        public int Create()
+        {
             SchemaBuilder.CreateTable("TaxonomyPartRecord", table => table
                 .ContentPartRecord()
                 .Column<string>("TermTypeName", column => column.WithLength(255))
@@ -57,7 +60,8 @@ namespace Orchard.Taxonomies {
             return 5;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
             ContentDefinitionManager.AlterTypeDefinition("TaxonomyNavigationMenuItem",
                cfg => cfg
                    .WithPart("TaxonomyNavigationPart")
@@ -71,7 +75,8 @@ namespace Orchard.Taxonomies {
             return 3;
         }
 
-        public int UpdateFrom3() {
+        public int UpdateFrom3()
+        {
             SchemaBuilder.AlterTable("TermPartRecord", table => table
                 .CreateIndex("IDX_Path", "Path")
             );
@@ -79,7 +84,8 @@ namespace Orchard.Taxonomies {
             return 4;
         }
 
-        public int UpdateFrom4() {
+        public int UpdateFrom4()
+        {
             ContentDefinitionManager.AlterTypeDefinition("TaxonomyNavigationMenuItem",
                cfg => cfg
                    .WithIdentity()

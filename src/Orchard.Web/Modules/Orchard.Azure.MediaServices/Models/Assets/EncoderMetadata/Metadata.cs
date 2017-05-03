@@ -7,10 +7,13 @@ using Orchard.FileSystems.Media;
 using Orchard.Azure.MediaServices.Helpers;
 using Newtonsoft.Json;
 
-namespace Orchard.Azure.MediaServices.Models.Assets.EncoderMetadata {
-    public class Metadata {
+namespace Orchard.Azure.MediaServices.Models.Assets.EncoderMetadata
+{
+    public class Metadata
+    {
 
-        public static Metadata Parse(string encoderMetadataXml, string privateLocatorUrl, string publicLocatorUrl, IMimeTypeProvider mimeTypeProvider) {
+        public static Metadata Parse(string encoderMetadataXml, string privateLocatorUrl, string publicLocatorUrl, IMimeTypeProvider mimeTypeProvider)
+        {
             var xml = XDocument.Parse(encoderMetadataXml);
             return new Metadata(xml, privateLocatorUrl, publicLocatorUrl, mimeTypeProvider);
         }
@@ -22,7 +25,8 @@ namespace Orchard.Azure.MediaServices.Models.Assets.EncoderMetadata {
         private readonly IMimeTypeProvider _mimeTypeProvider;
         private IEnumerable<AssetFile> _assetFiles;
 
-        public Metadata(XDocument xml, string privateLocatorUrl, string publicLocatorUrl, IMimeTypeProvider mimeTypeProvider) {
+        public Metadata(XDocument xml, string privateLocatorUrl, string publicLocatorUrl, IMimeTypeProvider mimeTypeProvider)
+        {
             _nsm = NamespaceHelper.CreateNamespaceManager(xml);
             _xml = xml;
             _privateLocatorUrl = privateLocatorUrl;
@@ -33,9 +37,12 @@ namespace Orchard.Azure.MediaServices.Models.Assets.EncoderMetadata {
         /// <summary>
         /// A collection of media files contained in this asset.
         /// </summary>
-        public IEnumerable<AssetFile> AssetFiles {
-            get {
-                if (_assetFiles == null) {
+        public IEnumerable<AssetFile> AssetFiles
+        {
+            get
+            {
+                if (_assetFiles == null)
+                {
                     var assetFilesQuery =
                         from e in _xml.Root.XPathSelectElements("./me:AssetFile", _nsm)
                         select new AssetFile(e, this, _mimeTypeProvider);
@@ -46,14 +53,18 @@ namespace Orchard.Azure.MediaServices.Models.Assets.EncoderMetadata {
         }
 
         [JsonIgnore]
-        public string PrivateLocatorUrl {
-            get {
+        public string PrivateLocatorUrl
+        {
+            get
+            {
                 return _privateLocatorUrl;
             }
         }
 
-        public string PublicLocatorUrl {
-            get {
+        public string PublicLocatorUrl
+        {
+            get
+            {
                 return _publicLocatorUrl;
             }
         }

@@ -76,7 +76,7 @@
 //            foreach (var validatorSetting in element.ValidationSettings.Validators.Enabled()) {
 //                var validatorDescriptor = _validationManager.GetValidatorByName(validatorSetting.Name);
 //                var clientValidationRegistrationContext = new ClientValidationRegistrationContext(element, validatorSetting, validatorDescriptor);
-                
+
 //                validatorDescriptor.ClientAttributes(clientValidationRegistrationContext);
 //                clientAttributes.Combine(clientValidationRegistrationContext.ClientAttributes);
 //            }

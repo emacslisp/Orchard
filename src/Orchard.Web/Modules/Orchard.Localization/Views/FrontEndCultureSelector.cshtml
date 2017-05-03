@@ -13,9 +13,9 @@
     }
 }
 @if (localizableAspects.Any()) {
-<div>
-    <ul>
-        @foreach (var localization in localizableAspects) {
+    <div>
+        <ul>
+            @foreach (var localization in localizableAspects) {
 
             if (localization.Culture == null) {
                 continue;
@@ -23,15 +23,15 @@
 
             var culture = CultureInfo.GetCultureInfo(localization.Culture);
 
-            <li>
-                @if (localization.Culture.Equals(WorkContext.CurrentCulture, StringComparison.InvariantCultureIgnoreCase)) {
-                    <a href="@Url.ItemDisplayUrl(localization)">@T("{0} (current)", culture.DisplayName)</a>
+                <li>
+                    @if (localization.Culture.Equals(WorkContext.CurrentCulture, StringComparison.InvariantCultureIgnoreCase)) {
+                        <a href="@Url.ItemDisplayUrl(localization)">@T("{0} (current)", culture.DisplayName)</a>
                 }
                 else {
-                    <a href="@Url.ItemDisplayUrl(localization)">@T("{0}", culture.DisplayName)</a>
+                        <a href="@Url.ItemDisplayUrl(localization)">@T("{0}", culture.DisplayName)</a>
                 }
-            </li>
+                </li>
         }
-    </ul>
-</div>
+        </ul>
+    </div>
 }

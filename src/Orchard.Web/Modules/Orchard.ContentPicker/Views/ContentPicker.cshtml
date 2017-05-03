@@ -12,7 +12,7 @@
 
     Script.Include("ContentPicker.js");
     Style.Include("ContentPicker.css");
-    
+
 }
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -29,20 +29,20 @@
         $.extend({
             contentPicker: {}
         });
-            
+
         $.contentPicker.cannotPerformMsg="@T("Cannot perform requested operation")";
         $.contentPicker.accessDeniedMsg="@T("Authentication timed-out: please log-on again")";
         $.contentPicker.logonUrl="@Url.Action("LogOn", new { Controller = "Account", Area = "Orchard.Users" })";
     </script>
 
     @Display.ContentPickerNavigation()
-    
+
     <div class="content-picker-tab">
-    @Display(Model.Tab)
+        @Display(Model.Tab)
     </div>
 
-@using(Script.Foot()) {
-<script type="text/javascript">
+    @using(Script.Foot()) {
+        <script type="text/javascript">
 //<![CDATA[
     $(".select").on("click", function () {
         try {
@@ -76,7 +76,7 @@
             link = link + "?callback=" + query("callback");
             self.attr("href", link);
         }
-        
+
         if (url.length == 1 || query("part", "?" + url[1]).length == 0) {
             link = link + "&part=" + query("part");
             self.attr("href", link);
@@ -87,7 +87,7 @@
             self.attr("href", link);
         }
     });
-    
+
     // get a querystring value
     function query(name, querystring) {
         name = name.toLowerCase();
@@ -103,7 +103,7 @@
         return [];
     }
 //]]>
-</script>
+        </script>
 }
 
     @Display.FootScripts()

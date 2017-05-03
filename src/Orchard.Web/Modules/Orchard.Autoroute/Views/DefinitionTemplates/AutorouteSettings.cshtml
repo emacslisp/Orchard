@@ -48,7 +48,7 @@
             @foreach (var culture in cultures) {
                 if (!String.IsNullOrEmpty(culture)) {
                     cssClass = i == cultures.Count - 1 ? "last" : "middle";
-                    <li class="@cssClass" style="@(Model.UseCulturePattern == false ? "display:none;" : "")"><a class="culture" href="#cat-@culture">@culture</a></li>
+                <li class="@cssClass" style="@(Model.UseCulturePattern == false ? "display:none;" : "")"><a class="culture" href="#cat-@culture">@culture</a></li>
                     i++;
                 }
             }

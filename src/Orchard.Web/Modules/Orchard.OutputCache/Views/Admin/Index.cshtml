@@ -1,5 +1,5 @@
 ﻿@model Orchard.OutputCache.ViewModels.IndexViewModel
-           
+
 @{
     Layout.Title = T("Cache Settings");
 
@@ -95,21 +95,21 @@
     </fieldset>
 
     foreach (var feature in featureRouteConfigs.Keys) {
-        <h2>@T(feature)</h2>
-        <table class="items">
-            <thead>
-                <tr>
-                    <th scope="col" style="width: 100%;">@T("Route")</th>
-                    <th scope="col">@T("Priority")</th>
-                    <th scope="col">@T("Duration (*)")</th>
-                    <th scope="col">@T("Grace Time (**)")</th>
-                </tr>
-            </thead>
-            @foreach (var routeConfig in featureRouteConfigs[feature]) {
+    <h2>@T(feature)</h2>
+    <table class="items">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 100%;">@T("Route")</th>
+                <th scope="col">@T("Priority")</th>
+                <th scope="col">@T("Duration (*)")</th>
+                <th scope="col">@T("Grace Time (**)")</th>
+            </tr>
+        </thead>
+        @foreach (var routeConfig in featureRouteConfigs[feature]) {
                 var index = Model.RouteConfigs.IndexOf(routeConfig);
             <tr>
                 <td style="width: 100%;">@routeConfig.Url</td>
-                <td>@routeConfig.Priority</td>    
+                <td>@routeConfig.Priority</td>
                 <td>
                     @Html.TextBoxFor(m => m.RouteConfigs[index].Duration, new { @class = "text small" })
                 </td>
@@ -119,9 +119,9 @@
                 @Html.HiddenFor(m => m.RouteConfigs[index].RouteKey)
             </tr>
             }
-        </table>
+    </table>
     }
-    
+
     <span class="hint">@T("* Leave Duration column empty to use default duration, enter 0 to disable caching for the route.")</span>
     <span class="hint">@T("** Leave Grace Time column empty to use default grace time, enter 0 to disable grace time for the route.")</span>
 

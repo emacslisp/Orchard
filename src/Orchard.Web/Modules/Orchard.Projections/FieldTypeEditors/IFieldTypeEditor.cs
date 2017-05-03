@@ -2,12 +2,14 @@
 using Orchard.ContentManagement;
 using Orchard.Localization;
 
-namespace Orchard.Projections.FieldTypeEditors {
+namespace Orchard.Projections.FieldTypeEditors
+{
     /// <summary>
     /// Defines a service to provide information on how a specific data type
     /// is stored in the content fields index.
     /// </summary>
-    public interface IFieldTypeEditor : IDependency {
+    public interface IFieldTypeEditor : IDependency
+    {
         /// <summary>
         /// Whether this instance can handle a given storage type
         /// </summary>

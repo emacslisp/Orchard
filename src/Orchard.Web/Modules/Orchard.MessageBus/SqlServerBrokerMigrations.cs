@@ -4,12 +4,15 @@ using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using Orchard.MessageBus.Models;
 
-namespace Orchard.MessageBus {
+namespace Orchard.MessageBus
+{
     [OrchardFeature("Orchard.MessageBus.SqlServerServiceBroker")]
-    public class SqlServerBrokerMigrations : DataMigrationImpl {
+    public class SqlServerBrokerMigrations : DataMigrationImpl
+    {
 
-        public int Create() {
-            
+        public int Create()
+        {
+
             SchemaBuilder.CreateTable("MessageRecord",
                 table => table
                     .Column<int>("Id", c => c.PrimaryKey().Identity())

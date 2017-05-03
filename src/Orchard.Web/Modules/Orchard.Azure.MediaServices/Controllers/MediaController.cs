@@ -17,10 +17,12 @@ using Orchard.Security;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 
-namespace Orchard.Azure.MediaServices.Controllers {
+namespace Orchard.Azure.MediaServices.Controllers
+{
 
     [Admin]
-    public class MediaController : Controller, IUpdateModel {
+    public class MediaController : Controller, IUpdateModel
+    {
 
         private readonly IContentManager _contentManager;
         private readonly IAssetManager _assetManager;
@@ -31,7 +33,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
         public MediaController(
             IOrchardServices services,
             IAssetManager assetManager,
-            ITransactionManager transactionManager) {
+            ITransactionManager transactionManager)
+        {
 
             _contentManager = services.ContentManager;
             _assetManager = assetManager;
@@ -50,46 +53,53 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
         private dynamic New { get; set; }
 
-        public ActionResult Import(string folderPath) {
+        public ActionResult Import(string folderPath)
+        {
             var part = _contentManager.New<CloudVideoPart>("CloudVideo");
             return EditImplementation(part, folderPath);
         }
 
         [HttpPost, ActionName("Import")]
         [FormValueRequired("submit.Save")]
-        public ActionResult ImportSave(string folderPath) {
+        public ActionResult ImportSave(string folderPath)
+        {
             var part = _contentManager.Create<CloudVideoPart>("CloudVideo", VersionOptions.Draft);
             return UpdateImplementation(part, folderPath, T("The cloud video item was successfully created."), publish: false);
         }
 
         [HttpPost, ActionName("Import")]
         [FormValueRequired("submit.Publish")]
-        public ActionResult ImportPublish(string folderPath) {
+        public ActionResult ImportPublish(string folderPath)
+        {
             var part = _contentManager.Create<CloudVideoPart>("CloudVideo", VersionOptions.Draft);
             return UpdateImplementation(part, folderPath, T("The cloud video item was successfully created."), publish: true);
         }
 
-        public ActionResult Edit(int id) {
+        public ActionResult Edit(int id)
+        {
             var part = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
             return EditImplementation(part, null);
         }
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Save")]
-        public ActionResult EditSave(int id) {
+        public ActionResult EditSave(int id)
+        {
             var part = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
             return UpdateImplementation(part, null, T("The cloud video item was successfully updated."), publish: false);
         }
 
         [HttpPost, ActionName("Edit")]
         [FormValueRequired("submit.Publish")]
-        public ActionResult EditPublish(int id) {
+        public ActionResult EditPublish(int id)
+        {
             var part = _contentManager.Get<CloudVideoPart>(id, VersionOptions.Latest);
             return UpdateImplementation(part, null, T("The cloud video item was successfully updated."), publish: true);
         }
 
         [HttpPost]
-        public ActionResult Upload() {
+        public ActionResult Upload()
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaContent, T("You are not authorized to manage Microsoft Azure Media content.")))
                 return new HttpUnauthorizedResult();
 
@@ -101,14 +111,16 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
             var fileName = _assetManager.SaveTemporaryFile(postedFile);
             Logger.Information("File with name '{0}' and size {1} bytes was uploaded to temporary storage.", postedFile.FileName, postedFile.ContentLength);
-            return Json(new {
+            return Json(new
+            {
                 originalFileName = Path.GetFileName(postedFile.FileName),
                 temporaryFileName = fileName,
                 fileSize = postedFile.ContentLength
             });
         }
 
-        private ActionResult EditImplementation(IContent content, string folderPath) {
+        private ActionResult EditImplementation(IContent content, string folderPath)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaContent, T("You are not authorized to manage Microsoft Azure Media content.")))
                 return new HttpUnauthorizedResult();
 
@@ -117,7 +129,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
             return View(model);
         }
 
-        private ActionResult UpdateImplementation(CloudVideoPart part, string folderPath, LocalizedString notification, bool publish) {
+        private ActionResult UpdateImplementation(CloudVideoPart part, string folderPath, LocalizedString notification, bool publish)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaContent, T("You are not authorized to manage Microsoft Azure Media content.")))
                 return new HttpUnauthorizedResult();
 
@@ -125,7 +138,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
 
             var editorShape = _contentManager.UpdateEditor(part, this);
 
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 _transactionManager.Cancel();
 
                 var viewModel = New.ViewModel(FolderPath: folderPath, Editor: editorShape);
@@ -135,7 +149,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
             var mediaPart = part.As<MediaPart>();
             mediaPart.LogicalType = "CloudVideo";
 
-            if (String.IsNullOrWhiteSpace(mediaPart.MimeType)) {
+            if (String.IsNullOrWhiteSpace(mediaPart.MimeType))
+            {
                 var mezzanineAsset = _assetManager.LoadAssetsFor<MezzanineAsset>(part).Single();
                 mediaPart.MimeType = mezzanineAsset.MimeType;
             }
@@ -143,14 +158,16 @@ namespace Orchard.Azure.MediaServices.Controllers {
             if (!String.IsNullOrWhiteSpace(folderPath))
                 mediaPart.FolderPath = folderPath;
 
-            try {
+            try
+            {
                 if (publish)
                     _contentManager.Publish(mediaPart.ContentItem);
 
                 Logger.Information("Cloud video item with ID {0} was saved.", part.Id);
                 _notifier.Success(notification);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _transactionManager.Cancel();
 
                 Logger.Error(ex, "Error while saving cloud video item with ID {0}.", part.Id);
@@ -160,11 +177,13 @@ namespace Orchard.Azure.MediaServices.Controllers {
             return RedirectToAction("Edit", new { id = part.Id });
         }
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

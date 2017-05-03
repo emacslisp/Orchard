@@ -14,16 +14,19 @@ using Orchard.Settings;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 
-namespace Orchard.Search.Controllers {
+namespace Orchard.Search.Controllers
+{
     [OrchardFeature("Orchard.Search.Content")]
-    public class AdminController : Controller {
+    public class AdminController : Controller
+    {
         private readonly ISearchService _searchService;
         private readonly ISiteService _siteService;
 
         public AdminController(
             IOrchardServices orchardServices,
             ISearchService searchService,
-            ISiteService siteService) {
+            ISiteService siteService)
+        {
             _searchService = searchService;
             _siteService = siteService;
             Services = orchardServices;
@@ -35,13 +38,15 @@ namespace Orchard.Search.Controllers {
         public ILogger Logger { get; set; }
         public Localizer T { get; set; }
 
-        public ActionResult Index(PagerParameters pagerParameters, string searchText = "") {
+        public ActionResult Index(PagerParameters pagerParameters, string searchText = "")
+        {
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var adminSearchSettingsPart = Services.WorkContext.CurrentSite.As<AdminSearchSettingsPart>();
             var searchSettingsPart = Services.WorkContext.CurrentSite.As<SearchSettingsPart>();
-            
+
             IPageOfItems<ISearchHit> searchHits = new PageOfItems<ISearchHit>(new ISearchHit[] { });
-            try {
+            try
+            {
 
                 searchHits = _searchService.Query(
                     searchText, pager.Page, pager.PageSize,
@@ -50,15 +55,18 @@ namespace Orchard.Search.Controllers {
                     searchSettingsPart.GetSearchFields(adminSearchSettingsPart.SearchIndex),
                     searchHit => searchHit);
             }
-            catch (Exception exception) {
+            catch (Exception exception)
+            {
                 Logger.Error(T("Invalid search query: {0}", exception.Message).Text);
                 Services.Notifier.Error(T("Invalid search query: {0}", exception.Message));
             }
 
             var list = Services.New.List();
-            foreach (var contentItem in Services.ContentManager.GetMany<IContent>(searchHits.Select(x => x.ContentItemId), VersionOptions.Latest, QueryHints.Empty)) {
+            foreach (var contentItem in Services.ContentManager.GetMany<IContent>(searchHits.Select(x => x.ContentItemId), VersionOptions.Latest, QueryHints.Empty))
+            {
                 // ignore search results which content item has been removed
-                if (contentItem == null) {
+                if (contentItem == null)
+                {
                     searchHits.TotalItemCount--;
                     continue;
                 }

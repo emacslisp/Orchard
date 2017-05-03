@@ -10,9 +10,9 @@
     <span class="name">@name:</span>
     @if(contentItems.Any()) {
         foreach(var contentItem in contentItems) {
-            <span class="value">@Html.ItemDisplayLink(contentItem)</span>
+        <span class="value">@Html.ItemDisplayLink(contentItem)</span>
             if(contentItem != contentItems.Last()) {
-                <span>,</span>
+        <span>,</span>
             }
         }
     }

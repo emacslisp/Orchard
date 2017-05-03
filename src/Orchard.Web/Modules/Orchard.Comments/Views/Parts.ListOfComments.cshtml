@@ -1,7 +1,7 @@
 ﻿@using Orchard.Comments.Models
 @{
     CommentsPart commentsPart = Model.ContentPart;
-    
+
     // add 'comments' class on the list container
     Model.List.Classes.Add("comments");
     Model.List.Id = string.Format("comments_{0}", commentsPart.ContentItem.Id);

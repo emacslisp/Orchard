@@ -23,8 +23,10 @@ using Orchard.Security;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 
-namespace Orchard.Modules.Controllers {
-    public class AdminController : Controller {
+namespace Orchard.Modules.Controllers
+{
+    public class AdminController : Controller
+    {
         private readonly IExtensionDisplayEventHandler _extensionDisplayEventHandler;
         private readonly IModuleService _moduleService;
         private readonly IDataMigrationManager _dataMigrationManager;
@@ -46,7 +48,8 @@ namespace Orchard.Modules.Controllers {
             IRecipeManager recipeManager,
             ShellDescriptor shellDescriptor,
             ShellSettings shellSettings,
-            IShapeFactory shapeFactory) {
+            IShapeFactory shapeFactory)
+        {
             Services = services;
             _extensionDisplayEventHandler = extensionDisplayEventHandlers.FirstOrDefault();
             _moduleService = moduleService;
@@ -68,7 +71,8 @@ namespace Orchard.Modules.Controllers {
         public ILogger Logger { get; set; }
         public dynamic Shape { get; set; }
 
-        public ActionResult Index(ModulesIndexOptions options, PagerParameters pagerParameters) {
+        public ActionResult Index(ModulesIndexOptions options, PagerParameters pagerParameters)
+        {
             if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not allowed to manage modules")))
                 return new HttpUnauthorizedResult();
 
@@ -83,7 +87,8 @@ namespace Orchard.Modules.Controllers {
 
             int totalItemCount = modules.Count();
 
-            if (pager.PageSize != 0) {
+            if (pager.PageSize != 0)
+            {
                 modules = modules.Skip((pager.Page - 1) * pager.PageSize).Take(pager.PageSize);
             }
 
@@ -91,19 +96,23 @@ namespace Orchard.Modules.Controllers {
             var installModules = _featureManager.GetEnabledFeatures().FirstOrDefault(f => f.Id == "PackagingServices") != null;
 
             modules = modules.ToList();
-            foreach (ModuleEntry moduleEntry in modules) {
+            foreach (ModuleEntry moduleEntry in modules)
+            {
                 moduleEntry.IsRecentlyInstalled = _moduleService.IsRecentlyInstalled(moduleEntry.Descriptor);
                 moduleEntry.CanUninstall = installModules;
 
-                if (_extensionDisplayEventHandler != null) {
-                    foreach (string notification in _extensionDisplayEventHandler.Displaying(moduleEntry.Descriptor, ControllerContext.RequestContext)) {
+                if (_extensionDisplayEventHandler != null)
+                {
+                    foreach (string notification in _extensionDisplayEventHandler.Displaying(moduleEntry.Descriptor, ControllerContext.RequestContext))
+                    {
                         moduleEntry.Notifications.Add(notification);
                     }
                 }
             }
 
 
-            return View(new ModulesIndexViewModel {
+            return View(new ModulesIndexViewModel
+            {
                 Modules = modules,
                 InstallModules = installModules,
                 Options = options,
@@ -111,7 +120,8 @@ namespace Orchard.Modules.Controllers {
             });
         }
 
-        public ActionResult Recipes() {
+        public ActionResult Recipes()
+        {
             if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not allowed to manage modules")))
                 return new HttpUnauthorizedResult();
 
@@ -122,8 +132,10 @@ namespace Orchard.Modules.Controllers {
 
             var viewModel = new RecipesViewModel();
 
-            if (_recipeHarvester != null) {
-                viewModel.Modules = modules.Select(x => new ModuleRecipesViewModel {
+            if (_recipeHarvester != null)
+            {
+                viewModel.Modules = modules.Select(x => new ModuleRecipesViewModel
+                {
                     Module = x,
                     Recipes = _recipeHarvester.HarvestRecipes(x.Descriptor.Id).Where(recipe => !recipe.IsSetupRecipe).ToList()
                 })
@@ -136,7 +148,8 @@ namespace Orchard.Modules.Controllers {
         }
 
         [HttpPost, ActionName("Recipes")]
-        public ActionResult RecipesPOST(string moduleId, string name) {
+        public ActionResult RecipesPOST(string moduleId, string name)
+        {
             if (!Services.Authorizer.Authorize(StandardPermissions.SiteOwner, T("Not allowed to manage modules")))
                 return new HttpUnauthorizedResult();
 
@@ -144,20 +157,24 @@ namespace Orchard.Modules.Controllers {
                 .Where(extensionDescriptor => extensionDescriptor.Id == moduleId && ExtensionIsAllowed(extensionDescriptor))
                 .Select(extensionDescriptor => new ModuleEntry { Descriptor = extensionDescriptor }).FirstOrDefault();
 
-            if (module == null) {
+            if (module == null)
+            {
                 return HttpNotFound();
             }
 
             Recipe recipe = _recipeHarvester.HarvestRecipes(module.Descriptor.Id).FirstOrDefault(x => !x.IsSetupRecipe && x.Name == name);
 
-            if (recipe == null) {
+            if (recipe == null)
+            {
                 return HttpNotFound();
             }
 
-            try {
+            try
+            {
                 _recipeManager.Execute(recipe);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Error(e, "Error while executing recipe {0} in {1}", moduleId, name);
                 Services.Notifier.Error(T("Recipes {0} contains  unsupported module installation steps.", recipe.Name));
             }
@@ -167,7 +184,8 @@ namespace Orchard.Modules.Controllers {
             return RedirectToAction("Recipes");
 
         }
-        public ActionResult Features() {
+        public ActionResult Features()
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageFeatures, T("Not allowed to manage features")))
                 return new HttpUnauthorizedResult();
 
@@ -175,7 +193,8 @@ namespace Orchard.Modules.Controllers {
 
             IEnumerable<ModuleFeature> features = _featureManager.GetAvailableFeatures()
                 .Where(f => !DefaultExtensionTypes.IsTheme(f.Extension.ExtensionType))
-                .Select(f => new ModuleFeature {
+                .Select(f => new ModuleFeature
+                {
                     Descriptor = f,
                     IsEnabled = _shellDescriptor.Features.Any(sf => sf.Name == f.Id),
                     IsRecentlyInstalled = _moduleService.IsRecentlyInstalled(f.Extension),
@@ -184,7 +203,8 @@ namespace Orchard.Modules.Controllers {
                 })
                 .ToList();
 
-            return View(new FeaturesViewModel {
+            return View(new FeaturesViewModel
+            {
                 Features = features,
                 IsAllowed = ExtensionIsAllowed
             });
@@ -192,22 +212,26 @@ namespace Orchard.Modules.Controllers {
 
         [HttpPost, ActionName("Features")]
         [FormValueRequired("submit.BulkExecute")]
-        public ActionResult FeaturesPOST(FeaturesBulkAction bulkAction, IList<string> featureIds, bool? force) {
+        public ActionResult FeaturesPOST(FeaturesBulkAction bulkAction, IList<string> featureIds, bool? force)
+        {
 
             if (!Services.Authorizer.Authorize(Permissions.ManageFeatures, T("Not allowed to manage features")))
                 return new HttpUnauthorizedResult();
 
-            if (featureIds == null || !featureIds.Any()) {
+            if (featureIds == null || !featureIds.Any())
+            {
                 ModelState.AddModelError("featureIds", T("Please select one or more features."));
             }
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 var availableFeatures = _moduleService.GetAvailableFeatures().Where(feature => ExtensionIsAllowed(feature.Descriptor.Extension)).ToList();
                 var selectedFeatures = availableFeatures.Where(x => featureIds.Contains(x.Descriptor.Id)).ToList();
                 var enabledFeatures = availableFeatures.Where(x => x.IsEnabled && featureIds.Contains(x.Descriptor.Id)).Select(x => x.Descriptor.Id).ToList();
                 var disabledFeatures = availableFeatures.Where(x => !x.IsEnabled && featureIds.Contains(x.Descriptor.Id)).Select(x => x.Descriptor.Id).ToList();
 
-                switch (bulkAction) {
+                switch (bulkAction)
+                {
                     case FeaturesBulkAction.None:
                         break;
                     case FeaturesBulkAction.Enable:
@@ -224,13 +248,16 @@ namespace Orchard.Modules.Controllers {
                         var featuresThatNeedUpdate = _dataMigrationManager.GetFeaturesThatNeedUpdate();
                         var selectedFeaturesThatNeedUpdate = selectedFeatures.Where(x => featuresThatNeedUpdate.Contains(x.Descriptor.Id));
 
-                        foreach (var feature in selectedFeaturesThatNeedUpdate) {
+                        foreach (var feature in selectedFeaturesThatNeedUpdate)
+                        {
                             var id = feature.Descriptor.Id;
-                            try {
+                            try
+                            {
                                 _dataMigrationManager.Update(id);
                                 Services.Notifier.Success(T("The feature {0} was updated successfully", id));
                             }
-                            catch (Exception exception) {
+                            catch (Exception exception)
+                            {
                                 Services.Notifier.Error(T("An error occurred while updating the feature {0}: {1}", id, exception.Message));
                             }
                         }
@@ -246,16 +273,21 @@ namespace Orchard.Modules.Controllers {
         /// <summary>
         /// Checks whether the module is allowed for the current tenant
         /// </summary>
-        private bool ExtensionIsAllowed(ExtensionDescriptor extensionDescriptor) {
+        private bool ExtensionIsAllowed(ExtensionDescriptor extensionDescriptor)
+        {
             return _shellSettings.Modules.Length == 0 || _shellSettings.Modules.Contains(extensionDescriptor.Id);
         }
 
-        private void EnableFeatures(List<string> disabledFeatures, bool force) {
-            foreach (var feature in disabledFeatures) {
-                if (_featureManager.HasLoader(feature)) {
+        private void EnableFeatures(List<string> disabledFeatures, bool force)
+        {
+            foreach (var feature in disabledFeatures)
+            {
+                if (_featureManager.HasLoader(feature))
+                {
                     _moduleService.EnableFeatures(disabledFeatures, force);
                 }
-                else {
+                else
+                {
                     Services.Notifier.Error(T("No loader found for feature's (\"{0}\") exension!", feature));
                 }
             }

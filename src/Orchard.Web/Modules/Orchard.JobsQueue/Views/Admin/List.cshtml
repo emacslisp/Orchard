@@ -10,16 +10,16 @@
     Script.Require("jQuery");
 }
 @using (Html.BeginFormAntiForgeryPost()) {
-<div class="manage">
-    <span class="queue-status @String.Format("{0}", status.ToString().HtmlClassify())">@T("Status: {0}", status)</span>
-    @if (status == JobsQueueStatus.Paused) {
-        <button type="submit" name="submit.Resume" value="resume" class="button">@T("Resume")</button>
+    <div class="manage">
+        <span class="queue-status @String.Format("{0}", status.ToString().HtmlClassify())">@T("Status: {0}", status)</span>
+        @if (status == JobsQueueStatus.Paused) {
+            <button type="submit" name="submit.Resume" value="resume" class="button">@T("Resume")</button>
     }
     else {
-        <button type="submit" name="submit.Pause" value="pause" class="button grey">@T("Pause")</button>
-        <button type="submit" name="submit.Process" value="process">@T("Process Now")</button>
+            <button type="submit" name="submit.Pause" value="pause" class="button grey">@T("Pause")</button>
+            <button type="submit" name="submit.Process" value="process">@T("Process Now")</button>
     }
-</div>
+    </div>
 if (!jobs.Any()) {
     <div class="job info">@T("The queue is empty.")</div>
 }
@@ -67,10 +67,10 @@ else {
 
 @if (Model.ProcessQueue) {
     using (Script.Foot()) {
-        <script type="text/javascript">
+    <script type="text/javascript">
             $(function () {
                 $("[name='submit.Process']").trigger("click");
             });
-        </script>
+    </script>
     }
 }

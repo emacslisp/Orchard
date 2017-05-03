@@ -106,7 +106,7 @@
     padding: 0;
     margin: 0;
     min-height: 600px;
-    overflow:auto;
+    overflow: auto;
     margin-right: 302px; /* width + borders */
 }
 
@@ -120,17 +120,16 @@
     overflow-y: scroll;
     border: 1px solid #E4E5E6;
     background-color: #F3F4F5;
-    float:left;
-
+    float: left;
     width: 300px;
     margin-left: -302px; /* width + borders */
 }
 
-#activity-toolbox .bulk-actions {
-    margin-top: 10px; 
-    margin-bottom: 5px; 
-    margin-left: 5px;
-}
+    #activity-toolbox .bulk-actions {
+        margin-top: 10px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
 
     #activity-toolbox .activity-toolbox-item {
         display: block;
@@ -140,17 +139,17 @@
         background-color: white;
     }
 
-    #activity-toolbox .activity-toolbox-item > div {
-        display: block;
-        padding: 0 5px 0 10px;
-        width: auto;
-        height: auto;
-    }
-
-        #activity-toolbox .activity-toolbox-item > div > h2 {
-            color: #333;
-            font-size: 1.077em;
+        #activity-toolbox .activity-toolbox-item > div {
+            display: block;
+            padding: 0 5px 0 10px;
+            width: auto;
+            height: auto;
         }
+
+            #activity-toolbox .activity-toolbox-item > div > h2 {
+                color: #333;
+                font-size: 1.077em;
+            }
 
 #activity-toolbar {
     position: absolute;
@@ -226,9 +225,9 @@
     background-position: 10px 10px;
 }
 
-.toolbox-task div {
-    margin-left: 36px;
-}
+    .toolbox-task div {
+        margin-left: 36px;
+    }
 
 .toolbox-event {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAQNJREFUOE+Vk7ERgzAMAL0TJQ0VPXMwAhMwAxOwARMwATUtE9DAcYrlRJxsSfaleF2wpdgPkgOAwPM8bhgGqKpKMI6jT/nmEe+P4zigbVu1cF1Xn2IUbtumFjVNA+d5+hSjcFkWtVC7JhJCzk+7JhLCfd+u6zpR1Pc9XNclipAQLL95nv22LEJC0PzquoZ93/22/GN8YVk/C7yJ6WdBn8f0syBv8/tpcO+//HgzRH789afu/DQkBI206dPWi5I53D09DYmSOdM0vYVa60UPROqXnUcO97MaXSwg3C87VinkVxwrDvcrjhWH/H7NLPYJsUB+udMQsYB+pdOQ6IGGunQaALgPuFaRbIPh6Z8AAAAASUVORK5CYII=');
@@ -236,9 +235,9 @@
     background-position: 10px 10px;
 }
 
-.toolbox-event div {
-    margin-left: 36px;
-}
+    .toolbox-event div {
+        margin-left: 36px;
+    }
 
 /* RTL */
 .dir-rtl #editor-wrapper {
@@ -257,8 +256,7 @@
 /* RTL toolbox */
 
 .dir-rtl #activity-toolbox {
-    float:right;
-
+    float: right;
     margin-left: inherit; /* width + borders */
     margin-right: -302px; /* width + borders */
 }

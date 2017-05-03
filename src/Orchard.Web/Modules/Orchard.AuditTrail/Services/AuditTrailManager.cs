@@ -15,8 +15,10 @@ using Orchard.Security;
 using Orchard.Services;
 using Orchard.Settings;
 
-namespace Orchard.AuditTrail.Services {
-    public class AuditTrailManager : Component, IAuditTrailManager {
+namespace Orchard.AuditTrail.Services
+{
+    public class AuditTrailManager : Component, IAuditTrailManager
+    {
         private readonly IRepository<AuditTrailEventRecord> _auditTrailRepository;
         private readonly ITransactionManager _transactionManager;
         private readonly IAuditTrailEventProvider _providers;
@@ -39,8 +41,9 @@ namespace Orchard.AuditTrail.Services {
             ICacheManager cacheManager,
             ISiteService siteService,
             ISignals signals,
-            IShapeFactory shapeFactory, 
-            IClientHostAddressAccessor clientHostAddressAccessor) {
+            IShapeFactory shapeFactory,
+            IClientHostAddressAccessor clientHostAddressAccessor)
+        {
 
             _auditTrailRepository = auditTrailRepository;
             _transactionManager = transactionManager;
@@ -59,11 +62,13 @@ namespace Orchard.AuditTrail.Services {
             int page,
             int pageSize,
             Filters filters = null,
-            AuditTrailOrderBy orderBy = AuditTrailOrderBy.DateDescending) {
+            AuditTrailOrderBy orderBy = AuditTrailOrderBy.DateDescending)
+        {
 
             var query = _auditTrailRepository.Table;
 
-            if (filters != null) {
+            if (filters != null)
+            {
                 var filterContext = new QueryFilterContext(query, filters);
 
                 // Invoke event handlers.
@@ -71,14 +76,16 @@ namespace Orchard.AuditTrail.Services {
 
                 // Give each provider a chance to modify the query.
                 var providersContext = DescribeProviders();
-                foreach (var queryFilter in providersContext.QueryFilters) {
+                foreach (var queryFilter in providersContext.QueryFilters)
+                {
                     queryFilter(filterContext);
                 }
 
                 query = filterContext.Query;
             }
 
-            switch (orderBy) {
+            switch (orderBy)
+            {
                 case AuditTrailOrderBy.EventAscending:
                     query = query.OrderBy(x => x.EventName).ThenByDescending(x => x.Id);
                     break;
@@ -98,18 +105,21 @@ namespace Orchard.AuditTrail.Services {
             if (pageSize > 0)
                 query = query.Take(pageSize);
 
-            return new PageOfItems<AuditTrailEventRecord>(query) {
+            return new PageOfItems<AuditTrailEventRecord>(query)
+            {
                 PageNumber = page,
                 PageSize = pageSize,
                 TotalItemCount = totalItemCount
             };
         }
 
-        public AuditTrailEventRecord GetRecord(int id) {
+        public AuditTrailEventRecord GetRecord(int id)
+        {
             return _auditTrailRepository.Get(id);
         }
 
-        public dynamic BuildFilterDisplay(Filters filters) {
+        public dynamic BuildFilterDisplay(Filters filters)
+        {
             var filterDisplay = (dynamic)_shapeFactory.Create("AuditTrailFilter");
             var filterDisplayContext = new DisplayFilterContext(_shapeFactory, filters, filterDisplay);
 
@@ -119,17 +129,20 @@ namespace Orchard.AuditTrail.Services {
             // Give each provider a chance to provide a filter display.
             var providersContext = DescribeProviders();
 
-            foreach (var action in providersContext.FilterDisplays) {
+            foreach (var action in providersContext.FilterDisplays)
+            {
                 action(filterDisplayContext);
             }
 
             return filterDisplay;
         }
 
-        public AuditTrailEventRecordResult CreateRecord<T>(string eventName, IUser user, IDictionary<string, object> properties = null, IDictionary<string, object> eventData = null, string eventFilterKey = null, string eventFilterData = null) where T : IAuditTrailEventProvider {
+        public AuditTrailEventRecordResult CreateRecord<T>(string eventName, IUser user, IDictionary<string, object> properties = null, IDictionary<string, object> eventData = null, string eventFilterKey = null, string eventFilterData = null) where T : IAuditTrailEventProvider
+        {
             var eventDescriptor = DescribeEvent<T>(eventName);
             if (!IsEventEnabled(eventDescriptor))
-                return new AuditTrailEventRecordResult {
+                return new AuditTrailEventRecordResult
+                {
                     Record = null,
                     IsDisabled = true
                 };
@@ -137,7 +150,8 @@ namespace Orchard.AuditTrail.Services {
             if (properties == null) properties = new Dictionary<string, object>();
             if (eventData == null) eventData = new Dictionary<string, object>();
 
-            var context = new AuditTrailCreateContext {
+            var context = new AuditTrailCreateContext
+            {
                 Event = eventName,
                 User = user,
                 Properties = properties,
@@ -148,7 +162,8 @@ namespace Orchard.AuditTrail.Services {
 
             _auditTrailEventHandlers.Create(context);
 
-            var record = new AuditTrailEventRecord {
+            var record = new AuditTrailEventRecord
+            {
                 Category = eventDescriptor.CategoryDescriptor.Category,
                 EventName = eventName,
                 FullEventName = eventDescriptor.Event,
@@ -162,33 +177,39 @@ namespace Orchard.AuditTrail.Services {
             };
 
             _auditTrailRepository.Create(record);
-            return new AuditTrailEventRecordResult {
+            return new AuditTrailEventRecordResult
+            {
                 Record = record,
                 IsDisabled = false
             };
         }
 
-        public IEnumerable<AuditTrailCategoryDescriptor> DescribeCategories() {
+        public IEnumerable<AuditTrailCategoryDescriptor> DescribeCategories()
+        {
             var context = DescribeProviders();
             return context.Describe();
         }
 
-        public DescribeContext DescribeProviders() {
+        public DescribeContext DescribeProviders()
+        {
             var context = new DescribeContext();
             _providers.Describe(context);
             return context;
         }
 
-        public AuditTrailEventDescriptor DescribeEvent(AuditTrailEventRecord record) {
+        public AuditTrailEventDescriptor DescribeEvent(AuditTrailEventRecord record)
+        {
             return DescribeEvent(record.FullEventName) ?? AuditTrailEventDescriptor.Basic(record);
         }
 
-        public AuditTrailEventDescriptor DescribeEvent<T>(string eventName) where T : IAuditTrailEventProvider {
+        public AuditTrailEventDescriptor DescribeEvent<T>(string eventName) where T : IAuditTrailEventProvider
+        {
             var fullyQualifiedEventName = EventNameExtensions.GetFullyQualifiedEventName<T>(eventName);
             return DescribeEvent(fullyQualifiedEventName);
         }
 
-        public AuditTrailEventDescriptor DescribeEvent(string fullyQualifiedEventName) {
+        public AuditTrailEventDescriptor DescribeEvent(string fullyQualifiedEventName)
+        {
             var categoryDescriptors = DescribeCategories();
             var eventDescriptorQuery =
                 from c in categoryDescriptors
@@ -200,7 +221,8 @@ namespace Orchard.AuditTrail.Services {
             return eventDescriptors.FirstOrDefault();
         }
 
-        public IEnumerable<AuditTrailEventRecord> Trim(TimeSpan retentionPeriod) {
+        public IEnumerable<AuditTrailEventRecord> Trim(TimeSpan retentionPeriod)
+        {
             var dateThreshold = (_clock.UtcNow.EndOfDay() - retentionPeriod);
             var query = _auditTrailRepository.Table.Where(x => x.CreatedUtc <= dateThreshold);
 
@@ -209,7 +231,8 @@ namespace Orchard.AuditTrail.Services {
             return query.ToArray();
         }
 
-        public string SerializeProviderConfiguration(IEnumerable<AuditTrailEventSetting> settings) {
+        public string SerializeProviderConfiguration(IEnumerable<AuditTrailEventSetting> settings)
+        {
             var doc = new XDocument(
                 new XElement("Events",
                     settings.Select(x =>
@@ -220,25 +243,30 @@ namespace Orchard.AuditTrail.Services {
             return doc.ToString(SaveOptions.DisableFormatting);
         }
 
-        public IEnumerable<AuditTrailEventSetting> DeserializeProviderConfiguration(string data) {
+        public IEnumerable<AuditTrailEventSetting> DeserializeProviderConfiguration(string data)
+        {
             if (String.IsNullOrWhiteSpace(data))
                 return Enumerable.Empty<AuditTrailEventSetting>();
 
-            try {
+            try
+            {
                 var doc = XDocument.Parse(data);
-                return doc.Element("Events").Elements("Event").Select(x => new AuditTrailEventSetting {
+                return doc.Element("Events").Elements("Event").Select(x => new AuditTrailEventSetting
+                {
                     EventName = x.Attr<string>("Name"),
                     IsEnabled = x.Attr<bool>("IsEnabled")
                 }).ToArray();
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error occurred during deserialization of audit trail settings.");
             }
             return Enumerable.Empty<AuditTrailEventSetting>();
         }
 
-        private string GetClientAddress() {
+        private string GetClientAddress()
+        {
             var settings = _siteService.GetSiteSettings().As<AuditTrailSettingsPart>();
 
             if (!settings.EnableClientIpAddressLogging)
@@ -247,11 +275,13 @@ namespace Orchard.AuditTrail.Services {
             return _clientHostAddressAccessor.GetClientAddress();
         }
 
-        private bool IsEventEnabled(AuditTrailEventDescriptor eventDescriptor) {
+        private bool IsEventEnabled(AuditTrailEventDescriptor eventDescriptor)
+        {
             if (eventDescriptor.IsMandatory)
                 return true;
 
-            var settingsDictionary = _cacheManager.Get("AuditTrail.EventSettings", context => {
+            var settingsDictionary = _cacheManager.Get("AuditTrail.EventSettings", context =>
+            {
                 context.Monitor(_signals.When("AuditTrail.EventSettings"));
                 return _siteService.GetSiteSettings().As<AuditTrailSettingsPart>().EventSettings.ToDictionary(x => x.EventName);
             });

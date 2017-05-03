@@ -20,10 +20,12 @@ using Orchard.UI.Admin;
 using Orchard.UI.Notify;
 using System.Net;
 
-namespace Orchard.Azure.MediaServices.Controllers {
+namespace Orchard.Azure.MediaServices.Controllers
+{
 
     [Admin]
-    public class AssetController : Controller, IUpdateModel {
+    public class AssetController : Controller, IUpdateModel
+    {
 
         private readonly ITransactionManager _transactionManager;
         private readonly IOrchardServices _services;
@@ -38,7 +40,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
             IOrchardServices services,
             IAssetManager assetManager,
             IWamsClient wamsClient,
-            Lazy<IEnumerable<IAssetDriver>> assetDrivers) {
+            Lazy<IEnumerable<IAssetDriver>> assetDrivers)
+        {
 
             _transactionManager = transactionManager;
             _services = services;
@@ -56,26 +59,32 @@ namespace Orchard.Azure.MediaServices.Controllers {
         public ILogger Logger { get; set; }
 
         [HttpPost]
-        public async Task<ActionResult> GenerateWamsAsset(string fileName) {
+        public async Task<ActionResult> GenerateWamsAsset(string fileName)
+        {
             var asset = await _wamsClient.CreateAssetAsync(fileName).ConfigureAwait(continueOnCapturedContext: false);
 
-            return Json(new {
+            return Json(new
+            {
                 sasLocator = asset.SasLocator,
                 assetId = asset.AssetId
             });
         }
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteWamsAsset(string id) {
+        public async Task<ActionResult> DeleteWamsAsset(string id)
+        {
             var asset = _wamsClient.GetAssetById(id);
             await _wamsClient.DeleteAssetAsync(asset).ConfigureAwait(continueOnCapturedContext: false);
             return new EmptyResult();
         }
 
-        public JsonResult State(int id) {
+        public JsonResult State(int id)
+        {
             var asset = _assetManager.GetAssetById(id);
-            return Json(new {
-                uploadState = new {
+            return Json(new
+            {
+                uploadState = new
+                {
                     status = asset.UploadState.Status.ToString(),
                     percentComplete = (int?)asset.UploadState.PercentComplete,
                 },
@@ -83,8 +92,10 @@ namespace Orchard.Azure.MediaServices.Controllers {
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Edit(int id) {
-            return Validate(id, asset => {
+        public ActionResult Edit(int id)
+        {
+            return Validate(id, asset =>
+            {
                 var viewModel = BuildAssetViewModel(asset, driver => driver.BuildEditor(asset, _services.New));
                 return View(viewModel);
             });
@@ -92,18 +103,22 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost, ActionName("Edit"), FormValueRequired("button.Save")]
-        public ActionResult EditSave(int id) {
-            return Validate(id, asset => {
+        public ActionResult EditSave(int id)
+        {
+            return Validate(id, asset =>
+            {
                 var viewModel = BuildAssetViewModel(asset, driver => driver.UpdateEditor(asset, this, _services.New));
 
-                if (TryUpdateModel(viewModel, null, null, new[] { "Asset", "SpecializedSettingsShapes" })) {
+                if (TryUpdateModel(viewModel, null, null, new[] { "Asset", "SpecializedSettingsShapes" }))
+                {
                     asset.Name = viewModel.Name.TrimSafe();
                     asset.Description = viewModel.Description.TrimSafe();
                     asset.IncludeInPlayer = viewModel.IncludeInPlayer;
                     asset.MediaQuery = viewModel.MediaQuery.TrimSafe();
                 }
 
-                if (!ModelState.IsValid) {
+                if (!ModelState.IsValid)
+                {
                     _transactionManager.Cancel();
                     return View(viewModel);
                 }
@@ -114,36 +129,42 @@ namespace Orchard.Azure.MediaServices.Controllers {
         }
 
         [HttpPost, ActionName("Edit"), FormValueRequired("button.Delete")]
-        public ActionResult EditDelete(int id) {
+        public ActionResult EditDelete(int id)
+        {
             return Delete(id);
         }
 
-        public ActionResult Delete(int id) {
+        public ActionResult Delete(int id)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaContent, T("You are not authorized to manage Microsoft Azure Media content.")))
                 return new HttpUnauthorizedResult();
 
             Logger.Debug("User requested to delete asset with ID {0}.", id);
 
             var asset = _assetManager.GetAssetById(id);
-            if (asset == null) {
+            if (asset == null)
+            {
                 Logger.Warning("User requested to delete asset with ID {0} but no such asset record exists.", id);
                 return HttpNotFound(String.Format("No asset with ID {0} was found.", id));
             }
 
             var cloudVideoPart = asset.VideoPart;
 
-            if (cloudVideoPart.MezzanineAsset.Record.Id == asset.Record.Id) {
+            if (cloudVideoPart.MezzanineAsset.Record.Id == asset.Record.Id)
+            {
                 Logger.Warning("User requested to delete asset with ID {0} but it is the mezzanine asset and cannot be deleted.", id);
                 return new HttpStatusCodeResult(HttpStatusCode.Forbidden, String.Format("Asset with ID {0} is the mezzanine asset and cannot be deleted.", id));
             }
 
-            try {
+            try
+            {
                 _assetManager.DeleteAsset(asset);
 
                 Logger.Information("Asset with ID {0} was deleted.", id);
                 _notifier.Success(T("The asset '{0}' was successfully deleted.", asset.Name));
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _transactionManager.Cancel();
 
                 Logger.Error(ex, "Error while deleting asset with ID {0}.", id);
@@ -153,7 +174,8 @@ namespace Orchard.Azure.MediaServices.Controllers {
             return Redirect(Url.ItemEditUrl(cloudVideoPart));
         }
 
-        private ActionResult Validate(int id, Func<Asset, ActionResult> validationSucceeded) {
+        private ActionResult Validate(int id, Func<Asset, ActionResult> validationSucceeded)
+        {
             if (!_authorizer.Authorize(Permissions.ManageCloudMediaContent, T("You are not authorized to manage Microsoft Azure Media content.")))
                 return new HttpUnauthorizedResult();
 
@@ -161,10 +183,12 @@ namespace Orchard.Azure.MediaServices.Controllers {
             return asset == null ? new HttpNotFoundResult() : validationSucceeded(asset);
         }
 
-        private AssetViewModel BuildAssetViewModel(Asset asset, Func<IAssetDriver, IEnumerable<AssetDriverResult>> driverAction) {
+        private AssetViewModel BuildAssetViewModel(Asset asset, Func<IAssetDriver, IEnumerable<AssetDriverResult>> driverAction)
+        {
             var specializedSettings = _assetDrivers.Value.SelectMany(driverAction);
 
-            return new AssetViewModel {
+            return new AssetViewModel
+            {
                 Name = asset.Name,
                 Description = asset.Description,
                 IncludeInPlayer = asset.IncludeInPlayer,
@@ -174,11 +198,13 @@ namespace Orchard.Azure.MediaServices.Controllers {
             };
         }
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

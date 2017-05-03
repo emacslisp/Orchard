@@ -1,11 +1,14 @@
-﻿namespace Orchard.Azure.MediaServices.Services.Tasks {
+﻿namespace Orchard.Azure.MediaServices.Services.Tasks
+{
 
     /// <summary>
     /// Represents a specific configuration of a task provider for an individual task instance.
     /// </summary>
-    public class TaskConfiguration {
+    public class TaskConfiguration
+    {
 
-        public TaskConfiguration(ITaskProvider provider) {
+        public TaskConfiguration(ITaskProvider provider)
+        {
             TaskProvider = provider;
         }
 

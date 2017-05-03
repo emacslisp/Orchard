@@ -20,9 +20,11 @@ using Orchard.Owin;
 using Owin;
 using LogLevel = Orchard.Logging.LogLevel;
 
-namespace Orchard.OpenId.OwinMiddlewares {
+namespace Orchard.OpenId.OwinMiddlewares
+{
     [OrchardFeature("Orchard.OpenId.AzureActiveDirectory")]
-    public class AzureActiveDirectory : IOwinMiddlewareProvider {
+    public class AzureActiveDirectory : IOwinMiddlewareProvider
+    {
         public ILogger Logger { get; set; }
 
         private readonly IWorkContextAccessor _workContextAccessor;
@@ -37,7 +39,8 @@ namespace Orchard.OpenId.OwinMiddlewares {
         public AzureActiveDirectory(
             IWorkContextAccessor workContextAccessor,
             IAzureActiveDirectoryService azureActiveDirectoryService,
-            InMemoryCache inMemoryCache) {
+            InMemoryCache inMemoryCache)
+        {
             _workContextAccessor = workContextAccessor;
             _azureActiveDirectoryService = azureActiveDirectoryService;
             _inMemoryCache = inMemoryCache;
@@ -45,14 +48,16 @@ namespace Orchard.OpenId.OwinMiddlewares {
             Logger = NullLogger.Instance;
         }
 
-        public IEnumerable<OwinMiddlewareRegistration> GetOwinMiddlewares() {
+        public IEnumerable<OwinMiddlewareRegistration> GetOwinMiddlewares()
+        {
             var settings = _workContextAccessor.GetContext().CurrentSite.As<AzureActiveDirectorySettingsPart>();
             var logoutRedirectUri = string.Empty;
             var azureAppKey = string.Empty;
             var azureWebSiteProtectionEnabled = false;
             var azureUseAzureGraphApi = false;
 
-            if (settings == null || !settings.IsValid) {
+            if (settings == null || !settings.IsValid)
+            {
                 return Enumerable.Empty<OwinMiddlewareRegistration>();
             }
 
@@ -70,12 +75,15 @@ namespace Orchard.OpenId.OwinMiddlewares {
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 
-            var openIdOptions = new OpenIdConnectAuthenticationOptions {
+            var openIdOptions = new OpenIdConnectAuthenticationOptions
+            {
                 ClientId = _azureClientId,
                 Authority = authority,
                 PostLogoutRedirectUri = logoutRedirectUri,
-                Notifications = new OpenIdConnectAuthenticationNotifications() {
-                    AuthorizationCodeReceived = (context) => {
+                Notifications = new OpenIdConnectAuthenticationNotifications()
+                {
+                    AuthorizationCodeReceived = (context) =>
+                    {
                         var code = context.Code;
                         var credential = new ClientCredential(_azureClientId, azureAppKey);
                         _inMemoryCache.UserObjectId = context.AuthenticationTicket.Identity.FindFirst(Constants.AzureActiveDirectory.ObjectIdentifierKey).Value;
@@ -84,7 +92,8 @@ namespace Orchard.OpenId.OwinMiddlewares {
 
                         return Task.FromResult(0);
                     },
-                    AuthenticationFailed = context => {
+                    AuthenticationFailed = context =>
+                    {
                         context.HandleResponse();
                         context.Response.Redirect(Constants.General.AuthenticationErrorUrl);
 
@@ -94,35 +103,47 @@ namespace Orchard.OpenId.OwinMiddlewares {
 
             };
 
-            if (azureWebSiteProtectionEnabled) {
-                middlewares.Add(new OwinMiddlewareRegistration {
+            if (azureWebSiteProtectionEnabled)
+            {
+                middlewares.Add(new OwinMiddlewareRegistration
+                {
                     Priority = "9",
                     Configure = app => { app.SetDataProtectionProvider(new MachineKeyProtectionProvider()); }
                 });
             }
 
-            middlewares.Add(new OwinMiddlewareRegistration {
+            middlewares.Add(new OwinMiddlewareRegistration
+            {
                 Priority = Constants.General.OpenIdOwinMiddlewarePriority,
-                Configure = app => {
+                Configure = app =>
+                {
                     app.UseOpenIdConnectAuthentication(openIdOptions);
                 }
             });
 
-            if (azureUseAzureGraphApi) {
-                middlewares.Add(new OwinMiddlewareRegistration {
+            if (azureUseAzureGraphApi)
+            {
+                middlewares.Add(new OwinMiddlewareRegistration
+                {
                     Priority = "11",
-                    Configure = app => app.Use(async (context, next) => {
-                        try {
-                            if (_azureActiveDirectoryService.Token == null && _azureActiveDirectoryService.Token.IsEmpty()) {
+                    Configure = app => app.Use(async (context, next) =>
+                    {
+                        try
+                        {
+                            if (_azureActiveDirectoryService.Token == null && _azureActiveDirectoryService.Token.IsEmpty())
+                            {
                                 RegenerateAzureGraphApiToken();
                             }
-                            else {
-                                if (DateTimeOffset.Compare(DateTimeOffset.UtcNow, _azureActiveDirectoryService.TokenExpiresOn) > 0) {
+                            else
+                            {
+                                if (DateTimeOffset.Compare(DateTimeOffset.UtcNow, _azureActiveDirectoryService.TokenExpiresOn) > 0)
+                                {
                                     RegenerateAzureGraphApiToken();
                                 }
                             }
                         }
-                        catch (Exception ex) {
+                        catch (Exception ex)
+                        {
                             Logger.Log(LogLevel.Error, ex, "An error occurred generating azure api credential {0}", ex.Message);
                         }
 
@@ -134,7 +155,8 @@ namespace Orchard.OpenId.OwinMiddlewares {
             return middlewares;
         }
 
-        private void RegenerateAzureGraphApiToken() {
+        private void RegenerateAzureGraphApiToken()
+        {
             var result = GetAuthContext().AcquireTokenAsync(_azureGraphApiUri, GetClientCredential()).Result;
 
             _azureActiveDirectoryService.TokenExpiresOn = result.ExpiresOn;
@@ -142,11 +164,13 @@ namespace Orchard.OpenId.OwinMiddlewares {
             _azureActiveDirectoryService.AzureTenant = _azureTenant;
         }
 
-        private ClientCredential GetClientCredential() {
+        private ClientCredential GetClientCredential()
+        {
             return new ClientCredential(_azureClientId, _azureGraphApiKey);
         }
 
-        private AuthenticationContext GetAuthContext() {
+        private AuthenticationContext GetAuthContext()
+        {
             var authority = string.Format(CultureInfo.InvariantCulture, _azureAdInstance, _azureTenant);
 
             return new AuthenticationContext(authority, false);

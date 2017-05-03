@@ -5,12 +5,15 @@ using Orchard.ContentManagement.Handlers;
 using Orchard.Localization.Models;
 using Orchard.Localization.Services;
 
-namespace Orchard.Localization.Handlers {
-    public class LocalizationPartHandler : ContentHandler {
+namespace Orchard.Localization.Handlers
+{
+    public class LocalizationPartHandler : ContentHandler
+    {
         private readonly ICultureManager _cultureManager;
         private readonly IContentManager _contentManager;
 
-        public LocalizationPartHandler(IRepository<LocalizationPartRecord> localizedRepository, ICultureManager cultureManager, IContentManager contentManager) {
+        public LocalizationPartHandler(IRepository<LocalizationPartRecord> localizedRepository, ICultureManager cultureManager, IContentManager contentManager)
+        {
             _cultureManager = cultureManager;
             _contentManager = contentManager;
             T = NullLocalizer.Instance;
@@ -29,20 +32,24 @@ namespace Orchard.Localization.Handlers {
 
         public Localizer T { get; set; }
 
-        protected static void PropertySetHandlers(ActivatedContentContext context, LocalizationPart localizationPart) {
-            localizationPart.CultureField.Setter(cultureRecord => {
+        protected static void PropertySetHandlers(ActivatedContentContext context, LocalizationPart localizationPart)
+        {
+            localizationPart.CultureField.Setter(cultureRecord =>
+            {
                 localizationPart.Record.CultureId = cultureRecord != null ? cultureRecord.Id : 0;
                 return cultureRecord;
             });
-            
-            localizationPart.MasterContentItemField.Setter(masterContentItem => {
+
+            localizationPart.MasterContentItemField.Setter(masterContentItem =>
+            {
                 localizationPart.Record.MasterContentItemId = masterContentItem.ContentItem.Id;
                 return masterContentItem;
-            });            
+            });
         }
 
-        protected void LazyLoadHandlers(LocalizationPart localizationPart) {
-            localizationPart.CultureField.Loader(() => 
+        protected void LazyLoadHandlers(LocalizationPart localizationPart)
+        {
+            localizationPart.CultureField.Loader(() =>
                 _cultureManager.GetCultureById(localizationPart.Record.CultureId));
 
             localizationPart.MasterContentItemField.Loader(() =>

@@ -16,22 +16,28 @@ using Orchard.Widgets.Layouts.Elements;
 using Orchard.Widgets.ViewModels;
 using ContentItem = Orchard.ContentManagement.ContentItem;
 
-namespace Orchard.Widgets.Layouts.Providers {
+namespace Orchard.Widgets.Layouts.Providers
+{
     [OrchardFeature("Orchard.Widgets.Elements")]
-    public class WidgetElementHarvester : Component, IElementHarvester {
+    public class WidgetElementHarvester : Component, IElementHarvester
+    {
         private readonly Work<IContentManager> _contentManager;
 
-        public WidgetElementHarvester(Work<IContentManager> contentManager) {
+        public WidgetElementHarvester(Work<IContentManager> contentManager)
+        {
             _contentManager = contentManager;
         }
 
-        public IEnumerable<ElementDescriptor> HarvestElements(HarvestElementsContext context) {
+        public IEnumerable<ElementDescriptor> HarvestElements(HarvestElementsContext context)
+        {
             var contentTypeDefinitions = GetWidgetContentTypeDefinitions();
 
-            return contentTypeDefinitions.Select(contentTypeDefinition => {
+            return contentTypeDefinitions.Select(contentTypeDefinition =>
+            {
                 var settings = contentTypeDefinition.Settings;
                 var description = settings.ContainsKey("Description") ? settings["Description"] : contentTypeDefinition.DisplayName;
-                return new ElementDescriptor(typeof (Widget), contentTypeDefinition.Name, T(contentTypeDefinition.DisplayName), T(description), category: "Widgets") {
+                return new ElementDescriptor(typeof(Widget), contentTypeDefinition.Name, T(contentTypeDefinition.DisplayName), T(description), category: "Widgets")
+                {
                     Displaying = Displaying,
                     Editor = Editor,
                     UpdateEditor = UpdateEditor,
@@ -47,7 +53,8 @@ namespace Orchard.Widgets.Layouts.Providers {
             });
         }
 
-        private void Displaying(ElementDisplayingContext context) {
+        private void Displaying(ElementDisplayingContext context)
+        {
             var contentTypeName = (string)context.Element.Descriptor.StateBag["ContentTypeName"];
             var element = (Widget)context.Element;
             var widgetId = element.WidgetId;
@@ -61,33 +68,40 @@ namespace Orchard.Widgets.Layouts.Providers {
             context.ElementShape.WidgetShape = widgetShape;
         }
 
-        private void Editor(ElementEditorContext context) {
+        private void Editor(ElementEditorContext context)
+        {
             UpdateEditor(context);
         }
 
-        private void UpdateEditor(ElementEditorContext context) {
+        private void UpdateEditor(ElementEditorContext context)
+        {
             var contentTypeName = (string)context.Element.Descriptor.StateBag["ContentTypeName"];
-            var element = (Widget) context.Element;
-            var elementViewModel = new WidgetElementViewModel {
+            var element = (Widget)context.Element;
+            var elementViewModel = new WidgetElementViewModel
+            {
                 WidgetId = element.WidgetId
             };
 
-            if (context.Updater != null) {
+            if (context.Updater != null)
+            {
                 context.Updater.TryUpdateModel(elementViewModel, context.Prefix, null, null);
             }
 
             var widgetId = elementViewModel.WidgetId;
-            var widget = widgetId != null 
-                ? _contentManager.Value.Get(widgetId.Value, VersionOptions.Latest) 
+            var widget = widgetId != null
+                ? _contentManager.Value.Get(widgetId.Value, VersionOptions.Latest)
                 : _contentManager.Value.New(contentTypeName);
 
             dynamic contentEditorShape;
 
-            if (context.Updater != null) {
-                if (widget.Id == 0) {
+            if (context.Updater != null)
+            {
+                if (widget.Id == 0)
+                {
                     _contentManager.Value.Create(widget, VersionOptions.Draft);
                 }
-                else {
+                else
+                {
                     var isDraftable = widget.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable;
                     var versionOptions = isDraftable ? VersionOptions.DraftRequired : VersionOptions.Latest;
                     widget = _contentManager.Value.Get(widget.Id, versionOptions);
@@ -106,20 +120,22 @@ namespace Orchard.Widgets.Layouts.Providers {
 
                 _contentManager.Value.Publish(widget);
             }
-            else {
+            else
+            {
                 contentEditorShape = _contentManager.Value.BuildEditor(widget);
             }
 
             var elementEditorShape = context.ShapeFactory.EditorTemplate(TemplateName: "Elements.Widget", Model: elementViewModel, Prefix: context.Prefix);
-            
+
             elementEditorShape.Metadata.Position = "Properties:0";
             contentEditorShape.Metadata.Position = "Properties:0";
             context.EditorResult.Add(elementEditorShape);
             context.EditorResult.Add(contentEditorShape);
         }
 
-        private void RemoveContentItem(ElementRemovingContext context) {
-            var element = (Widget) context.Element;
+        private void RemoveContentItem(ElementRemovingContext context)
+        {
+            var element = (Widget)context.Element;
             var widgetId = element.WidgetId;
 
             // Only remove the widget if no other elements are referencing this one.
@@ -136,11 +152,12 @@ namespace Orchard.Widgets.Layouts.Providers {
 
             var contentItem = widgetId != null ? _contentManager.Value.Get(widgetId.Value, VersionOptions.Latest) : default(ContentItem);
 
-            if(contentItem != null)
+            if (contentItem != null)
                 _contentManager.Value.Remove(contentItem);
         }
 
-        private void ExportElement(ExportElementContext context) {
+        private void ExportElement(ExportElementContext context)
+        {
             var element = (Widget)context.Element;
             var widgetId = element.WidgetId;
             var widget = widgetId != null ? _contentManager.Value.Get(widgetId.Value, VersionOptions.Latest) : default(ContentItem);
@@ -150,7 +167,8 @@ namespace Orchard.Widgets.Layouts.Providers {
                 context.ExportableData["WidgetId"] = widgetIdentity;
         }
 
-        private void ImportElement(ImportElementContext context) {
+        private void ImportElement(ImportElementContext context)
+        {
             var widgetIdentity = context.ExportableData.Get("WidgetId");
 
             if (String.IsNullOrWhiteSpace(widgetIdentity))
@@ -162,7 +180,8 @@ namespace Orchard.Widgets.Layouts.Providers {
             element.WidgetId = widget != null ? widget.Id : default(int?);
         }
 
-        private IEnumerable<ContentTypeDefinition> GetWidgetContentTypeDefinitions() {
+        private IEnumerable<ContentTypeDefinition> GetWidgetContentTypeDefinitions()
+        {
             // Select all types that have either "the "Widget" stereotype.
             var contentTypeDefinitionsQuery =
                 from contentTypeDefinition in _contentManager.Value.GetContentTypeDefinitions()

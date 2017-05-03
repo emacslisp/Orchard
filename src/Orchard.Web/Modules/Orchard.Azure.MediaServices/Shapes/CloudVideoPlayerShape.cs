@@ -4,10 +4,14 @@ using Orchard.Azure.MediaServices.Models;
 using Orchard.Azure.MediaServices.Models.Assets;
 using Orchard.DisplayManagement.Descriptors;
 
-namespace Orchard.Azure.MediaServices.Shapes {
-    public class CloudVideoPlayerShape : IShapeTableProvider {
-        public void Discover(ShapeTableBuilder builder) {
-            builder.Describe("CloudVideoPlayer").OnDisplaying(context => {
+namespace Orchard.Azure.MediaServices.Shapes
+{
+    public class CloudVideoPlayerShape : IShapeTableProvider
+    {
+        public void Discover(ShapeTableBuilder builder)
+        {
+            builder.Describe("CloudVideoPlayer").OnDisplaying(context =>
+            {
                 var shape = context.Shape;
                 CloudVideoPart cloudVideoPart = shape.ContentPart; // The cloud video item to render a player for.
                 int? assetId = shape.AssetId; // Set to limit the player to only one particular asset.
@@ -23,7 +27,8 @@ namespace Orchard.Azure.MediaServices.Shapes {
                         asset is VideoAsset && !(asset is DynamicVideoAsset) &&
                         (!assetId.HasValue || asset.Record.Id == assetId.Value)
                     let videoAsset = asset as VideoAsset
-                    select new {
+                    select new
+                    {
                         Type = videoAsset.GetType().Name,
                         Id = videoAsset.Record.Id,
                         Name = videoAsset.Name,
@@ -41,7 +46,8 @@ namespace Orchard.Azure.MediaServices.Shapes {
                         asset is DynamicVideoAsset &&
                         (!assetId.HasValue || asset.Record.Id == assetId.Value)
                     let videoAsset = asset as DynamicVideoAsset
-                    select new {
+                    select new
+                    {
                         Type = videoAsset.GetType().Name,
                         Id = videoAsset.Record.Id,
                         Name = videoAsset.Name,
@@ -62,7 +68,8 @@ namespace Orchard.Azure.MediaServices.Shapes {
                     asset is ThumbnailAsset &&
                     (!assetId.HasValue || asset.Record.Id == assetId.Value)
                 let thumbnailAsset = asset as ThumbnailAsset
-                select new {
+                select new
+                {
                     Type = thumbnailAsset.GetType().Name,
                     Id = thumbnailAsset.Record.Id,
                     Name = thumbnailAsset.Name,
@@ -78,7 +85,8 @@ namespace Orchard.Azure.MediaServices.Shapes {
                         asset is SubtitleAsset &&
                         (!assetId.HasValue || asset.Record.Id == assetId.Value)
                     let subtitleAsset = asset as SubtitleAsset
-                    select new {
+                    select new
+                    {
                         Type = subtitleAsset.GetType().Name,
                         Id = subtitleAsset.Record.Id,
                         Name = subtitleAsset.Name,
@@ -88,7 +96,8 @@ namespace Orchard.Azure.MediaServices.Shapes {
                         MainFileUrl = selectUrl(subtitleAsset.PrivateMainFileUrl, subtitleAsset.PublicMainFileUrl)
                     };
 
-                var assetData = new {
+                var assetData = new
+                {
                     VideoAssets = videoAssetQuery.ToArray(),
                     DynamicVideoAssets = dynamicVideoAssetQuery.ToArray(),
                     ThumbnailAssets = thumbnailAssetQuery.ToArray(),

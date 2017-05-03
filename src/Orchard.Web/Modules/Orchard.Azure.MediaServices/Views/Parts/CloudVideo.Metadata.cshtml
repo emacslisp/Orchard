@@ -16,7 +16,7 @@
         <em>@T("Upload Status:")</em>
         <span class="upload-status-text">@videoPart.MezzanineAsset.UploadState.Status</span>
     </div>
-    <div class="upload-progress-status" @if (videoPart.MezzanineAsset.UploadState.Status != AssetUploadStatus.Uploading) { <text> style="display:none;" </text>  }>
+    <div class="upload-progress-status" @if (videoPart.MezzanineAsset.UploadState.Status != AssetUploadStatus.Uploading) { <text> style="display:none;" </text>   }>
         <em>@T("Upload Progress:")</em>
         <span class="upload-progress-value">@T("{0}%", (int)(videoPart.MezzanineAsset.UploadState.PercentComplete.GetValueOrDefault()))</span>
     </div>

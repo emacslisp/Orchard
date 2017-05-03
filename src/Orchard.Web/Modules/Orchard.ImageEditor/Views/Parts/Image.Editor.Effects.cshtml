@@ -1,10 +1,10 @@
 ﻿<button id="preset">@T("Preset")</button>
 @{
-    Script.Include("caman/caman.full.min.js"); 
+    Script.Include("caman/caman.full.min.js");
 }
 
 @using (Script.Foot()) {
-    
+
     <script type="text/javascript">
     //<![CDATA[
 
@@ -28,7 +28,7 @@
                 // cancel resizing
                 $('#preset-cancel').on('click', function () {
                     host.image.src = imageSrc;
-                    
+
                     $('#preset-options').hide();
                     host.hideOptions();
                 });
@@ -58,7 +58,7 @@
 
                             var context = thumb.getContext('2d');
                             context.drawImage(localImage, 0, 0, host.image.width, host.image.height, 0, 0, thumb.width, thumb.height);
-                            
+
                             Caman(thumb, function () {
                                 this[filter]().render(function () {
                                     link.append(thumb);
@@ -69,7 +69,7 @@
 
                         localImage.src = imageSrc;
                     });
-                    
+
                     $('#preset-options').show();
                     host.showOptions();
                 });
@@ -95,7 +95,7 @@
                 }
             });
         });
-    //]]>    
+    //]]>
 
     </script>
 }

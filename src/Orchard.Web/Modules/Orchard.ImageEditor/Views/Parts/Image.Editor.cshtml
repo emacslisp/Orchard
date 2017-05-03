@@ -2,12 +2,12 @@
 @using Orchard.MediaLibrary.Models
 @{
     ImagePart imagePart = Model.ContentPart;
-    
+
     // do not show the editor if the image is not local
     if (String.IsNullOrEmpty(imagePart.As<MediaPart>().MediaUrl)) {
         return;
     }
-}           
+}
 
 @Html.ActionLink(T("Image Editor").Text, "Index", "Admin", new { id = imagePart.Id, area = "Orchard.ImageEditor" }, new { id="edit-image-link", @class="button"})
 

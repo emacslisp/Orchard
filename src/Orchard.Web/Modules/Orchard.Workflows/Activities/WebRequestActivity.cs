@@ -8,42 +8,52 @@ using Orchard.Localization;
 using Orchard.Workflows.Models;
 using Orchard.Workflows.Services;
 
-namespace Orchard.Workflows.Activities {
-    public class WebRequestActivity : Task {
-        public WebRequestActivity() {
+namespace Orchard.Workflows.Activities
+{
+    public class WebRequestActivity : Task
+    {
+        public WebRequestActivity()
+        {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public override bool CanExecute(WorkflowContext workflowContext, ActivityContext activityContext) {
+        public override bool CanExecute(WorkflowContext workflowContext, ActivityContext activityContext)
+        {
             var url = activityContext.GetState<string>("Url");
             return !string.IsNullOrWhiteSpace(url);
         }
 
-        public override IEnumerable<LocalizedString> GetPossibleOutcomes(WorkflowContext workflowContext, ActivityContext activityContext) {
+        public override IEnumerable<LocalizedString> GetPossibleOutcomes(WorkflowContext workflowContext, ActivityContext activityContext)
+        {
             yield return T("Error");
             yield return T("Success");
         }
 
-        public override IEnumerable<LocalizedString> Execute(WorkflowContext workflowContext, ActivityContext activityContext) {
+        public override IEnumerable<LocalizedString> Execute(WorkflowContext workflowContext, ActivityContext activityContext)
+        {
             var url = activityContext.GetState<string>("Url");
             var verb = (activityContext.GetState<string>("Verb") ?? "GET").ToUpper();
             var headers = activityContext.GetState<string>("Headers");
             var formValues = activityContext.GetState<string>("FormValues") ?? "";
 
-            using (var httpClient = new HttpClient {BaseAddress = new Uri(url)}) {
+            using (var httpClient = new HttpClient { BaseAddress = new Uri(url) })
+            {
                 HttpResponseMessage response;
 
                 httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                if (!String.IsNullOrWhiteSpace(headers)) {
-                    foreach (var header in ParseKeyValueString(headers)) {
+                if (!String.IsNullOrWhiteSpace(headers))
+                {
+                    foreach (var header in ParseKeyValueString(headers))
+                    {
                         httpClient.DefaultRequestHeaders.Add(header.Key, header.Value);
                     }
                 }
 
-                switch (verb) {
+                switch (verb)
+                {
                     default:
                     case "GET":
                         response = httpClient.GetAsync("").Result;
@@ -51,7 +61,8 @@ namespace Orchard.Workflows.Activities {
                     case "POST":
                         var format = activityContext.GetState<string>("FormFormat");
 
-                        switch (format) {
+                        switch (format)
+                        {
                             default:
                             case "KeyValue":
                                 var form = ParseKeyValueString(formValues);
@@ -62,10 +73,10 @@ namespace Orchard.Workflows.Activities {
                                 response = httpClient.PostAsync("", new StringContent(json, Encoding.UTF8, "application/json")).Result;
                                 break;
                         }
-                        
+
                         break;
                 }
-                
+
                 workflowContext.SetState("WebRequestResponse", response.Content.ReadAsStringAsync().Result);
 
                 if (response.IsSuccessStatusCode)
@@ -75,41 +86,51 @@ namespace Orchard.Workflows.Activities {
             }
         }
 
-        public override string Name {
+        public override string Name
+        {
             get { return "WebRequest"; }
         }
 
-        public override LocalizedString Category {
+        public override LocalizedString Category
+        {
             get { return T("HTTP"); }
         }
 
-        public override LocalizedString Description {
+        public override LocalizedString Description
+        {
             get { return T("Performs an HTTP request."); }
         }
 
-        public override string Form {
+        public override string Form
+        {
             get { return "WebRequestActivity"; }
         }
 
-        private static IEnumerable<KeyValuePair<string, string>> ParseKeyValueString(string text) {
-            using (var reader = new StringReader(text)) {
+        private static IEnumerable<KeyValuePair<string, string>> ParseKeyValueString(string text)
+        {
+            using (var reader = new StringReader(text))
+            {
                 string line;
-                while (null != (line = reader.ReadLine())) {
+                while (null != (line = reader.ReadLine()))
+                {
 
                     line = line.Trim();
 
                     // ignore empty lines
-                    if (String.IsNullOrWhiteSpace(line)) {
+                    if (String.IsNullOrWhiteSpace(line))
+                    {
                         continue;
                     }
 
                     // step comments
-                    if (line.StartsWith("#")) {
+                    if (line.StartsWith("#"))
+                    {
                         continue;
                     }
 
                     var index = line.IndexOf("=", StringComparison.InvariantCulture);
-                    if (index != -1 && index != line.Length - 1) {
+                    if (index != -1 && index != line.Length - 1)
+                    {
                         var name = line.Substring(0, index);
                         var value = line.Substring(index + 1);
 

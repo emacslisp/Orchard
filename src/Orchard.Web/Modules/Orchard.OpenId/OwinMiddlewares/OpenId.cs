@@ -7,7 +7,8 @@ using Orchard.Environment.Extensions;
 using Orchard.Owin;
 using Owin;
 
-namespace Orchard.OpenId.OwinMiddlewares {
+namespace Orchard.OpenId.OwinMiddlewares
+{
     [OrchardFeature("Orchard.OpenId")]
     public class OpenId : IOwinMiddlewareProvider
     {

@@ -3,11 +3,14 @@ using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 using System;
 
-namespace Orchard.Users {
-    public class UsersDataMigration : DataMigrationImpl {
+namespace Orchard.Users
+{
+    public class UsersDataMigration : DataMigrationImpl
+    {
 
-        public int Create() {
-            SchemaBuilder.CreateTable("UserPartRecord", 
+        public int Create()
+        {
+            SchemaBuilder.CreateTable("UserPartRecord",
                 table => table
                     .ContentPartRecord()
                     .Column<string>("UserName")
@@ -31,15 +34,18 @@ namespace Orchard.Users {
             return 5;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
             ContentDefinitionManager.AlterTypeDefinition("User", cfg => cfg.Creatable(false));
 
             return 2;
         }
 
-        public int UpdateFrom2() {
+        public int UpdateFrom2()
+        {
             SchemaBuilder.AlterTable("UserPartRecord",
-                table => {
+                table =>
+                {
                     table.AddColumn<DateTime>("CreatedUtc");
                     table.AddColumn<DateTime>("LastLoginUtc");
                 });
@@ -47,18 +53,22 @@ namespace Orchard.Users {
             return 3;
         }
 
-        public int UpdateFrom3() {
+        public int UpdateFrom3()
+        {
             SchemaBuilder.AlterTable("UserPartRecord",
-                table => {
+                table =>
+                {
                     table.AddColumn<DateTime>("LastLogoutUtc");
                 });
 
             return 4;
         }
 
-        public int UpdateFrom4() {
+        public int UpdateFrom4()
+        {
             SchemaBuilder.AlterTable("UserPartRecord",
-                table => {
+                table =>
+                {
                     table.AddColumn<DateTime>("LastPasswordChangeUtc", c => c.WithDefault(new DateTime(1990, 1, 1)));
                 });
 

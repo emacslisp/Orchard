@@ -9,26 +9,32 @@ using Orchard.Logging;
 using Orchard.Recipes.Models;
 using Orchard.Recipes.Services;
 
-namespace Orchard.Recipes.Providers.Executors {
-    public class RemoveContentDefinitionStep : RecipeExecutionStep {
+namespace Orchard.Recipes.Providers.Executors
+{
+    public class RemoveContentDefinitionStep : RecipeExecutionStep
+    {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IContentDefinitionEventHandler _contentDefinitonEventHandlers;
 
         public RemoveContentDefinitionStep(
-            RecipeExecutionLogger logger, IContentDefinitionManager contentDefinitionManager, IContentDefinitionEventHandler contentDefinitonEventHandlers) : base(logger) {
+            RecipeExecutionLogger logger, IContentDefinitionManager contentDefinitionManager, IContentDefinitionEventHandler contentDefinitonEventHandlers) : base(logger)
+        {
             _contentDefinitionManager = contentDefinitionManager;
             _contentDefinitonEventHandlers = contentDefinitonEventHandlers;
         }
 
-        public override string Name {
+        public override string Name
+        {
             get { return "RemoveContentDefinition"; }
         }
 
-        public override LocalizedString DisplayName {
+        public override LocalizedString DisplayName
+        {
             get { return T("Remove Content Definition"); }
         }
 
-        public override LocalizedString Description {
+        public override LocalizedString Description
+        {
             get { return T("Removes a list of content definitions."); }
         }
 
@@ -41,20 +47,26 @@ namespace Orchard.Recipes.Providers.Executors {
         //  <Parts>
         //  </Parts>
         // </RemoveContentDefinition>
-        public override void Execute(RecipeExecutionContext context) {
-            foreach (var metadataElement in context.RecipeStep.Step.Elements()) {
+        public override void Execute(RecipeExecutionContext context)
+        {
+            foreach (var metadataElement in context.RecipeStep.Step.Elements())
+            {
                 Logger.Debug("Processing element '{0}'.", metadataElement.Name.LocalName);
-                switch (metadataElement.Name.LocalName) {
+                switch (metadataElement.Name.LocalName)
+                {
                     case "Types":
-                        foreach (var element in metadataElement.Elements()) {
+                        foreach (var element in metadataElement.Elements())
+                        {
                             var typeName = XmlConvert.DecodeName(element.Name.LocalName);
 
                             Logger.Information("Removing content type '{0}'.", typeName);
-                            try {
+                            try
+                            {
                                 _contentDefinitionManager.DeleteTypeDefinition(typeName);
-                                _contentDefinitonEventHandlers.ContentTypeRemoved(new ContentTypeRemovedContext {ContentTypeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName)});
+                                _contentDefinitonEventHandlers.ContentTypeRemoved(new ContentTypeRemovedContext { ContentTypeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName) });
                             }
-                            catch (Exception ex) {
+                            catch (Exception ex)
+                            {
                                 Logger.Error(ex, "Error while removing content type '{0}'.", typeName);
                                 throw;
                             }
@@ -62,16 +74,19 @@ namespace Orchard.Recipes.Providers.Executors {
                         break;
 
                     case "Parts":
-                        foreach (var element in metadataElement.Elements()) {
+                        foreach (var element in metadataElement.Elements())
+                        {
                             var partElement = element;
                             var partName = XmlConvert.DecodeName(element.Name.LocalName);
 
                             Logger.Information("Removing content part definition '{0}'.", partName);
-                            try {
+                            try
+                            {
                                 _contentDefinitionManager.DeletePartDefinition(partName);
-                                _contentDefinitonEventHandlers.ContentPartRemoved(new ContentPartRemovedContext {ContentPartDefinition = _contentDefinitionManager.GetPartDefinition(partName)});
+                                _contentDefinitonEventHandlers.ContentPartRemoved(new ContentPartRemovedContext { ContentPartDefinition = _contentDefinitionManager.GetPartDefinition(partName) });
                             }
-                            catch (Exception ex) {
+                            catch (Exception ex)
+                            {
                                 Logger.Error(ex, "Error while removing content part definition for '{0}'.", partName);
                                 throw;
                             }

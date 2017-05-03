@@ -17,8 +17,10 @@ using Orchard.Services;
 using Orchard.Tasks;
 using NHibernate;
 
-namespace Orchard.Azure.MediaServices.Services.Assets {
-    public class AssetUploader : Component, IBackgroundTask {
+namespace Orchard.Azure.MediaServices.Services.Assets
+{
+    public class AssetUploader : Component, IBackgroundTask
+    {
 
         private static readonly object _sweepLock = new object();
 
@@ -37,7 +39,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             IContentManager contentManager,
             IAssetManager assetManager,
             ITempFileManager fileManager,
-            IWamsClient wamsClient) {
+            IWamsClient wamsClient)
+        {
 
             _orchardServices = orchardServices;
             _clock = clock;
@@ -48,12 +51,16 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
             _wamsClient = wamsClient;
         }
 
-        void IBackgroundTask.Sweep() {
-            if (Monitor.TryEnter(_sweepLock)) {
-                try {
+        void IBackgroundTask.Sweep()
+        {
+            if (Monitor.TryEnter(_sweepLock))
+            {
+                try
+                {
                     Logger.Debug("Beginning sweep.");
 
-                    if (!_orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>().IsValid()) {
+                    if (!_orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>().IsValid())
+                    {
                         Logger.Debug("Settings are invalid; going back to sleep.");
                         return;
                     }
@@ -64,7 +71,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
                     var pendingAssets = pendingAssetsQuery.ToArray();
 
-                    if (!pendingAssets.Any()) {
+                    if (!pendingAssets.Any())
+                    {
                         Logger.Debug("No pending assets with temp files on local machine were found; going back to sleep.");
                         return;
                     }
@@ -76,7 +84,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                     var assetProgressMonikers = new Dictionary<Guid, Asset>();
                     var assetCancellationTokenSources = new Dictionary<Guid, CancellationTokenSource>();
 
-                    foreach (var pendingAsset in pendingAssets) {
+                    foreach (var pendingAsset in pendingAssets)
+                    {
                         Logger.Information("Uploading asset of type {0} with name '{1}'...", pendingAsset.Record.Type, pendingAsset.Name);
 
                         var cloudVideoPart = _contentManager.Get<CloudVideoPart>(pendingAsset.Record.VideoContentItemId, VersionOptions.Latest);
@@ -95,9 +104,12 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                         var localPendingAsset = pendingAsset;
                         var uploadTask =
                             _wamsClient.UploadAssetAsync(_fileManager.GetPhysicalFilePath(pendingAsset.LocalTempFileName), progressInfoQueue.Add, assetProgressMoniker, assetCancellationTokenSource.Token)
-                            .ContinueWith((previousTask) => {
-                                if (!previousTask.IsCanceled) {
-                                    try {
+                            .ContinueWith((previousTask) =>
+                            {
+                                if (!previousTask.IsCanceled)
+                                {
+                                    try
+                                    {
                                         var wamsAsset = previousTask.Result; // Throws if previous task was faulted.
                                         var wamsLocators = _wamsClient.CreateLocatorsAsync(wamsAsset, WamsLocatorCategory.Private).Result;
 
@@ -108,7 +120,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                                         localPendingAsset.UploadState.BytesComplete = localPendingAsset.LocalTempFileSize;
                                         localPendingAsset.UploadState.CompletedUtc = _clock.UtcNow;
                                     }
-                                    catch (Exception ex) {
+                                    catch (Exception ex)
+                                    {
                                         Logger.Error(ex, "Error while uploading asset of type {0} with name '{1}'. Resetting asset upload status to {2}.", localPendingAsset.Record.Type, localPendingAsset.Name, AssetUploadStatus.Pending);
 
                                         // Reset asset to pending status so it will be retried later.
@@ -128,27 +141,33 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
 
                                 if (previousTask.IsCanceled)
                                     Logger.Information("Upload of asset of type {0} with name '{1}' was canceled.", localPendingAsset.Record.Type, localPendingAsset.Name);
-                                else {
-                                    try {
-                                        if (cloudVideoPart.PublishOnUpload) {
+                                else
+                                {
+                                    try
+                                    {
+                                        if (cloudVideoPart.PublishOnUpload)
+                                        {
                                             var remainingPendingAssetsQuery =
                                                 from asset in cloudVideoPart.Assets
                                                 where asset.UploadState.Status.IsAny(AssetUploadStatus.Pending, AssetUploadStatus.Uploading)
                                                 select asset;
 
-                                            if (!remainingPendingAssetsQuery.Any()) {
+                                            if (!remainingPendingAssetsQuery.Any())
+                                            {
                                                 Logger.Information("No more remaining assets on cloud video item with ID {0}; publishing the item.", cloudVideoPart.Id);
                                                 _contentManager.Publish(cloudVideoPart.ContentItem);
                                                 cloudVideoPart.PublishOnUpload = false;
                                                 Logger.Information("Published cloud video item with ID {0}.", cloudVideoPart.Id);
                                             }
                                         }
-                                        else if (cloudVideoPart.ContentItem.IsPublished()) {
+                                        else if (cloudVideoPart.ContentItem.IsPublished())
+                                        {
                                             // Publish the asset.
                                             _assetManager.PublishAssetsFor(cloudVideoPart);
                                         }
                                     }
-                                    catch (Exception ex) {
+                                    catch (Exception ex)
+                                    {
                                         Logger.Warning(ex, "Upload of asset of type {0} with name '{1}' was completed but an error occurred while publishing the cloud video item with ID {2} after upload.", localPendingAsset.Record.Type, localPendingAsset.Name, cloudVideoPart.Id);
                                     }
 
@@ -163,23 +182,27 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                     Task.WhenAll(uploadTasks).ContinueWith((previousTask) => progressInfoQueue.CompleteAdding());
 
                     var lastUpdateUtc = _clock.UtcNow;
-                    foreach (var progressInfo in progressInfoQueue.GetConsumingEnumerable()) {
+                    foreach (var progressInfo in progressInfoQueue.GetConsumingEnumerable())
+                    {
                         var progressAsset = assetProgressMonikers[progressInfo.AssetMoniker];
                         var cancellationTokenSource = assetCancellationTokenSources[progressInfo.AssetMoniker];
 
                         // Check for cancellation (asset upload status was set to Canceled).
-                        if (!cancellationTokenSource.IsCancellationRequested) {
+                        if (!cancellationTokenSource.IsCancellationRequested)
+                        {
                             var session = _transactionManager.GetSession();
                             session.Refresh(progressAsset.Record, LockMode.None);
 
-                            if (progressAsset.UploadState.Status == AssetUploadStatus.Canceled) {
+                            if (progressAsset.UploadState.Status == AssetUploadStatus.Canceled)
+                            {
                                 Logger.Information("Cancellation request was detected for asset of type {0} with name '{1}'; cancelling upload...", progressAsset.Record.Type, progressAsset.Name);
                                 cancellationTokenSource.Cancel();
                             }
                         }
 
                         // Don't flood the database with progress updates; limit it to every 5 seconds.
-                        if ((_clock.UtcNow - lastUpdateUtc).Seconds >= 5) {
+                        if ((_clock.UtcNow - lastUpdateUtc).Seconds >= 5)
+                        {
                             progressAsset.UploadState.BytesComplete = progressInfo.Data.BytesTransferred;
                             _transactionManager.RequireNew();
                             lastUpdateUtc = _clock.UtcNow;
@@ -188,7 +211,8 @@ namespace Orchard.Azure.MediaServices.Services.Assets {
                         Logger.Debug("Uploading asset of type {0} with name '{1}'; {2}/{3} KB uploaded ({4}%) at {5} KB/sec.", progressAsset.Record.Type, progressAsset.Name, Convert.ToInt64(progressInfo.Data.BytesTransferred / 1024), Convert.ToInt64(progressInfo.Data.TotalBytesToTransfer / 1024), progressInfo.Data.ProgressPercentage, Convert.ToInt32(progressInfo.Data.TransferRateBytesPerSecond / 1024));
                     }
                 }
-                finally {
+                finally
+                {
                     Logger.Debug("Ending sweep.");
                     Monitor.Exit(_sweepLock);
                 }

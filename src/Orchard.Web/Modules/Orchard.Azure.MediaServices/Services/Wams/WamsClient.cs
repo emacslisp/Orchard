@@ -15,8 +15,10 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Logging;
 
-namespace Orchard.Azure.MediaServices.Services.Wams {
-    public class WamsClient : Component, IWamsClient {
+namespace Orchard.Azure.MediaServices.Services.Wams
+{
+    public class WamsClient : Component, IWamsClient
+    {
 
         private readonly IOrchardServices _orchardServices;
         private readonly ITempFileManager _tempFileManager;
@@ -25,14 +27,16 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
         private CloudMediaSettingsPart Settings { get { return _settings.Value; } }
         private CloudMediaContext Context { get { return _context.Value; } }
 
-        public WamsClient(IOrchardServices orchardServices, ITempFileManager tempFileManager) {
+        public WamsClient(IOrchardServices orchardServices, ITempFileManager tempFileManager)
+        {
             _orchardServices = orchardServices;
             _tempFileManager = tempFileManager;
             _settings = new Lazy<CloudMediaSettingsPart>(() => _orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>());
             _context = new Lazy<CloudMediaContext>(() => new CloudMediaContext(_settings.Value.WamsAccountName, _settings.Value.WamsAccountKey));
         }
 
-        public IMediaProcessor GetLatestMediaProcessorByName(MediaProcessorName mediaProcessorName) {
+        public IMediaProcessor GetLatestMediaProcessorByName(MediaProcessorName mediaProcessorName)
+        {
             Logger.Debug("GetLatestMediaProcessorByName() invoked for media processor '{0}'.", mediaProcessorName);
 
             var processorQuery =
@@ -51,12 +55,14 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return latestProcessor;
         }
 
-        public IAsset GetAssetById(string assetId) {
+        public IAsset GetAssetById(string assetId)
+        {
             Logger.Debug("GetAssetById() invoked with assetId value '{0}'.", assetId);
             return Context.Assets.Where(x => x.Id == assetId).ToArray().FirstOrDefault(); // ToArray() first because FirstOrDefault() is unsupported by provider.
         }
 
-        public IEnumerable<IAsset> GetAssetsById(IEnumerable<string> assetIds) {
+        public IEnumerable<IAsset> GetAssetsById(IEnumerable<string> assetIds)
+        {
             Logger.Debug("GetAssetsById() invoked.");
 
             // The following throws a NotSupportedException.
@@ -69,13 +75,15 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return assetsQuery.ToArray();
         }
 
-        public async Task<IAsset> UploadAssetAsync(string localFilePath, UpdateProgressAction updateProgress, Guid assetProgressMoniker, CancellationToken cancellationToken) {
+        public async Task<IAsset> UploadAssetAsync(string localFilePath, UpdateProgressAction updateProgress, Guid assetProgressMoniker, CancellationToken cancellationToken)
+        {
             Logger.Debug("UploadAssetAsync() invoked with localFilePath value '{0}'.", localFilePath);
 
             IAsset asset = null;
             IAccessPolicy uploadAccessPolicy = null;
 
-            try {
+            try
+            {
                 var assetName = Guid.NewGuid().ToString();
                 asset = await Context.Assets.CreateAsync(assetName, AssetCreationOptions.None, cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
                 var assetFile = await asset.AssetFiles.CreateAsync(Path.GetFileName(localFilePath), cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
@@ -95,19 +103,22 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
                 return asset;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 if (ex is OperationCanceledException)
                     Logger.Information("Upload of asset with ID '{0}' from temp file with name '{1}' was canceled.", asset.Id, localFilePath);
                 else
                     Logger.Error(ex, "Error while uploading asset from temp file with name '{0}'. Cleaning up asset and any locators and access policy created for upload.", localFilePath);
 
-                try {
+                try
+                {
                     if (asset != null)
                         asset.Delete(); // Deletes any locators also.
                     if (uploadAccessPolicy != null)
                         uploadAccessPolicy.Delete();
                 }
-                catch (Exception iex) {
+                catch (Exception iex)
+                {
                     Logger.Warning(iex, "Error while cleaning up asset and any locators and access policy created for upload.");
                 }
 
@@ -115,10 +126,12 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             }
         }
 
-        public async Task DeleteAssetAsync(IAsset asset) {
+        public async Task DeleteAssetAsync(IAsset asset)
+        {
             Logger.Debug("DeleteAssetAsync() invoked for asset '{0}'.", asset.Name);
 
-            try {
+            try
+            {
                 var locators = asset.Locators.ToArray();
                 var accessPolicies = Context.AccessPolicies.ToArray();
 
@@ -138,13 +151,15 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
                 Logger.Information("Asset '{0}' was deleted.", asset.Name);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while deleting asset '{0}'.", asset.Name);
                 throw;
             }
         }
 
-        public async Task<WamsLocators> CreateLocatorsAsync(IAsset asset, WamsLocatorCategory category) {
+        public async Task<WamsLocators> CreateLocatorsAsync(IAsset asset, WamsLocatorCategory category)
+        {
             Logger.Debug("CreateLocatorsAsync() invoked for asset '{0}' with category '{1}'.", asset.Name, category);
 
             Task<WamsLocatorInfo> sasLocatorInfoTask = null;
@@ -152,9 +167,10 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             var primaryAssetFile = asset.AssetFiles.Where(assetFile => assetFile.IsPrimary).Single();
             var isDynamicAsset = Settings.EnableDynamicPackaging && primaryAssetFile.Name.EndsWith(".ism", StringComparison.OrdinalIgnoreCase);
 
-            try {
+            try
+            {
                 sasLocatorInfoTask = CreateLocatorAsync(asset, String.Format("{0} {1} On-Demand Policy", asset.Id, category), LocatorType.Sas, Settings.AccessPolicyDuration);
-                
+
                 if (isDynamicAsset)
                     onDemandLocatorInfoTask = CreateLocatorAsync(asset, String.Format("{0} {1} On-Demand Policy", asset.Id, category), LocatorType.OnDemandOrigin, Settings.AccessPolicyDuration);
 
@@ -165,10 +181,12 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
                     isDynamicAsset ? await onDemandLocatorInfoTask.ConfigureAwait(continueOnCapturedContext: false) : null,
                     isDynamicAsset ? primaryAssetFile.Name : null);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while creating locators for asset '{0}'. Cleaning up any orphaned locators.", asset.Name);
 
-                try {
+                try
+                {
                     var wamsLocators = new WamsLocators(
                         sasLocatorInfoTask != null ? sasLocatorInfoTask.Result : null,
                         onDemandLocatorInfoTask != null ? onDemandLocatorInfoTask.Result : null,
@@ -176,7 +194,8 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
                     DeleteLocatorsAsync(asset, wamsLocators).Wait();
                 }
-                catch (Exception iex) {
+                catch (Exception iex)
+                {
                     Logger.Warning(iex, "Error while cleaning up orphaned locators.");
                 }
 
@@ -184,12 +203,14 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             }
         }
 
-        public async Task DeleteLocatorsAsync(IAsset asset, WamsLocators locators) {
+        public async Task DeleteLocatorsAsync(IAsset asset, WamsLocators locators)
+        {
             Logger.Debug("DeleteLocatorsAsync() invoked for asset '{0}'.", asset.Name);
 
             var locatorsToDelete = new List<ILocator>();
 
-            try {
+            try
+            {
                 if (locators.SasLocator != null && !String.IsNullOrEmpty(locators.SasLocator.Id))
                     locatorsToDelete.AddRange(
                         from locator in Context.Locators
@@ -212,19 +233,22 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
                 Logger.Information("Locators were deleted for asset '{0}'.", asset.Name);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while deleting locators for asset '{0}'.", asset.Name);
                 throw;
             }
         }
 
-        public IJob GetJobById(string jobId) {
+        public IJob GetJobById(string jobId)
+        {
             Logger.Debug("GetJobById() invoked for with jobId value '{0}'.", jobId);
 
             return Context.Jobs.Where(job => job.Id == jobId).ToArray().SingleOrDefault(); // ToArray() first because FirstOrDefault() is unsupported by provider.
         }
 
-        public IEnumerable<IJob> GetJobsById(IEnumerable<string> jobIds) {
+        public IEnumerable<IJob> GetJobsById(IEnumerable<string> jobIds)
+        {
             Logger.Debug("GetAssetsById() invoked.");
 
             // The following throws a NotSupportedException.
@@ -237,7 +261,8 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return jobsQuery.Where(x => x != null).ToArray();
         }
 
-        public IJob CreateNewJob(string name) {
+        public IJob CreateNewJob(string name)
+        {
             Logger.Debug("CreateNewJob() invoked for with name value '{0}'.", name);
 
             var job = Context.Jobs.Create(name);
@@ -246,7 +271,8 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return job;
         }
 
-        public async Task<WamsAssetInfo> CreateAssetAsync(string filename) {
+        public async Task<WamsAssetInfo> CreateAssetAsync(string filename)
+        {
             var assetName = Guid.NewGuid().ToString();
             var asset = await Context.Assets.CreateAsync(assetName, AssetCreationOptions.None, CancellationToken.None).ConfigureAwait(continueOnCapturedContext: false);
             var assetFile = await asset.AssetFiles.CreateAsync(filename, CancellationToken.None).ConfigureAwait(continueOnCapturedContext: false);
@@ -261,39 +287,47 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return new WamsAssetInfo() { SasLocator = blobUri.Uri.AbsoluteUri, AssetId = asset.Id };
         }
 
-        public async Task<string> GetEncoderMetadataXml(IAsset asset) {
+        public async Task<string> GetEncoderMetadataXml(IAsset asset)
+        {
             var metadataFile = asset.AssetFiles.ToArray().SingleOrDefault(a => a.Name.EndsWith("_manifest.xml"));
             if (metadataFile == null)
                 return null;
 
             var metadataFilename = _tempFileManager.CreateNewFileName("xml");
-            
-            try {
+
+            try
+            {
                 var metadataFilePath = _tempFileManager.GetPhysicalFilePath(metadataFilename);
                 metadataFile.Download(metadataFilePath);
 
                 string metadataXml;
 
-                using (var stream = _tempFileManager.LoadFile(metadataFilename)) {
-                    using (var reader = new StreamReader(stream)) {
+                using (var stream = _tempFileManager.LoadFile(metadataFilename))
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
                         metadataXml = await reader.ReadToEndAsync();
                     }
                 }
 
                 return metadataXml;
             }
-            finally {
-                try {
+            finally
+            {
+                try
+                {
                     _tempFileManager.DeleteFile(metadataFilename);
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     // No use doing anything here except logging.
                     Logger.Warning(ex, "Error while deleting temporary file '{0}'.", metadataFilename);
                 }
             }
         }
 
-        public async Task<IEnumerable<string>> EnsureCorsIsEnabledAsync(params string[] origins) {
+        public async Task<IEnumerable<string>> EnsureCorsIsEnabledAsync(params string[] origins)
+        {
             var storageAccount = new CloudStorageAccount(new StorageCredentials(Context.DefaultStorageAccount.Name, Settings.StorageAccountKey), false);
             var client = storageAccount.CreateCloudBlobClient();
             var serviceProperties = await client.GetServicePropertiesAsync().ConfigureAwait(continueOnCapturedContext: false);
@@ -302,11 +336,13 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
             if (serviceProperties.Cors == null)
                 serviceProperties.Cors = new CorsProperties();
-            
+
             var rule = FindBestMatchingRule(serviceProperties, requiredHeaders, requiredMethods, origins);
 
-            if (rule == null) {
-                rule = new CorsRule {
+            if (rule == null)
+            {
+                rule = new CorsRule
+                {
                     AllowedHeaders = requiredHeaders,
                     AllowedMethods = requiredMethods,
                     AllowedOrigins = new List<string>(),
@@ -321,7 +357,8 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             var addedOrigins = new List<string>();
             var settingsChanged = false;
 
-            foreach (var origin in origins.Where(origin => !rule.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))) {
+            foreach (var origin in origins.Where(origin => !rule.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase)))
+            {
                 rule.AllowedOrigins.Add(origin);
                 addedOrigins.Add(origin);
                 settingsChanged = true;
@@ -334,7 +371,8 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return addedOrigins.AsEnumerable();
         }
 
-        private static CorsRule FindBestMatchingRule(ServiceProperties serviceProperties, IEnumerable<string> requiredHeaders, CorsHttpMethods requiredMethods, IEnumerable<string> origins) {
+        private static CorsRule FindBestMatchingRule(ServiceProperties serviceProperties, IEnumerable<string> requiredHeaders, CorsHttpMethods requiredMethods, IEnumerable<string> origins)
+        {
             var query =
                 from rule in serviceProperties.Cors.CorsRules
                 let hasRequiredHeadersAndMethods = (rule.AllowedHeaders.Contains("*") || requiredHeaders.All(rule.AllowedHeaders.Contains)) && (rule.AllowedMethods & requiredMethods) == requiredMethods
@@ -346,11 +384,13 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
             return query.FirstOrDefault();
         }
 
-        private async Task<WamsLocatorInfo> CreateLocatorAsync(IAsset asset, string accessPolicyName, LocatorType type, TimeSpan duration) {
+        private async Task<WamsLocatorInfo> CreateLocatorAsync(IAsset asset, string accessPolicyName, LocatorType type, TimeSpan duration)
+        {
             IAccessPolicy accessPolicy = null;
             ILocator locator = null;
 
-            try {
+            try
+            {
                 accessPolicy = await Context.AccessPolicies.CreateAsync(accessPolicyName, duration, AccessPermissions.Read | AccessPermissions.List).ConfigureAwait(continueOnCapturedContext: false);
                 locator = await Context.Locators.CreateLocatorAsync(type, asset, accessPolicy).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -358,16 +398,19 @@ namespace Orchard.Azure.MediaServices.Services.Wams {
 
                 return new WamsLocatorInfo(locator.Id, locator.Path);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error while creating locator for asset '{0}'. Cleaning up any created locator and access policy.", asset.Name);
 
-                try {
+                try
+                {
                     if (locator != null)
                         locator.Delete();
                     if (accessPolicy != null)
                         accessPolicy.Delete();
                 }
-                catch (Exception iex) {
+                catch (Exception iex)
+                {
                     Logger.Warning(iex, "Error while cleaning up created locator and access policy.");
                 }
 

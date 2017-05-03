@@ -9,13 +9,13 @@
 
 	var pageSizes = new List<int?>() { 10, 50, 100 };
 	var defaultPageSize = WorkContext.CurrentSite.PageSize;
-	if(!pageSizes.Contains(defaultPageSize)) { 
+	if(!pageSizes.Contains(defaultPageSize)) {
 		pageSizes.Add(defaultPageSize);
 	}
 }
 
 <h1>@Html.TitleForPage(T("Manage Queries").ToString()) </h1>
-@using (Html.BeginFormAntiForgeryPost()) { 
+@using (Html.BeginFormAntiForgeryPost()) {
     @Html.ValidationSummary()
     <div class="manage">@Html.ActionLink(T("Add a new Query").ToString(), "Create", new { Area = "Contents", id = "Query", returnurl = HttpContext.Current.Request.RawUrl }, new { @class = "button primaryAction" })</div>
     <fieldset class="bulk-actions">
@@ -28,21 +28,21 @@
         <button type="submit" name="submit.BulkEdit" value="@T("Apply")">@T("Apply")</button>
     </fieldset>
     <fieldset class="bulk-actions">
-		<label for="filterResults">@T("Sort by:")</label>
+        <label for="filterResults">@T("Sort by:")</label>
         <select id="filterResults" name="@Html.NameOf(m => m.Options.Order)">
             @Html.SelectOption(Model.Options.Order, QueriesOrder.Name, T("Name").ToString())
         </select>
-		<input type="hidden" name="Page" value="1" />
-		<label for="pageSize">@T("Show:")</label>
-		<select id="pageSize" name="PageSize">
-			@Html.SelectOption((int)Model.Pager.PageSize, 0, T("All").ToString())
-			@foreach(int size in pageSizes.OrderBy(p => p)) {
-				@Html.SelectOption((int)Model.Pager.PageSize, size, size.ToString())
+        <input type="hidden" name="Page" value="1" />
+        <label for="pageSize">@T("Show:")</label>
+        <select id="pageSize" name="PageSize">
+            @Html.SelectOption((int)Model.Pager.PageSize, 0, T("All").ToString())
+            @foreach(int size in pageSizes.OrderBy(p => p)) {
+                @Html.SelectOption((int)Model.Pager.PageSize, size, size.ToString())
 			}
-		</select>
+        </select>
         <button type="submit" name="submit.Filter" value="@T("Filter")">@T("Filter")</button>
     </fieldset>
-    <fieldset>		
+    <fieldset>
         <table class="items">
             <thead>
                 <tr>
@@ -51,14 +51,14 @@
                     <th scope="col" class="actions">&nbsp;</th>
                 </tr>
             </thead>
-            @foreach (var entry in Model.Queries) { 
+            @foreach (var entry in Model.Queries) {
                 <tr>
                     <td>
-                        <input type="hidden" value="@Model.Queries[index].QueryId" name="@Html.NameOf(m => m.Queries[index].QueryId)"/>
-                        <input type="checkbox" value="true" name="@Html.NameOf(m => m.Queries[index].IsChecked)"/>
+                        <input type="hidden" value="@Model.Queries[index].QueryId" name="@Html.NameOf(m => m.Queries[index].QueryId)" />
+                        <input type="checkbox" value="true" name="@Html.NameOf(m => m.Queries[index].IsChecked)" />
                     </td>
                     <td>
-                        @Html.ActionLink(entry.Name, "Edit", new { id = entry.QueryId }) 
+                        @Html.ActionLink(entry.Name, "Edit", new { id = entry.QueryId })
                     </td>
                     <td>
                         @Html.ActionLink(T("Properties").ToString(), "Edit", new { Area = "Contents", id = entry.QueryId, returnurl = HttpContext.Current.Request.RawUrl }) |
@@ -72,6 +72,6 @@
                 index++;
             }
         </table>
-	@Display(Model.Pager)
+        @Display(Model.Pager)
     </fieldset>
-} 
+}

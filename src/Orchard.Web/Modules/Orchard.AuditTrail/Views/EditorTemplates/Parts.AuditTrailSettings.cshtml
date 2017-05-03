@@ -40,7 +40,7 @@
                         </td>
                         <td>@e.Description</td>
                         <td class="audittrail-event-enabled-cell">
-                            <input id="@checkboxId" type="checkbox" class="check-all-slave" name="AuditTrailSettingsPart.Categories[@i].Events[@j].IsEnabled" value="@Boolean.TrueString" @if (e.IsEnabled || e.IsMandatory) { <text> checked="checked" </text>  } @if (e.IsMandatory) { <text> disabled="disabled" </text>  } />
+                            <input id="@checkboxId" type="checkbox" class="check-all-slave" name="AuditTrailSettingsPart.Categories[@i].Events[@j].IsEnabled" value="@Boolean.TrueString" @if (e.IsEnabled || e.IsMandatory) { <text> checked="checked" </text>   } @if (e.IsMandatory) { <text> disabled="disabled" </text>   } />
                         </td>
                     </tr>
                     j++;

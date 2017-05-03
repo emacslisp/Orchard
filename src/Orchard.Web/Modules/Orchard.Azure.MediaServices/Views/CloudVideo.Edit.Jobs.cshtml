@@ -15,7 +15,7 @@
 }
 @helper ShortDateTime(DateTime? value) {
     if (value != null) {
-        @Display.DateTime(DateTimeUtc: value)
+    @Display.DateTime(DateTimeUtc: value)
     }
 }
 @if (!isCreatingItem && jobsToDisplay.Any()) {
@@ -61,10 +61,10 @@
                         <td>
                             @if (authorizedToManageJobs) {
                                 if (job.CanArchive) {
-                                    @Html.ActionLink(T("Archive").ToString(), "Archive", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices" }, new { itemprop = "UnsafeUrl RemoveUrl" })
+                                @Html.ActionLink(T("Archive").ToString(), "Archive", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices" }, new { itemprop = "UnsafeUrl RemoveUrl" })
                                 }
                                 if (job.CanCancel) {
-                                    @Html.ActionLink(T("Cancel").ToString(), "Cancel", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices" }, new { itemprop = "UnsafeUrl RemoveUrl" })
+                                @Html.ActionLink(T("Cancel").ToString(), "Cancel", "Job", new { job.Record.Id, Area = "Orchard.Azure.MediaServices" }, new { itemprop = "UnsafeUrl RemoveUrl" })
                                 }
                             }
                         </td>
@@ -84,11 +84,11 @@
 }
 @if (authorizedToManageJobs) {
     if (!canCreateJobs) {
-        <p>@T("Jobs can be created once the mezzanine video asset has finished uploaded and the cloud video item has been saved.")</p>
+    <p>@T("Jobs can be created once the mezzanine video asset has finished uploaded and the cloud video item has been saved.")</p>
     }
     else {
-        <fieldset>
-            @Html.Link(T("Create Job").Text, href, htmlAttributes)
-        </fieldset>
+    <fieldset>
+        @Html.Link(T("Create Job").Text, href, htmlAttributes)
+    </fieldset>
     }
 }

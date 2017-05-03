@@ -24,21 +24,26 @@ ul.breadcrumbs:after {
     margin-top: 1em;
 }
 
-.list-navigation:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
+    .list-navigation:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
 
-.list-navigation .pull-right {
-    float: right;
-}
+    .list-navigation .pull-right {
+        float: right;
+    }
 
-.media-library-modal-window .list-navigation{
+.media-library-modal-window .list-navigation {
     display: none;
 }
 
-#cboxTopLeft, #cboxMiddleLeft, #cboxTopRight, #cboxMiddleRight, #cboxBottomLeft, #cboxBottomRight { width: 1px;}
-#cboxTopLeft, #cboxTopCenter, #cboxTopRight, #cboxBottomLeft, #cboxBottomCenter, #cboxBottomRight { height: 1px; }
+#cboxTopLeft, #cboxMiddleLeft, #cboxTopRight, #cboxMiddleRight, #cboxBottomLeft, #cboxBottomRight {
+    width: 1px;
+}
+
+#cboxTopLeft, #cboxTopCenter, #cboxTopRight, #cboxBottomLeft, #cboxBottomCenter, #cboxBottomRight {
+    height: 1px;
+}

@@ -7,11 +7,14 @@ using Orchard.Security;
 using Orchard.Services;
 using Orchard.Users.Models;
 
-namespace Orchard.Users.Events {
-    public class LoginUserEventHandler : IUserEventHandler {
+namespace Orchard.Users.Events
+{
+    public class LoginUserEventHandler : IUserEventHandler
+    {
         private readonly IClock _clock;
 
-        public LoginUserEventHandler(IClock clock) {
+        public LoginUserEventHandler(IClock clock)
+        {
             _clock = clock;
         }
 
@@ -19,11 +22,13 @@ namespace Orchard.Users.Events {
 
         public void Created(UserContext context) { }
 
-        public void LoggedIn(IUser user) {
+        public void LoggedIn(IUser user)
+        {
             user.As<UserPart>().LastLoginUtc = _clock.UtcNow;
         }
 
-        public void LoggedOut(IUser user) {
+        public void LoggedOut(IUser user)
+        {
             user.As<UserPart>().LastLogoutUtc = _clock.UtcNow;
         }
 

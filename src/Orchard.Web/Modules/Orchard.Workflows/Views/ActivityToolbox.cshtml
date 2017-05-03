@@ -18,8 +18,8 @@
                 <span class="hint">@activity.Description</span>
             </div>
         </li>
-    }   
-</ul> 
+    }
+</ul>
 
 @* Render script to initialize a new jsplumb shape in the form of activities['activity-name'].create() *@
 @using (Script.Foot()) {
@@ -32,7 +32,7 @@
                 description: '@HttpUtility.JavaScriptStringEncode(activity.Description.Text)',
                 IsEvent: @(activity.IsEvent ? "true" : "false"),
                 hasForm: @(!String.IsNullOrWhiteSpace(activity.Form) ? "true" : "false")
-            },</text> 
+            },</text>
                            }
 
         };

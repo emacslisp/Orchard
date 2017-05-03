@@ -5,8 +5,10 @@ using Orchard.Azure.MediaServices.Models.Jobs;
 using Orchard.Azure.MediaServices.Services.Tasks;
 using Orchard;
 
-namespace Orchard.Azure.MediaServices.Services.Jobs {
-    public interface IJobManager : IDependency {
+namespace Orchard.Azure.MediaServices.Services.Jobs
+{
+    public interface IJobManager : IDependency
+    {
         IEnumerable<Job> GetJobsFor(CloudVideoPart part);
         Job GetJobById(int id);
         Job CreateJobFor(CloudVideoPart part, Action<Job> initialize = null);

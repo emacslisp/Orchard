@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Orchard.ContentManagement;
 using Orchard.Events;
 
-namespace Orchard.Workflows.Services {
-    public interface IWorkflowManager : IEventHandler {
+namespace Orchard.Workflows.Services
+{
+    public interface IWorkflowManager : IEventHandler
+    {
         /// <summary>
         /// Triggers a specific Event, and provides the tokens context if the event is 
         /// actually executed

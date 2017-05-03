@@ -2,23 +2,29 @@
 using System.Linq;
 using Orchard.Projections.Models;
 
-namespace Orchard.Projections.Services {
-    public class FieldIndexService : IFieldIndexService {
+namespace Orchard.Projections.Services
+{
+    public class FieldIndexService : IFieldIndexService
+    {
 
-        public void Set(FieldIndexPart part, string partName, string fieldName, string valueName, object value, Type valueType) {
+        public void Set(FieldIndexPart part, string partName, string fieldName, string valueName, object value, Type valueType)
+        {
             var propertyName = String.Join(".", partName, fieldName, valueName ?? "");
 
             var typeCode = Type.GetTypeCode(valueType);
 
-            if(valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+            if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
                 typeCode = Type.GetTypeCode(Nullable.GetUnderlyingType(valueType));
             }
 
-            switch (typeCode) {
+            switch (typeCode)
+            {
                 case TypeCode.Char:
                 case TypeCode.String:
                     var stringRecord = part.Record.StringFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (stringRecord == null) {
+                    if (stringRecord == null)
+                    {
                         stringRecord = new StringFieldIndexRecord { PropertyName = propertyName };
                         part.Record.StringFieldIndexRecords.Add(stringRecord);
                     }
@@ -26,7 +32,7 @@ namespace Orchard.Projections.Services {
                     // take the first 4000 chars as it is the limit for the field
                     stringRecord.Value = value == null ? null : value.ToString().Substring(0, Math.Min(value.ToString().Length, 4000));
 
-                    
+
                     break;
                 case TypeCode.Byte:
                 case TypeCode.SByte:
@@ -37,7 +43,8 @@ namespace Orchard.Projections.Services {
                 case TypeCode.UInt32:
                 case TypeCode.UInt64:
                     var integerRecord = part.Record.IntegerFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (integerRecord == null) {
+                    if (integerRecord == null)
+                    {
                         integerRecord = new IntegerFieldIndexRecord { PropertyName = propertyName };
                         part.Record.IntegerFieldIndexRecords.Add(integerRecord);
                     }
@@ -46,7 +53,8 @@ namespace Orchard.Projections.Services {
                     break;
                 case TypeCode.DateTime:
                     var dateTimeRecord = part.Record.IntegerFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (dateTimeRecord == null) {
+                    if (dateTimeRecord == null)
+                    {
                         dateTimeRecord = new IntegerFieldIndexRecord { PropertyName = propertyName };
                         part.Record.IntegerFieldIndexRecords.Add(dateTimeRecord);
                     }
@@ -55,7 +63,8 @@ namespace Orchard.Projections.Services {
                     break;
                 case TypeCode.Boolean:
                     var booleanRecord = part.Record.IntegerFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (booleanRecord == null) {
+                    if (booleanRecord == null)
+                    {
                         booleanRecord = new IntegerFieldIndexRecord { PropertyName = propertyName };
                         part.Record.IntegerFieldIndexRecords.Add(booleanRecord);
                     }
@@ -64,7 +73,8 @@ namespace Orchard.Projections.Services {
                     break;
                 case TypeCode.Decimal:
                     var decimalRecord = part.Record.DecimalFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (decimalRecord == null) {
+                    if (decimalRecord == null)
+                    {
                         decimalRecord = new DecimalFieldIndexRecord { PropertyName = propertyName };
                         part.Record.DecimalFieldIndexRecords.Add(decimalRecord);
                     }
@@ -74,7 +84,8 @@ namespace Orchard.Projections.Services {
                 case TypeCode.Single:
                 case TypeCode.Double:
                     var doubleRecord = part.Record.DoubleFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);
-                    if (doubleRecord == null) {
+                    if (doubleRecord == null)
+                    {
                         doubleRecord = new DoubleFieldIndexRecord { PropertyName = propertyName };
                         part.Record.DoubleFieldIndexRecords.Add(doubleRecord);
                     }
@@ -84,12 +95,14 @@ namespace Orchard.Projections.Services {
             }
         }
 
-        public T Get<T>(FieldIndexPart part, string partName, string fieldName, string valueName) {
+        public T Get<T>(FieldIndexPart part, string partName, string fieldName, string valueName)
+        {
             var propertyName = String.Join(".", partName, fieldName, valueName ?? "");
 
             var typeCode = Type.GetTypeCode(typeof(T));
 
-            switch (typeCode) {
+            switch (typeCode)
+            {
                 case TypeCode.Char:
                 case TypeCode.String:
                     var stringRecord = part.Record.StringFieldIndexRecords.FirstOrDefault(r => r.PropertyName == propertyName);

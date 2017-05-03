@@ -4,8 +4,8 @@
 
 @{ Layout.Title = T("Manage tag: {0}", Model.TagName).ToString(); }
 
-@using (Html.BeginFormAntiForgeryPost()) { 
-    @Html.ValidationSummary()  
+@using (Html.BeginFormAntiForgeryPost()) {
+    @Html.ValidationSummary()
     <fieldset>
         @Html.HiddenFor(m=>m.Id)
         @Html.LabelFor(m => m.TagName, T("Tag Name"))
@@ -32,11 +32,11 @@ else {
                 <th scope="co2">@T("Name")</th>
             </tr>
         </thead>
-        @foreach (IContent content in (IEnumerable<IContent>)ViewData["ContentItems"]) { 
-        <tr>
-            <td>@content.ContentItem.ContentType.CamelFriendly()</td>
-            <td>@Html.ItemEditLink(content.ContentItem)</td>
-        </tr>
+        @foreach (IContent content in (IEnumerable<IContent>)ViewData["ContentItems"]) {
+            <tr>
+                <td>@content.ContentItem.ContentType.CamelFriendly()</td>
+                <td>@Html.ItemEditLink(content.ContentItem)</td>
+            </tr>
         }
     </table>
 }

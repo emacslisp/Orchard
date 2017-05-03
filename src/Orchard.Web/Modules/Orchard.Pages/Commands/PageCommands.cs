@@ -14,8 +14,10 @@ using Orchard.Core.Title.Models;
 using Orchard.UI.Navigation;
 using Orchard.Utility;
 
-namespace Orchard.Pages.Commands {
-    public class PageCommands : DefaultOrchardCommandHandler {
+namespace Orchard.Pages.Commands
+{
+    public class PageCommands : DefaultOrchardCommandHandler
+    {
         private readonly IContentManager _contentManager;
         private readonly IMembershipService _membershipService;
         private readonly ISiteService _siteService;
@@ -25,13 +27,14 @@ namespace Orchard.Pages.Commands {
         private readonly IHomeAliasService _homeAliasService;
 
         public PageCommands(
-            IContentManager contentManager, 
-            IMembershipService membershipService, 
+            IContentManager contentManager,
+            IMembershipService membershipService,
             IAuthenticationService authenticationService,
             ISiteService siteService,
             IMenuService menuService,
-            INavigationManager navigationManager, 
-            IHomeAliasService homeAliasService) {
+            INavigationManager navigationManager,
+            IHomeAliasService homeAliasService)
+        {
 
             _contentManager = contentManager;
             _membershipService = membershipService;
@@ -75,8 +78,10 @@ namespace Orchard.Pages.Commands {
         [CommandName("page create")]
         [CommandHelp("page create [/Slug:<slug>] /Title:<title> /Path:<path> [/Text:<text>] [/Owner:<username>] [/MenuName:<name>] [/MenuText:<menu text>] [/Homepage:true|false] [/Publish:true|false] [/UseWelcomeText:true|false]\r\n\t" + "Creates a new page")]
         [OrchardSwitches("Slug,Title,Path,Text,Owner,MenuText,Homepage,MenuName,Publish,UseWelcomeText")]
-        public void Create() {
-            if (String.IsNullOrEmpty(Owner)) {
+        public void Create()
+        {
+            if (String.IsNullOrEmpty(Owner))
+            {
                 Owner = _siteService.GetSiteSettings().SuperUser;
             }
 
@@ -87,10 +92,12 @@ namespace Orchard.Pages.Commands {
             page.As<TitlePart>().Title = Title;
             page.As<ICommonPart>().Owner = owner;
 
-            if (!String.IsNullOrWhiteSpace(MenuText)) {
+            if (!String.IsNullOrWhiteSpace(MenuText))
+            {
                 var menu = _menuService.GetMenu(MenuName);
 
-                if (menu != null) {
+                if (menu != null)
+                {
                     var menuItem = _contentManager.Create<ContentMenuItemPart>("ContentMenuItem");
                     menuItem.Content = page;
                     menuItem.As<MenuPart>().MenuPosition = Position.GetNext(_navigationManager.BuildMenu(menu));
@@ -99,12 +106,14 @@ namespace Orchard.Pages.Commands {
                 }
             }
 
-            if (Homepage) {
+            if (Homepage)
+            {
                 _homeAliasService.PublishHomeAlias(page);
             }
 
             var layout = default(string);
-            if (UseWelcomeText) {
+            if (UseWelcomeText)
+            {
                 var text = T(
                     @"<p>You've successfully setup your Orchard Site and this is the homepage of your new site.
 Here are a few things you can look at to get familiar with the application.
@@ -181,8 +190,10 @@ Aliquam vel sem nibh. Suspendisse vel condimentum tellus.</p>").Text;
                             "}]" +
                         "}]}]}";
             }
-            else {
-                if (!String.IsNullOrEmpty(Text)) {
+            else
+            {
+                if (!String.IsNullOrEmpty(Text))
+                {
                     layout = @"{
     'elements': [{
         'typeName': 'Orchard.Layouts.Elements.Canvas',
@@ -196,7 +207,7 @@ Aliquam vel sem nibh. Suspendisse vel condimentum tellus.</p>").Text;
             }
 
             // (Layout) Hackish way to access the LayoutPart on the page without having to declare a dependency on Orchard.Layouts.
-            var layoutPart = ((dynamic) page).LayoutPart;
+            var layoutPart = ((dynamic)page).LayoutPart;
             var bodyPart = page.As<BodyPart>();
 
             if (bodyPart != null)
@@ -207,14 +218,16 @@ Aliquam vel sem nibh. Suspendisse vel condimentum tellus.</p>").Text;
             if (layoutPart != null && layoutPart.GetType().Name == "LayoutPart")
                 layoutPart.LayoutData = layout;
 
-            if (Publish) {
+            if (Publish)
+            {
                 _contentManager.Publish(page);
             }
 
             Context.Output.WriteLine(T("Page created successfully.").Text);
         }
 
-        private static string Encode(string text) {
+        private static string Encode(string text)
+        {
             return HttpUtility.UrlEncode(text);
         }
     }

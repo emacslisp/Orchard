@@ -5,7 +5,7 @@
 
 @{
     Script.Require("ShapesBase").AtFoot();
-    
+
     Orchard.Themes.Models.ThemeEntry theme = Model.Theme;
     var themeClasses = theme.IsRecentlyInstalled ? "class=\"recentlyInstalledTheme\"" : String.Empty;
 }
@@ -43,22 +43,22 @@
 
     @if (theme.Enabled) {
         using (Html.BeginFormAntiForgeryPost(Url.Action("Disable"), FormMethod.Post, new { @class = "inline link" })) {
-            @Html.Hidden("themeId", (string)theme.Descriptor.Id)
-            <button type="submit" class="disable" title="Disable">@T("Disable")</button>
+        @Html.Hidden("themeId", (string)theme.Descriptor.Id)
+        <button type="submit" class="disable" title="Disable">@T("Disable")</button>
         }
     }
     else {
         using (Html.BeginFormAntiForgeryPost(Url.Action("Enable"), FormMethod.Post, new { @class = "inline link" })) {
-            @Html.Hidden("themeId", (string)theme.Descriptor.Id)
-            <button type="submit" class="enable" title="Enable">@T("Enable")</button>
+        @Html.Hidden("themeId", (string)theme.Descriptor.Id)
+        <button type="submit" class="enable" title="Enable">@T("Enable")</button>
         }
     }
 
     @if (theme.NeedsUpdate) {
         <span> | </span>
         using (Html.BeginFormAntiForgeryPost(Url.Action("Update"), FormMethod.Post, new { @class = "inline link" })) {
-            @Html.Hidden("themeId", (string)theme.Descriptor.Id)
-            <button type="submit" class="update">@T("Update")</button> <br />
+        @Html.Hidden("themeId", (string)theme.Descriptor.Id)
+        <button type="submit" class="update">@T("Update")</button> <br />
         }
     }
 

@@ -10,8 +10,10 @@ using Orchard.Environment.Configuration;
 using Orchard.Environment.Descriptor;
 using Orchard.Environment.State;
 
-namespace Orchard.Blogs.Services {
-    public class BlogService : IBlogService {
+namespace Orchard.Blogs.Services
+{
+    public class BlogService : IBlogService
+    {
         private readonly IContentManager _contentManager;
         private readonly IProcessingEngine _processingEngine;
         private readonly ShellSettings _shellSettings;
@@ -24,7 +26,8 @@ namespace Orchard.Blogs.Services {
             IProcessingEngine processingEngine,
             ShellSettings shellSettings,
             IShellDescriptorManager shellDescriptorManager,
-            IPathResolutionService pathResolutionService) {
+            IPathResolutionService pathResolutionService)
+        {
             _contentManager = contentManager;
             _processingEngine = processingEngine;
             _shellSettings = shellSettings;
@@ -32,42 +35,51 @@ namespace Orchard.Blogs.Services {
             _pathResolutionService = pathResolutionService;
         }
 
-        public BlogPart Get(string path) {
+        public BlogPart Get(string path)
+        {
             var blog = _pathResolutionService.GetPath(path);
 
-            if (blog == null) {
+            if (blog == null)
+            {
                 return null;
             }
 
-            if (!blog.Has<BlogPart>()) {
+            if (!blog.Has<BlogPart>())
+            {
                 return null;
             }
 
             return blog.As<BlogPart>();
         }
 
-        public ContentItem Get(int id, VersionOptions versionOptions) {
+        public ContentItem Get(int id, VersionOptions versionOptions)
+        {
             var blogPart = _contentManager.Get<BlogPart>(id, versionOptions);
             return blogPart == null ? null : blogPart.ContentItem;
         }
 
-        public IEnumerable<BlogPart> Get() {
+        public IEnumerable<BlogPart> Get()
+        {
             return Get(VersionOptions.Published);
         }
 
-        public IEnumerable<BlogPart> Get(VersionOptions versionOptions) {
+        public IEnumerable<BlogPart> Get(VersionOptions versionOptions)
+        {
             return _contentManager.Query<BlogPart>(versionOptions, "Blog")
                 .Join<TitlePartRecord>()
                 .OrderBy(br => br.Title)
                 .List();
         }
 
-        public void Delete(ContentItem blog) {
+        public void Delete(ContentItem blog)
+        {
             _contentManager.Remove(blog);
         }
 
-        public void ProcessBlogPostsCount(int blogPartId) {
-            if (!_processedBlogParts.Contains(blogPartId)) {
+        public void ProcessBlogPostsCount(int blogPartId)
+        {
+            if (!_processedBlogParts.Contains(blogPartId))
+            {
                 _processedBlogParts.Add(blogPartId);
                 _processingEngine.AddTask(_shellSettings, _shellDescriptorManager.GetShellDescriptor(), "IBlogPostsCountProcessor.Process", new Dictionary<string, object> { { "blogPartId", blogPartId } });
             }

@@ -20,7 +20,7 @@
                         partSelection.PartDisplayName,
                         !string.IsNullOrWhiteSpace(partSelection.PartDescription) ? string.Format("<label for=\"{0}\" class=\"part hint\">{1}</label>", fieldId, partSelection.PartDescription) : "",
                         Html.Hidden(fieldNameStart + "PartName", partSelection.PartName)));
-                  
+
             },
             "available-parts")
     </fieldset>

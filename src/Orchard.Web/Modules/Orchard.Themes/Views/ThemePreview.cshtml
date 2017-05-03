@@ -8,7 +8,7 @@ body {
 #themepreview {
     background:#2D2F25 url('@Href("~/Core/Shapes/Styles/Images/toolBarBackground.gif")') repeat-x left top;
     border-bottom:1px solid #494d4d;
-    font-size:15px; 
+    font-size:15px;
     left:0;
     height:30px;
     margin:0;
@@ -17,7 +17,7 @@ body {
     padding:5px 0;
     top:0;
     width:100%;
-}   
+}
 #themepreview fieldset,
 #themepreview span, #themepreview input,
 #themepreview select, #themepreview button  {
@@ -57,7 +57,7 @@ html.dyn #themepreview button.preview { display:none; }
 </style>
 
 <div id="themepreview">
-    @using(Html.BeginFormAntiForgeryPost(Url.Action("Preview", new{Controller="Admin", Area="Orchard.Themes"}), FormMethod.Post, new { @class = "inline" })) { 
+    @using(Html.BeginFormAntiForgeryPost(Url.Action("Preview", new{Controller="Admin", Area="Orchard.Themes"}), FormMethod.Post, new { @class = "inline" })) {
         <fieldset>
             <span>@T("You are previewing: ")</span>
             @Html.DropDownList("ThemeId", themes, new {onChange = "this.form.submit();"})

@@ -3,10 +3,13 @@ using Orchard.Azure.MediaServices.Models.Assets;
 using Orchard.ContentManagement.FieldStorage.InfosetStorage;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Azure.MediaServices.Models.Records {
-    public class AssetRecord {
+namespace Orchard.Azure.MediaServices.Models.Records
+{
+    public class AssetRecord
+    {
 
-        public AssetRecord() {
+        public AssetRecord()
+        {
             Infoset = new Infoset();
         }
 
@@ -36,7 +39,8 @@ namespace Orchard.Azure.MediaServices.Models.Records {
         public virtual DateTime? RemovedUtc { get; set; }
 
         [StringLengthMax]
-        public virtual string Data {
+        public virtual string Data
+        {
             get { return Infoset.Data; }
             set { Infoset.Data = value; }
         }

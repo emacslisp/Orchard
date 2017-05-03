@@ -1,9 +1,12 @@
 ﻿using Orchard.Core.Common.ViewModels;
 
-namespace Orchard.AuditTrail.ViewModels {
-    public class CommonAuditTrailFilterViewModel {
-        public CommonAuditTrailFilterViewModel() {
-            From = new DateTimeEditor { ShowDate = true, ShowTime = false};
+namespace Orchard.AuditTrail.ViewModels
+{
+    public class CommonAuditTrailFilterViewModel
+    {
+        public CommonAuditTrailFilterViewModel()
+        {
+            From = new DateTimeEditor { ShowDate = true, ShowTime = false };
             To = new DateTimeEditor { ShowDate = true, ShowTime = false };
         }
 

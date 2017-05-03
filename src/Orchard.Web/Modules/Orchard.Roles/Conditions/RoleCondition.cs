@@ -5,25 +5,32 @@ using Orchard.Security;
 using System;
 using System.Linq;
 
-namespace Orchard.Roles.Conditions {
-    public interface IConditionProvider : IEventHandler {
+namespace Orchard.Roles.Conditions
+{
+    public interface IConditionProvider : IEventHandler
+    {
         void Evaluate(dynamic evaluationContext);
     }
 
-    public class RoleConditionProvider : IConditionProvider {
+    public class RoleConditionProvider : IConditionProvider
+    {
         private readonly IAuthenticationService _authenticationService;
 
-        public RoleConditionProvider(IAuthenticationService authenticationService) {
+        public RoleConditionProvider(IAuthenticationService authenticationService)
+        {
             _authenticationService = authenticationService;
         }
 
-        public void Evaluate(dynamic evaluationContext) {
-            if (!String.Equals(evaluationContext.FunctionName, "role", StringComparison.OrdinalIgnoreCase)) {
+        public void Evaluate(dynamic evaluationContext)
+        {
+            if (!String.Equals(evaluationContext.FunctionName, "role", StringComparison.OrdinalIgnoreCase))
+            {
                 return;
             }
 
             var user = _authenticationService.GetAuthenticatedUser();
-            if (user == null) {
+            if (user == null)
+            {
                 evaluationContext.Result = false;
                 return;
             }

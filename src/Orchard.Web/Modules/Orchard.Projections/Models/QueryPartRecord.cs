@@ -3,9 +3,12 @@ using System.Xml.Serialization;
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Projections.Models {
-    public class QueryPartRecord : ContentPartRecord {
-        public QueryPartRecord() {
+namespace Orchard.Projections.Models
+{
+    public class QueryPartRecord : ContentPartRecord
+    {
+        public QueryPartRecord()
+        {
             FilterGroups = new List<FilterGroupRecord>();
             SortCriteria = new List<SortCriterionRecord>();
             Layouts = new List<LayoutRecord>();

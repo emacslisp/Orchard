@@ -6,22 +6,27 @@ using Orchard.DisplayManagement;
 using Orchard.Forms.Services;
 using Orchard.Localization;
 
-namespace Orchard.Projections.FilterEditors.Forms {
+namespace Orchard.Projections.FilterEditors.Forms
+{
 
-    public class StringFilterForm : IFormProvider {
+    public class StringFilterForm : IFormProvider
+    {
         public const string FormName = "StringFilter";
 
         protected dynamic Shape { get; set; }
         public Localizer T { get; set; }
 
-        public StringFilterForm(IShapeFactory shapeFactory) {
+        public StringFilterForm(IShapeFactory shapeFactory)
+        {
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
         }
 
-        public void Describe(DescribeContext context) {
+        public void Describe(DescribeContext context)
+        {
             Func<IShapeFactory, object> form =
-                shape => {
+                shape =>
+                {
 
                     var f = Shape.Form(
                         Id: "StringFilter",
@@ -57,11 +62,13 @@ namespace Orchard.Projections.FilterEditors.Forms {
 
         }
 
-        public static Action<IHqlExpressionFactory> GetFilterPredicate(dynamic formState, string property) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicate(dynamic formState, string property)
+        {
             var op = (StringOperator)Enum.Parse(typeof(StringOperator), Convert.ToString(formState.Operator));
             object value = Convert.ToString(formState.Value);
 
-            switch (op) {
+            switch (op)
+            {
                 case StringOperator.Equals:
                     return x => x.Eq(property, value);
                 case StringOperator.NotEquals:
@@ -93,11 +100,13 @@ namespace Orchard.Projections.FilterEditors.Forms {
             }
         }
 
-        public static LocalizedString DisplayFilter(string fieldName, dynamic formState, Localizer T) {
+        public static LocalizedString DisplayFilter(string fieldName, dynamic formState, Localizer T)
+        {
             var op = (StringOperator)Enum.Parse(typeof(StringOperator), Convert.ToString(formState.Operator));
             string value = Convert.ToString(formState.Value);
 
-            switch (op) {
+            switch (op)
+            {
                 case StringOperator.Equals:
                     return T("{0} is equal to '{1}'", fieldName, value);
                 case StringOperator.NotEquals:
@@ -124,7 +133,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
         }
     }
 
-    public enum StringOperator {
+    public enum StringOperator
+    {
         Equals,
         NotEquals,
         Contains,

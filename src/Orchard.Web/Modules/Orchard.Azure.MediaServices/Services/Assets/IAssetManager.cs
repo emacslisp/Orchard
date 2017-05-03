@@ -5,11 +5,13 @@ using Orchard.Azure.MediaServices.Models;
 using Orchard.Azure.MediaServices.Models.Assets;
 using Orchard;
 
-namespace Orchard.Azure.MediaServices.Services.Assets {
-    public interface IAssetManager : IDependency {
+namespace Orchard.Azure.MediaServices.Services.Assets
+{
+    public interface IAssetManager : IDependency
+    {
         Asset GetAssetById(int id);
         IEnumerable<Asset> LoadAssetsFor(CloudVideoPart part);
-        IEnumerable<T> LoadAssetsFor<T>(CloudVideoPart part) where T:Asset;
+        IEnumerable<T> LoadAssetsFor<T>(CloudVideoPart part) where T : Asset;
         IEnumerable<Asset> LoadPendingAssets();
         Asset CreateAssetFor<T>(CloudVideoPart part, Action<T> initialize = null) where T : Asset, new();
         void DeleteAssetsFor(CloudVideoPart part);

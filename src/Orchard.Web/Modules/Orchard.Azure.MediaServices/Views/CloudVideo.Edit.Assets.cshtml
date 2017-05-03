@@ -6,11 +6,11 @@
 @{
     Style.Include("cloudmedia-edit-assets.css", "cloudmedia-edit-assets.min.css");
     Style.Include("cloudmedia-progress.css", "cloudmedia-progress.min.css");
-    
+
     Script.Require("ShapesBase");
-    
+
     Script.Include("cloudmedia-admin-common.js", "cloudmedia-admin-common.min.js");
-    
+
     var cloudVideoPart = (CloudVideoPart)Model.CloudVideoPart;
     var isCreatingItem = cloudVideoPart == null || cloudVideoPart.Id == 0;
     var assets = cloudVideoPart != null ? cloudVideoPart.Assets.Where(x => x.PublishState.Status != AssetPublishStatus.Removed).ToArray() : Enumerable.Empty<Asset>();
@@ -19,45 +19,45 @@
 
 @helper MainFileUrl(Asset asset, Func<Asset, string> mainFileUrl, string linkText) {
     if (!String.IsNullOrEmpty(mainFileUrl(asset))) {
-        <a href="@mainFileUrl(asset)">@T(linkText)</a>
+    <a href="@mainFileUrl(asset)">@T(linkText)</a>
     }
 }
 
 @helper ManifestUrls(DynamicVideoAsset asset, Func<Asset, string> videoUrl, Func<DynamicVideoAsset, string> onDemandLocatorUrl, Func<DynamicVideoAsset, string> smoothStreamingLocatorUrl, Func<DynamicVideoAsset, string> hlsLocatorUrl, Func<DynamicVideoAsset, string> mpegDashLocatorUrl) {
     if (!String.IsNullOrEmpty(onDemandLocatorUrl(asset))) {
-        @MainFileUrl(asset, videoUrl, "First video file")<br />
-        <a href="@smoothStreamingLocatorUrl(asset)">@T("Manifest (Smooth Streaming)")</a><br />
-        <a href="@hlsLocatorUrl(asset)">@T("Manifest (HLS)")</a><br />
-        <a href="@mpegDashLocatorUrl(asset)">@T("Manifest (MPEG DASH)")</a>
+    @MainFileUrl(asset, videoUrl, "First video file")<br />
+    <a href="@smoothStreamingLocatorUrl(asset)">@T("Manifest (Smooth Streaming)")</a><br />
+    <a href="@hlsLocatorUrl(asset)">@T("Manifest (HLS)")</a><br />
+    <a href="@mpegDashLocatorUrl(asset)">@T("Manifest (MPEG DASH)")</a>
     }
 }
 
 @helper AssetActions(Asset asset, bool hasManageCloudMediaPermission) {
     if (hasManageCloudMediaPermission) {
-        <a href="@Url.Action("Edit", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })">Edit</a>
-        <a href="@Url.Action("Delete", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })" data-prompt="@T("Are you sure you want to delete this asset?")">@T("Delete")</a>
+    <a href="@Url.Action("Edit", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })">Edit</a>
+    <a href="@Url.Action("Delete", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })" data-prompt="@T("Are you sure you want to delete this asset?")">@T("Delete")</a>
     }
 }
 
 @helper AssetLink(Asset asset, bool hasManageCloudMediaPermission) {
     if (hasManageCloudMediaPermission) {
         var assetName = !String.IsNullOrWhiteSpace(asset.Name) ? asset.Name : "(untitled)";
-        <a href="@Url.Action("Edit", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })">@assetName</a>
+    <a href="@Url.Action("Edit", "Asset", new { id = asset.Record.Id, area = "Orchard.Azure.MediaServices" })">@assetName</a>
     }
 }
 
 @helper UploadStatus(Asset asset) {
     if (asset.UploadState.Status == AssetUploadStatus.Uploading) {
         var percentComplete = Convert.ToInt32(asset.UploadState.PercentComplete.GetValueOrDefault());
-        <span class="progress-text">
-            @String.Format("Uploading ({0}%)...", percentComplete)
-        </span>
-        <div class="progress-bar">
-            <div class="progress" style="width: @percentComplete%"></div>
-        </div>
+    <span class="progress-text">
+        @String.Format("Uploading ({0}%)...", percentComplete)
+    </span>
+    <div class="progress-bar">
+        <div class="progress" style="width: @percentComplete%"></div>
+    </div>
     }
     else {
-        @T(asset.UploadState.Status.ToString())
+    @T(asset.UploadState.Status.ToString())
     }
 }
 
@@ -100,15 +100,15 @@ else if (!isCreatingItem) {
                 <!-- Video -->
                 @if (videoAssets.Any()) {
                     foreach (var asset in videoAssets) {
-                         <tr>
-                             <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
-                             <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Video file")</td>
-                             <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Video file")</td>
-                             <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
-                             <td>@asset.MediaQuery</td>
-                             <td>@UploadStatus(asset)</td>
-                             <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
-                         </tr>
+                    <tr>
+                        <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
+                        <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Video file")</td>
+                        <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Video file")</td>
+                        <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
+                        <td>@asset.MediaQuery</td>
+                        <td>@UploadStatus(asset)</td>
+                        <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
+                    </tr>
                      }
                 }
                 @if (dynamicVideoAssets.Any()) {
@@ -117,15 +117,15 @@ else if (!isCreatingItem) {
                         <td colspan="7"><h3>@T("Dynamic Video Assets")</h3></td>
                     </tr>
                     foreach (var asset in dynamicVideoAssets) {
-                         <tr>
-                             <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
-                             <td>@ManifestUrls(asset, a => a.PrivateMainFileUrl, a => a.WamsPrivateOnDemandLocatorUrl, a => a.PrivateSmoothStreamingUrl, a => a.PrivateHlsUrl, a => a.PrivateMpegDashUrl)</td>
-                             <td>@ManifestUrls(asset, a => a.PublicMainFileUrl, a => a.WamsPublicOnDemandLocatorUrl, a => a.PublicSmoothStreamingUrl, a => a.PublicHlsUrl, a => a.PublicMpegDashUrl)</td>
-                             <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
-                             <td>@asset.MediaQuery</td>
-                             <td>@UploadStatus(asset)</td>
-                             <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
-                         </tr>
+                    <tr>
+                        <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
+                        <td>@ManifestUrls(asset, a => a.PrivateMainFileUrl, a => a.WamsPrivateOnDemandLocatorUrl, a => a.PrivateSmoothStreamingUrl, a => a.PrivateHlsUrl, a => a.PrivateMpegDashUrl)</td>
+                        <td>@ManifestUrls(asset, a => a.PublicMainFileUrl, a => a.WamsPublicOnDemandLocatorUrl, a => a.PublicSmoothStreamingUrl, a => a.PublicHlsUrl, a => a.PublicMpegDashUrl)</td>
+                        <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
+                        <td>@asset.MediaQuery</td>
+                        <td>@UploadStatus(asset)</td>
+                        <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
+                    </tr>
                      }
                 }
                 @if (thumbnailAssets.Any()) {
@@ -134,15 +134,15 @@ else if (!isCreatingItem) {
                         <td colspan="7"><h3>@T("Thumbnails")</h3></td>
                     </tr>
                     foreach (var asset in thumbnailAssets) {
-                         <tr>
-                             <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
-                             <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Image file")</td>
-                             <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Image file")</td>
-                             <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
-                             <td>@asset.MediaQuery</td>
-                             <td>@UploadStatus(asset)</td>
-                             <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
-                         </tr>
+                    <tr>
+                        <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
+                        <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Image file")</td>
+                        <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Image file")</td>
+                        <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
+                        <td>@asset.MediaQuery</td>
+                        <td>@UploadStatus(asset)</td>
+                        <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
+                    </tr>
                      }
                 }
                 @if (subtitleAssets.Any()) {
@@ -151,15 +151,15 @@ else if (!isCreatingItem) {
                         <td colspan="7"><h3>@T("Subtitles")</h3></td>
                     </tr>
                     foreach (var asset in subtitleAssets) {
-                        <tr>
-                            <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
-                            <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Subtitle file")</td>
-                            <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Subtitle file")</td>
-                            <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
-                            <td>@asset.MediaQuery</td>
-                            <td>@UploadStatus(asset)</td>
-                            <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
-                        </tr>
+                    <tr>
+                        <td>@AssetLink(asset, hasManageCloudMediaPermission)</td>
+                        <td>@MainFileUrl(asset, a => a.PrivateMainFileUrl, "Subtitle file")</td>
+                        <td>@MainFileUrl(asset, a => a.PublicMainFileUrl, "Subtitle file")</td>
+                        <td>@T(asset.IncludeInPlayer.ToYesNo())</td>
+                        <td>@asset.MediaQuery</td>
+                        <td>@UploadStatus(asset)</td>
+                        <td>@AssetActions(asset, hasManageCloudMediaPermission)</td>
+                    </tr>
                     }
                 }
             </tbody>

@@ -5,27 +5,34 @@ using Orchard.Localization;
 using Orchard.Recipes.Services;
 using Orchard.Roles.Models;
 
-namespace Orchard.Roles.Recipes.Builders {
-    public class RolesStep : RecipeBuilderStep {
+namespace Orchard.Roles.Recipes.Builders
+{
+    public class RolesStep : RecipeBuilderStep
+    {
         private readonly IRepository<RoleRecord> _roleRecordepository;
 
-        public RolesStep(IRepository<RoleRecord> roleRecordRepository) {
+        public RolesStep(IRepository<RoleRecord> roleRecordRepository)
+        {
             _roleRecordepository = roleRecordRepository;
         }
 
-        public override string Name {
+        public override string Name
+        {
             get { return "Roles"; }
         }
 
-        public override LocalizedString DisplayName {
+        public override LocalizedString DisplayName
+        {
             get { return T("Roles"); }
         }
 
-        public override LocalizedString Description {
+        public override LocalizedString Description
+        {
             get { return T("Exports user roles."); }
         }
 
-        public override void Build(BuildContext context) {
+        public override void Build(BuildContext context)
+        {
             var roles = _roleRecordepository.Table.OrderBy(x => x.Name).ToList();
 
             if (!roles.Any())
@@ -34,7 +41,8 @@ namespace Orchard.Roles.Recipes.Builders {
             var root = new XElement("Roles");
             context.RecipeDocument.Element("Orchard").Add(root);
 
-            foreach (var role in roles) {
+            foreach (var role in roles)
+            {
                 root.Add(
                     new XElement("Role",
                         new XAttribute("Name", role.Name),

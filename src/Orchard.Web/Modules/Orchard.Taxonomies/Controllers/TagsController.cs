@@ -13,29 +13,34 @@ using System.Linq;
 using Orchard.Security;
 using Orchard.Taxonomies.ViewModels;
 
-namespace Orchard.Taxonomies.Controllers {
-    public class TagsController : ApiController {
+namespace Orchard.Taxonomies.Controllers
+{
+    public class TagsController : ApiController
+    {
         private readonly ITaxonomyService _taxonomyService;
         private readonly IContentManager _contentManager;
-	    private readonly IAuthorizer _authorizer;
+        private readonly IAuthorizer _authorizer;
         public Localizer T { get; set; }
         protected ILogger Logger { get; set; }
 
         public TagsController(
             ITaxonomyService taxonomyService,
             IContentManager contentManager,
-			IAuthorizer authorizer) {
+            IAuthorizer authorizer)
+        {
             _taxonomyService = taxonomyService;
             T = NullLocalizer.Instance;
             _contentManager = contentManager;
-	        _authorizer = authorizer;
+            _authorizer = authorizer;
             Logger = NullLogger.Instance;
         }
 
-        public IEnumerable<Tag> Get(int taxonomyId, bool leavesOnly, string query) {
-	        if (!_authorizer.Authorize(StandardPermissions.AccessAdminPanel)) {
-		        throw new UnauthorizedAccessException("Can't access the admin");
-	        }
+        public IEnumerable<Tag> Get(int taxonomyId, bool leavesOnly, string query)
+        {
+            if (!_authorizer.Authorize(StandardPermissions.AccessAdminPanel))
+            {
+                throw new UnauthorizedAccessException("Can't access the admin");
+            }
             if (string.IsNullOrEmpty(query)) return new List<Tag>();
             var allTerms = leavesOnly
                                ? _taxonomyService.GetTerms(taxonomyId).ToList()
@@ -51,8 +56,10 @@ namespace Orchard.Taxonomies.Controllers {
             return matchingTerms;
         }
 
-        private static Tag BuildTag(TermPart term, bool leavesOnly, IEnumerable<TermPart> terms) {
-            return new Tag {
+        private static Tag BuildTag(TermPart term, bool leavesOnly, IEnumerable<TermPart> terms)
+        {
+            return new Tag
+            {
                 Value = term.Id,
                 Label = term.Name,
                 Disabled = !term.Selectable || (leavesOnly && terms.Any(t => t.Path.Contains(term.Path + term.Id))),

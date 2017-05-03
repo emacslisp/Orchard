@@ -11,11 +11,11 @@
 /* Validation
 ***************************************************************/
 .input-validation-error, input.text.input-validation-error {
-     border:1px solid #990808;
+    border: 1px solid #990808;
 }
 
 .field-validation-error {
-     color: #990808;
+    color: #990808;
 }
 
 /* Elements

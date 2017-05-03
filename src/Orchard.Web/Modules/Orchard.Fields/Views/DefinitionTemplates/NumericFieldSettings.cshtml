@@ -8,28 +8,28 @@
     </div>
 </fieldset>
 <fieldset>
-	<div class="editor-field">
+    <div class="editor-field">
         <label for="@Html.FieldIdFor(m => m.Scale)">@T("Scale")</label>
         @Html.TextBoxFor(m => m.Scale, new { @class = "text small" })
         @Html.ValidationMessageFor(m => m.Scale)
         <span class="hint">@T("The number of digits to the right of the decimal. Put 0 for integers.")</span>
-	</div>
+    </div>
 </fieldset>
 <fieldset>
-	<div class="editor-field">
+    <div class="editor-field">
         <label for="@Html.FieldIdFor(m => m.Minimum)">@T("Minimum")</label>
         @Html.TextBoxFor(m => m.Minimum, new { @class = "text small" })
         @Html.ValidationMessageFor(m => m.Minimum)
         <span class="hint">@T("The minimum value allowed. (optional)")</span>
-	</div>
+    </div>
 </fieldset>
 <fieldset>
-	<div class="editor-field">
+    <div class="editor-field">
         <label for="@Html.FieldIdFor(m => m.Maximum)">@T("Maximum")</label>
         @Html.TextBoxFor(m => m.Maximum, new { @class = "text small" })
         @Html.ValidationMessageFor(m => m.Maximum)
         <span class="hint">@T("The maximum value allowed. (optional)")</span>
-	</div>
+    </div>
 </fieldset>
 <fieldset>
     <div>

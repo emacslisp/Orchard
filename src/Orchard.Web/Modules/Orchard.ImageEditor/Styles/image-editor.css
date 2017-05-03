@@ -10,7 +10,7 @@
 
 #image-editor-container {
     padding: 30px;
-    margin-top:10px;
+    margin-top: 10px;
     background-color: rgb(62, 70, 74);
 }
 
@@ -33,7 +33,7 @@
 .editor-shadow {
     -moz-box-shadow: inset 0px 0px 12px rgba(0, 0, 0, 0.80);
     -webkit-box-shadow: inset 0px 0px 12px rgba(0, 0, 0, 0.80);
-    box-shadow: inset 0px 0px 12px rgba(0, 0, 0, 0.80);    
+    box-shadow: inset 0px 0px 12px rgba(0, 0, 0, 0.80);
 }
 
 /* FILTERS */
@@ -45,10 +45,10 @@
     margin-right: 20px;
 }
 
-.filter > span {
-    display: inline-block;
-    width: 100px;
-}
+    .filter > span {
+        display: inline-block;
+        width: 100px;
+    }
 
 .slider {
     display: inline-block;

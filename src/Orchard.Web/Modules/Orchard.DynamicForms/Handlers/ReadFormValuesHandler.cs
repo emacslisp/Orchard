@@ -2,9 +2,12 @@ using System;
 using Orchard.DynamicForms.Elements;
 using Orchard.DynamicForms.Services;
 
-namespace Orchard.DynamicForms.Handlers {
-    public class ReadFormValuesHandler : FormElementEventHandlerBase {
-        public override void GetElementValue(FormElement element, ReadElementValuesContext context) {
+namespace Orchard.DynamicForms.Handlers
+{
+    public class ReadFormValuesHandler : FormElementEventHandlerBase
+    {
+        public override void GetElementValue(FormElement element, ReadElementValuesContext context)
+        {
 
             if (String.IsNullOrWhiteSpace(element.Name))
                 return;

@@ -10,24 +10,25 @@
     var taskProvider = (ITaskProvider)Model.TaskProvider;
     var cloudVideoPart = (CloudVideoPart)Model.CloudVideoPart;
     var jobViewModel = (JobViewModel)Model.JobViewModel;
-    
+
     var inputAssetListItemQuery =
         from asset in cloudVideoPart.Assets
         where asset is MezzanineAsset
         select new SelectListItem {
-            Text = asset.ToString(), 
-            Value = asset.Record.Id.ToString(), 
+            Text = asset.ToString(),
+            Value = asset.Record.Id.ToString(),
             Selected = asset.Record.Id == jobViewModel.SelectedInputAssetId
         };
-        
+
     Layout.Title = "Create Cloud Job";
 }
 @Display.FrameBuster()
 <h2>@taskProvider.Description</h2>
 @Html.ValidationSummary()
 @using (Html.BeginFormAntiForgeryPost()) {
-    <fieldset style="display: none"> @* Hidden for now. *@
-        <div class="form-group">   
+    <fieldset style="display: none">
+        @* Hidden for now. *@
+        <div class="form-group">
             @Html.LabelFor(m => jobViewModel.SelectedInputAssetId, T("Input Asset"))
             @Html.DropDownListFor(m => jobViewModel.SelectedInputAssetId, inputAssetListItemQuery)
             <span class="hint">@T("Select the input asset for the job.")</span>

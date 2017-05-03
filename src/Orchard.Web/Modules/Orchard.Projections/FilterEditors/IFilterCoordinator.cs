@@ -2,12 +2,14 @@
 using Orchard.ContentManagement;
 using Orchard.Localization;
 
-namespace Orchard.Projections.FilterEditors {
+namespace Orchard.Projections.FilterEditors
+{
     /// <summary>
     /// Coordinated all available <see cref="IFilterEditor"/> to apply specific formatting on a model binding property
     /// </summary>
-    public interface IFilterCoordinator : IDependency {
-        
+    public interface IFilterCoordinator : IDependency
+    {
+
         /// <summary>
         /// Returns the form for a specific type
         /// </summary>

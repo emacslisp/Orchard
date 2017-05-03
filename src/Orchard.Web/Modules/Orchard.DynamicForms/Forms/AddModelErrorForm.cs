@@ -1,10 +1,14 @@
 ﻿using Orchard.Forms.Services;
 
-namespace Orchard.DynamicForms.Forms {
-    public class AddModelErrorForm : Component, IFormProvider {
-    
-        public void Describe(DescribeContext context) {
-            context.Form("AddModelError", factory => {
+namespace Orchard.DynamicForms.Forms
+{
+    public class AddModelErrorForm : Component, IFormProvider
+    {
+
+        public void Describe(DescribeContext context)
+        {
+            context.Form("AddModelError", factory =>
+            {
                 var shape = (dynamic)factory;
                 var form = shape.Form(
                     Id: "AddModelError",

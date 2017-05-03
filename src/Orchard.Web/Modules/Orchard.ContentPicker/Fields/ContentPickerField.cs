@@ -5,24 +5,31 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.FieldStorage;
 using Orchard.ContentManagement.Utilities;
 
-namespace Orchard.ContentPicker.Fields {
-    public class ContentPickerField : ContentField {
-        private static readonly char[] separator = new [] {'{', '}', ','};
+namespace Orchard.ContentPicker.Fields
+{
+    public class ContentPickerField : ContentField
+    {
+        private static readonly char[] separator = new[] { '{', '}', ',' };
         internal LazyField<IEnumerable<ContentItem>> _contentItems = new LazyField<IEnumerable<ContentItem>>();
- 
-        public int[] Ids {
+
+        public int[] Ids
+        {
             get { return DecodeIds(Storage.Get<string>()); }
             set { Storage.Set(EncodeIds(value)); }
         }
 
-        public IEnumerable<ContentItem> ContentItems { 
-            get {
+        public IEnumerable<ContentItem> ContentItems
+        {
+            get
+            {
                 return _contentItems.Value ?? Enumerable.Empty<ContentItem>();
             }
         }
 
-        private string EncodeIds(ICollection<int> ids) {
-            if (ids == null || !ids.Any()) {
+        private string EncodeIds(ICollection<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
                 return string.Empty;
             }
 
@@ -30,8 +37,10 @@ namespace Orchard.ContentPicker.Fields {
             return "{" + string.Join("},{", ids.ToArray()) + "}";
         }
 
-        private int[] DecodeIds(string ids) {
-            if(String.IsNullOrWhiteSpace(ids)) {
+        private int[] DecodeIds(string ids)
+        {
+            if (String.IsNullOrWhiteSpace(ids))
+            {
                 return new int[0];
             }
 

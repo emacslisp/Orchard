@@ -2,8 +2,10 @@
 using Orchard.Localization;
 using Orchard.Workflows.Models;
 
-namespace Orchard.Workflows.Services {
-    public interface IActivity : IDependency {
+namespace Orchard.Workflows.Services
+{
+    public interface IActivity : IDependency
+    {
 
         string Name { get; }
         LocalizedString Category { get; }

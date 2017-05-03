@@ -9,30 +9,38 @@ using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.FieldStorage;
 
-namespace Orchard.Indexing.Handlers {
-    public class InfosetFieldIndexingHandler : ContentHandler {
+namespace Orchard.Indexing.Handlers
+{
+    public class InfosetFieldIndexingHandler : ContentHandler
+    {
 
         private readonly IEnumerable<IContentFieldDriver> _contentFieldDrivers;
         private readonly IFieldStorageProvider _fieldStorageProvider;
 
         public InfosetFieldIndexingHandler(
             IEnumerable<IContentFieldDriver> contentFieldDrivers,
-            IFieldStorageProvider fieldStorageProvider) {
-            
+            IFieldStorageProvider fieldStorageProvider)
+        {
+
             _contentFieldDrivers = contentFieldDrivers;
             _fieldStorageProvider = fieldStorageProvider;
 
             OnIndexing<InfosetPart>(
-                (context, cp) => {
+                (context, cp) =>
+                {
                     var infosetPart = context.ContentItem.As<InfosetPart>();
-                    if (infosetPart == null) {
+                    if (infosetPart == null)
+                    {
                         return;
                     }
 
                     // part fields
-                    foreach ( var part in infosetPart.ContentItem.Parts ) {
-                        foreach ( var field in part.PartDefinition.Fields ) {
-                            if (!field.Settings.GetModel<FieldIndexing>().Included) {
+                    foreach (var part in infosetPart.ContentItem.Parts)
+                    {
+                        foreach (var field in part.PartDefinition.Fields)
+                        {
+                            if (!field.Settings.GetModel<FieldIndexing>().Included)
+                            {
                                 continue;
                             }
 
@@ -45,24 +53,29 @@ namespace Orchard.Indexing.Handlers {
                             var fieldStorage = _fieldStorageProvider.BindStorage(localPart, localField);
                             var indexName = infosetPart.TypeDefinition.Name.ToLower() + "-" + field.Name.ToLower();
 
-                            var membersContext = new DescribeMembersContext(fieldStorage, values => {
+                            var membersContext = new DescribeMembersContext(fieldStorage, values =>
+                            {
 
-                                foreach (var value in values) {
+                                foreach (var value in values)
+                                {
 
-                                    if (value == null) {
+                                    if (value == null)
+                                    {
                                         continue;
                                     }
 
                                     var t = value.GetType();
 
                                     // the T is nullable, convert using underlying type
-                                    if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+                                    if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                    {
                                         t = Nullable.GetUnderlyingType(t);
                                     }
-                                    
+
                                     var typeCode = Type.GetTypeCode(t);
 
-                                    switch (typeCode) {
+                                    switch (typeCode)
+                                    {
                                         case TypeCode.Empty:
                                         case TypeCode.Object:
                                         case TypeCode.DBNull:
@@ -94,7 +107,8 @@ namespace Orchard.Indexing.Handlers {
                                 }
                             });
 
-                            foreach (var driver in drivers) {
+                            foreach (var driver in drivers)
+                            {
                                 driver.Describe(membersContext);
                             }
                         }

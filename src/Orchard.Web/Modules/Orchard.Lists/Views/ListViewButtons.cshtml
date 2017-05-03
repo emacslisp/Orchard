@@ -5,7 +5,7 @@
     var activeProvider = (IListViewProvider) Model.ActiveProvider;
 }
 <div class="switch-button-group-wrapper group">
-    <input id="listViewName" name="listViewName" type="checkbox"/>
+    <input id="listViewName" name="listViewName" type="checkbox" />
     <ul class="switch-button-group">
         @foreach (var provider in providers) {
             <li class="switch-button @provider.Name.HtmlClassify() @if (activeProvider.Name == provider.Name) {<text>active</text>}" data-listviewname="@provider.Name"></li>

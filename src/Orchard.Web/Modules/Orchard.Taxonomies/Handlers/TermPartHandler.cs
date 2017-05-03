@@ -4,13 +4,17 @@ using Orchard.Data;
 using System.Web.Routing;
 using Orchard.ContentManagement;
 
-namespace Orchard.Taxonomies.Handlers {
-    public class TermPartHandler : ContentHandler {
-        public TermPartHandler(IRepository<TermPartRecord> repository) {
+namespace Orchard.Taxonomies.Handlers
+{
+    public class TermPartHandler : ContentHandler
+    {
+        public TermPartHandler(IRepository<TermPartRecord> repository)
+        {
             Filters.Add(StorageFilter.For(repository));
             OnInitializing<TermPart>((context, part) => part.Selectable = true);
         }
-        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+        protected override void GetItemMetadata(GetContentItemMetadataContext context)
+        {
             var term = context.ContentItem.As<TermPart>();
 
             if (term == null)

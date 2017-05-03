@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Orchard.ContentManagement;
 
-namespace Orchard.OutputCache.Models {
-    public class CacheSettings : ContentPart {
+namespace Orchard.OutputCache.Models
+{
+    public class CacheSettings : ContentPart
+    {
         public const string CacheKey = "Orchard_OutputCache_CacheSettings";
 
-        public CacheSettings(CacheSettingsPart part) {
+        public CacheSettings(CacheSettingsPart part)
+        {
             DefaultCacheDuration = part.DefaultCacheDuration;
             DefaultCacheGraceTime = part.DefaultCacheGraceTime;
             DefaultMaxAge = part.DefaultMaxAge;
@@ -23,7 +26,7 @@ namespace Orchard.OutputCache.Models {
             VaryByAuthenticationState = part.VaryByAuthenticationState;
             DebugMode = part.DebugMode;
         }
-        
+
         public int DefaultCacheDuration { get; private set; }
         public int DefaultCacheGraceTime { get; private set; }
         public int DefaultMaxAge { get; private set; }

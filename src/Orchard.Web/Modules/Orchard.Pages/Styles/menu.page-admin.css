@@ -1,7 +1,8 @@
 ﻿.navicon-page,
 .section-new .subnavicon-page {
-background-image:url(images/menu.page.png) !important;
+    background-image: url(images/menu.page.png) !important;
 }
-.navicon-page:hover {
-background-position:0 -30px !important;
-}
+
+    .navicon-page:hover {
+        background-position: 0 -30px !important;
+    }

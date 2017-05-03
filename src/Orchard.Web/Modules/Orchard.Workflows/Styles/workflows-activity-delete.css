@@ -12,9 +12,9 @@
     background-position: 10px 10px;
 }
 
-.toolbox-delete div {
-    margin-left: 36px;
-}
+    .toolbox-delete div {
+        margin-left: 36px;
+    }
 
 .publish {
     width: 36px;
@@ -30,6 +30,6 @@
     background-position: 10px 10px;
 }
 
-.toolbox-publish div {
-    margin-left: 36px;
-}
+    .toolbox-publish div {
+        margin-left: 36px;
+    }

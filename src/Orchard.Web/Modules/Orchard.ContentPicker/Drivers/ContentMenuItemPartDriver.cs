@@ -9,16 +9,19 @@ using Orchard.Core.Navigation.ViewModels;
 using Orchard.Localization;
 using Orchard.Security;
 
-namespace Orchard.ContentPicker.Drivers {
-    public class ContentMenuItemPartDriver : ContentPartDriver<ContentMenuItemPart> {
+namespace Orchard.ContentPicker.Drivers
+{
+    public class ContentMenuItemPartDriver : ContentPartDriver<ContentMenuItemPart>
+    {
         private readonly IContentManager _contentManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly IWorkContextAccessor _workContextAccessor;
 
         public ContentMenuItemPartDriver(
             IContentManager contentManager,
-            IAuthorizationService authorizationService, 
-            IWorkContextAccessor workContextAccessor) {
+            IAuthorizationService authorizationService,
+            IWorkContextAccessor workContextAccessor)
+        {
             _contentManager = contentManager;
             _authorizationService = authorizationService;
             _workContextAccessor = workContextAccessor;
@@ -28,10 +31,13 @@ namespace Orchard.ContentPicker.Drivers {
 
         public Localizer T { get; set; }
 
-        protected override DriverResult Editor(ContentMenuItemPart part, dynamic shapeHelper) {
+        protected override DriverResult Editor(ContentMenuItemPart part, dynamic shapeHelper)
+        {
             return ContentShape("Parts_ContentMenuItem_Edit",
-                                () => {
-                                    var model = new ContentMenuItemEditViewModel {
+                                () =>
+                                {
+                                    var model = new ContentMenuItemEditViewModel
+                                    {
                                         ContentItemId = part.Content == null ? -1 : part.Content.Id,
                                         Part = part
                                     };
@@ -39,19 +45,23 @@ namespace Orchard.ContentPicker.Drivers {
                                 });
         }
 
-        protected override DriverResult Editor(ContentMenuItemPart part, IUpdateModel updater, dynamic shapeHelper) {
+        protected override DriverResult Editor(ContentMenuItemPart part, IUpdateModel updater, dynamic shapeHelper)
+        {
             var currentUser = _workContextAccessor.GetContext().CurrentUser;
             if (!_authorizationService.TryCheckAccess(Permissions.ManageMenus, currentUser, part))
                 return null;
 
             var model = new ContentMenuItemEditViewModel();
 
-            if(updater.TryUpdateModel(model, Prefix, null, null)) {
+            if (updater.TryUpdateModel(model, Prefix, null, null))
+            {
                 var contentItem = _contentManager.Get(model.ContentItemId, VersionOptions.Latest);
-                if(contentItem == null) {
+                if (contentItem == null)
+                {
                     updater.AddModelError("ContentItemId", T("You must select a Content Item"));
                 }
-                else {
+                else
+                {
                     part.Content = contentItem;
                 }
             }
@@ -59,25 +69,31 @@ namespace Orchard.ContentPicker.Drivers {
             return Editor(part, shapeHelper);
         }
 
-        protected override void Importing(ContentMenuItemPart part, ImportContentContext context) {
+        protected override void Importing(ContentMenuItemPart part, ImportContentContext context)
+        {
             // Don't do anything if the tag is not specified.
-            if (context.Data.Element(part.PartDefinition.Name) == null) {
+            if (context.Data.Element(part.PartDefinition.Name) == null)
+            {
                 return;
             }
 
-            context.ImportAttribute(part.PartDefinition.Name, "ContentItem", 
-                contentItemId => {
+            context.ImportAttribute(part.PartDefinition.Name, "ContentItem",
+                contentItemId =>
+                {
                     var contentItem = context.GetItemFromSession(contentItemId);
                     part.Content = contentItem;
-                }, () => 
+                }, () =>
                     part.Content = null
             );
         }
 
-        protected override void Exporting(ContentMenuItemPart part, ExportContentContext context) {
-            if (part.Content != null) {
+        protected override void Exporting(ContentMenuItemPart part, ExportContentContext context)
+        {
+            if (part.Content != null)
+            {
                 var contentItem = _contentManager.Get(part.Content.Id);
-                if (contentItem != null) {
+                if (contentItem != null)
+                {
                     var containerIdentity = _contentManager.GetItemMetadata(contentItem).Identity;
                     context.Element(part.PartDefinition.Name).SetAttributeValue("ContentItem", containerIdentity.ToString());
                 }

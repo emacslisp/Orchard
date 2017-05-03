@@ -12,9 +12,11 @@ using Orchard.Security;
 using Orchard.UI.Navigation;
 using Orchard.Utility;
 
-namespace Orchard.ContentPicker.Drivers {
-    
-    public class NavigationPartDriver : ContentPartDriver<NavigationPart> {
+namespace Orchard.ContentPicker.Drivers
+{
+
+    public class NavigationPartDriver : ContentPartDriver<NavigationPart>
+    {
         private readonly IAuthorizationService _authorizationService;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly IContentManager _contentManager;
@@ -22,11 +24,12 @@ namespace Orchard.ContentPicker.Drivers {
         private readonly INavigationManager _navigationManager;
 
         public NavigationPartDriver(
-            IAuthorizationService authorizationService, 
+            IAuthorizationService authorizationService,
             IWorkContextAccessor workContextAccessor,
             IContentManager contentManager,
             IMenuService menuService,
-            INavigationManager navigationManager) {
+            INavigationManager navigationManager)
+        {
             _authorizationService = authorizationService;
             _workContextAccessor = workContextAccessor;
             _contentManager = contentManager;
@@ -38,13 +41,16 @@ namespace Orchard.ContentPicker.Drivers {
 
         public Localizer T { get; set; }
 
-        protected override string Prefix {
-            get {
+        protected override string Prefix
+        {
+            get
+            {
                 return "NavigationPart";
             }
         }
 
-        protected override DriverResult Editor(NavigationPart part, dynamic shapeHelper) {
+        protected override DriverResult Editor(NavigationPart part, dynamic shapeHelper)
+        {
             var currentUser = _workContextAccessor.GetContext().CurrentUser;
             var allowedMenus = _menuService.GetMenus().Where(menu => _authorizationService.TryCheckAccess(Permissions.ManageMenus, currentUser, menu)).ToList();
 
@@ -52,9 +58,11 @@ namespace Orchard.ContentPicker.Drivers {
                 return null;
 
             return ContentShape("Parts_Navigation_Edit",
-                                () => {
+                                () =>
+                                {
                                     // loads all menu part of type ContentMenuItem linking to the current content item
-                                    var model = new NavigationPartViewModel {
+                                    var model = new NavigationPartViewModel
+                                    {
                                         Part = part,
                                         ContentMenuItems = _contentManager
                                             .Query<MenuPart>()
@@ -68,7 +76,8 @@ namespace Orchard.ContentPicker.Drivers {
                                 });
         }
 
-        protected override DriverResult Editor(NavigationPart part, IUpdateModel updater, dynamic shapeHelper) {
+        protected override DriverResult Editor(NavigationPart part, IUpdateModel updater, dynamic shapeHelper)
+        {
             var currentUser = _workContextAccessor.GetContext().CurrentUser;
             var allowedMenus = _menuService.GetMenus().Where(menu => _authorizationService.TryCheckAccess(Permissions.ManageMenus, currentUser, menu)).ToList();
 
@@ -77,15 +86,20 @@ namespace Orchard.ContentPicker.Drivers {
 
             var model = new NavigationPartViewModel();
 
-            if (updater.TryUpdateModel(model, Prefix, null, null)) {
-                if(model.AddMenuItem) {
-                    if (string.IsNullOrEmpty(model.MenuText)) {
+            if (updater.TryUpdateModel(model, Prefix, null, null))
+            {
+                if (model.AddMenuItem)
+                {
+                    if (string.IsNullOrEmpty(model.MenuText))
+                    {
                         updater.AddModelError("MenuText", T("The MenuText field is required"));
                     }
-                    else {
+                    else
+                    {
                         var menu = allowedMenus.FirstOrDefault(m => m.Id == model.CurrentMenuId);
 
-                        if(menu != null) {
+                        if (menu != null)
+                        {
                             var menuItem = _contentManager.Create<ContentMenuItemPart>("ContentMenuItem");
                             menuItem.Content = part.ContentItem;
 

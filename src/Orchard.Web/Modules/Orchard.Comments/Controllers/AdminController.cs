@@ -15,11 +15,13 @@ using Orchard.UI.Notify;
 using Orchard.Comments.ViewModels;
 using Orchard.Comments.Services;
 
-namespace Orchard.Comments.Controllers {
+namespace Orchard.Comments.Controllers
+{
     using Orchard.Settings;
 
     [ValidateInput(false)]
-    public class AdminController : Controller, IUpdateModel {
+    public class AdminController : Controller, IUpdateModel
+    {
         private readonly IOrchardServices _orchardServices;
         private readonly ICommentService _commentService;
         private readonly ISiteService _siteService;
@@ -29,7 +31,8 @@ namespace Orchard.Comments.Controllers {
             IOrchardServices orchardServices,
             ICommentService commentService,
             ISiteService siteService,
-            IShapeFactory shapeFactory) {
+            IShapeFactory shapeFactory)
+        {
             _orchardServices = orchardServices;
             _commentService = commentService;
             _siteService = siteService;
@@ -43,7 +46,8 @@ namespace Orchard.Comments.Controllers {
         public Localizer T { get; set; }
         dynamic Shape { get; set; }
 
-        public ActionResult Index(CommentIndexOptions options, PagerParameters pagerParameters) {
+        public ActionResult Index(CommentIndexOptions options, PagerParameters pagerParameters)
+        {
             Pager pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
 
             // Default options
@@ -52,7 +56,8 @@ namespace Orchard.Comments.Controllers {
 
             // Filtering
             IContentQuery<CommentPart, CommentPartRecord> commentsQuery;
-            switch (options.Filter) {
+            switch (options.Filter)
+            {
                 case CommentIndexFilter.All:
                     commentsQuery = _commentService.GetComments();
                     break;
@@ -73,7 +78,8 @@ namespace Orchard.Comments.Controllers {
                 .ToList()
                 .Select(CreateCommentEntry);
 
-            var model = new CommentsIndexViewModel {
+            var model = new CommentsIndexViewModel
+            {
                 Comments = entries.ToList(),
                 Options = options,
                 Pager = pagerShape
@@ -84,19 +90,22 @@ namespace Orchard.Comments.Controllers {
 
         [HttpPost]
         [FormValueRequired("submit.BulkEdit")]
-        public ActionResult Index(FormCollection input) {
+        public ActionResult Index(FormCollection input)
+        {
             var viewModel = new CommentsIndexViewModel { Comments = new List<CommentEntry>(), Options = new CommentIndexOptions() };
             UpdateModel(viewModel);
 
             IEnumerable<CommentEntry> checkedEntries = viewModel.Comments.Where(c => c.IsChecked);
-            switch (viewModel.Options.BulkAction) {
+            switch (viewModel.Options.BulkAction)
+            {
                 case CommentIndexBulkAction.None:
                     break;
                 case CommentIndexBulkAction.Unapprove:
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't moderate comment")))
                         return new HttpUnauthorizedResult();
                     //TODO: Transaction
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.UnapproveComment(entry.Comment.Id);
                     }
                     break;
@@ -104,7 +113,8 @@ namespace Orchard.Comments.Controllers {
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't moderate comment")))
                         return new HttpUnauthorizedResult();
                     //TODO: Transaction
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.ApproveComment(entry.Comment.Id);
                     }
                     break;
@@ -112,7 +122,8 @@ namespace Orchard.Comments.Controllers {
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't delete comment")))
                         return new HttpUnauthorizedResult();
 
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.DeleteComment(entry.Comment.Id);
                     }
                     break;
@@ -124,14 +135,16 @@ namespace Orchard.Comments.Controllers {
             return RedirectToAction("Index");
         }
 
-        public ActionResult Details(int id, CommentDetailsOptions options) {
+        public ActionResult Details(int id, CommentDetailsOptions options)
+        {
             // Default options
             if (options == null)
                 options = new CommentDetailsOptions();
 
             // Filtering
             IContentQuery<CommentPart, CommentPartRecord> comments;
-            switch (options.Filter) {
+            switch (options.Filter)
+            {
                 case CommentDetailsFilter.All:
                     comments = _commentService.GetCommentsForCommentedContent(id);
                     break;
@@ -145,7 +158,8 @@ namespace Orchard.Comments.Controllers {
                     throw new ArgumentOutOfRangeException();
             }
             var entries = comments.List().Select(comment => CreateCommentEntry(comment)).ToList();
-            var model = new CommentsDetailsViewModel {
+            var model = new CommentsDetailsViewModel
+            {
                 Comments = entries,
                 Options = options,
                 DisplayNameForCommentedItem = _commentService.GetDisplayForCommentedContent(id) == null ? "" : _commentService.GetDisplayForCommentedContent(id).DisplayText,
@@ -157,19 +171,22 @@ namespace Orchard.Comments.Controllers {
 
         [HttpPost]
         [FormValueRequired("submit.BulkEdit")]
-        public ActionResult Details(FormCollection input) {
+        public ActionResult Details(FormCollection input)
+        {
             var viewModel = new CommentsDetailsViewModel { Comments = new List<CommentEntry>(), Options = new CommentDetailsOptions() };
             UpdateModel(viewModel);
 
             IEnumerable<CommentEntry> checkedEntries = viewModel.Comments.Where(c => c.IsChecked);
-            switch (viewModel.Options.BulkAction) {
+            switch (viewModel.Options.BulkAction)
+            {
                 case CommentDetailsBulkAction.None:
                     break;
                 case CommentDetailsBulkAction.Unapprove:
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't moderate comment")))
                         return new HttpUnauthorizedResult();
 
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.UnapproveComment(entry.Comment.Id);
                     }
                     break;
@@ -177,7 +194,8 @@ namespace Orchard.Comments.Controllers {
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't moderate comment")))
                         return new HttpUnauthorizedResult();
 
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.ApproveComment(entry.Comment.Id);
                     }
                     break;
@@ -185,7 +203,8 @@ namespace Orchard.Comments.Controllers {
                     if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't delete comment")))
                         return new HttpUnauthorizedResult();
 
-                    foreach (CommentEntry entry in checkedEntries) {
+                    foreach (CommentEntry entry in checkedEntries)
+                    {
                         _commentService.DeleteComment(entry.Comment.Id);
                     }
                     break;
@@ -198,7 +217,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Disable(int commentedItemId, string returnUrl) {
+        public ActionResult Disable(int commentedItemId, string returnUrl)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't disable comments")))
                 return new HttpUnauthorizedResult();
 
@@ -207,7 +227,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Enable(int commentedItemId, string returnUrl) {
+        public ActionResult Enable(int commentedItemId, string returnUrl)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't enable comments")))
                 return new HttpUnauthorizedResult();
 
@@ -216,7 +237,8 @@ namespace Orchard.Comments.Controllers {
             return this.RedirectLocal(returnUrl, () => RedirectToAction("Index"));
         }
 
-        public ActionResult Edit(int id) {
+        public ActionResult Edit(int id)
+        {
             var commentPart = _contentManager.Get<CommentPart>(id);
             if (commentPart == null)
                 return new HttpNotFoundResult();
@@ -226,7 +248,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection input) {
+        public ActionResult Edit(int id, FormCollection input)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't edit comment")))
                 return new HttpUnauthorizedResult();
 
@@ -234,8 +257,10 @@ namespace Orchard.Comments.Controllers {
 
             var editorShape = _contentManager.UpdateEditor(commentPart, this);
 
-            if (!ModelState.IsValid) {
-                foreach (var error in ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage)) {
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage))
+                {
                     _orchardServices.Notifier.Error(T(error));
                 }
 
@@ -246,7 +271,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Approve(int id, string returnUrl) {
+        public ActionResult Approve(int id, string returnUrl)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't approve comment")))
                 return new HttpUnauthorizedResult();
 
@@ -261,7 +287,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Unapprove(int id, string returnUrl) {
+        public ActionResult Unapprove(int id, string returnUrl)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't unapprove comment")))
                 return new HttpUnauthorizedResult();
 
@@ -276,7 +303,8 @@ namespace Orchard.Comments.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Delete(int id, string returnUrl) {
+        public ActionResult Delete(int id, string returnUrl)
+        {
             if (!_orchardServices.Authorizer.Authorize(Permissions.ManageComments, T("Couldn't delete comment")))
                 return new HttpUnauthorizedResult();
 
@@ -290,19 +318,23 @@ namespace Orchard.Comments.Controllers {
             return this.RedirectLocal(returnUrl, () => RedirectToAction("Details", new { id = commentedOn }));
         }
 
-        private CommentEntry CreateCommentEntry(CommentPart item) {
-            return new CommentEntry {
+        private CommentEntry CreateCommentEntry(CommentPart item)
+        {
+            return new CommentEntry
+            {
                 Comment = item.Record,
                 CommentedOn = _commentService.GetCommentedContent(item.CommentedOn),
                 IsChecked = false,
             };
         }
 
-        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
+        bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
+        {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
 
-        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage) {
+        void IUpdateModel.AddModelError(string key, LocalizedString errorMessage)
+        {
             ModelState.AddModelError(key, errorMessage.ToString());
         }
     }

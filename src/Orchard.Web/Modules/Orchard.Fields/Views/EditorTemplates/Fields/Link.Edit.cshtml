@@ -21,7 +21,7 @@
         <span class="hint">@settings.Hint</span>
     }
     <div class="editor-label">
-        <label for="@Html.FieldIdFor(m => m.Value)" @if (settings.Required) { <text> class="required" </text>   }>@T("Url")</label>
+        <label for="@Html.FieldIdFor(m => m.Value)" @if (settings.Required) { <text> class="required" </text>       }>@T("Url")</label>
     </div>
     <div class="editor-field">
         @(settings.Required ? Html.TextBoxFor(m => m.Value, new { @class = "text large", placeholder = settings.UrlPlaceholder, required = "required" }) : Html.TextBoxFor(m => m.Value, new { @class = "text large", placeholder = settings.UrlPlaceholder }))
@@ -29,7 +29,7 @@
     </div>
     @if (settings.LinkTextMode == LinkTextMode.Optional || settings.LinkTextMode == LinkTextMode.Required) {
         <div class="editor-label">
-            <label for="@Html.FieldIdFor(m => m.Text)" @if (settings.LinkTextMode == LinkTextMode.Required) { <text> class="required" </text> }>@T("Text")</label>
+            <label for="@Html.FieldIdFor(m => m.Text)" @if (settings.LinkTextMode == LinkTextMode.Required) { <text> class="required" </text>     }>@T("Text")</label>
         </div>
         <div class="editor-field">
             @(settings.LinkTextMode == LinkTextMode.Required ? Html.TextBoxFor(m => m.Text, new { @class = "text medium", placeholder = settings.UrlPlaceholder, required = "required" }) : Html.TextBoxFor(m => m.Text, new { @class = "text medium", placeholder = settings.UrlPlaceholder }))

@@ -4,7 +4,7 @@
     var forField = (string) Model.ProcessedFor;
 }
 @if (!String.IsNullOrWhiteSpace(forField)) {
-@Html.ValidationMessage(forField, commonAttributes)
+    @Html.ValidationMessage(forField, commonAttributes)
 }
 else {
   <!--@T("ValidationMessage (target not specified)")-->

@@ -8,22 +8,28 @@ using Orchard.Layouts.Framework.Drivers;
 using Orchard.Layouts.Framework.Elements;
 using Orchard.Layouts.Services;
 
-namespace Orchard.DynamicForms.Handlers {
-    public class ClientValidationRegistrationCoordinator : IFormElementEventHandler, IElementEventHandler {
+namespace Orchard.DynamicForms.Handlers
+{
+    public class ClientValidationRegistrationCoordinator : IFormElementEventHandler, IElementEventHandler
+    {
         private readonly IFormService _formService;
-        public ClientValidationRegistrationCoordinator(IFormService formService) {
+        public ClientValidationRegistrationCoordinator(IFormService formService)
+        {
             _formService = formService;
         }
 
-        void IFormElementEventHandler.RegisterClientValidation(FormElement element, RegisterClientValidationAttributesContext context) {
+        void IFormElementEventHandler.RegisterClientValidation(FormElement element, RegisterClientValidationAttributesContext context)
+        {
             var validators = _formService.GetValidators(element).ToArray();
 
-            foreach (var validator in validators) {
+            foreach (var validator in validators)
+            {
                 validator.RegisterClientValidation(element, context);
             }
         }
 
-        void IElementEventHandler.Displaying(ElementDisplayingContext context) {
+        void IElementEventHandler.Displaying(ElementDisplayingContext context)
+        {
             if (context.DisplayType == "Design")
                 return;
 
@@ -32,14 +38,17 @@ namespace Orchard.DynamicForms.Handlers {
             if (element == null)
                 return;
 
-            var registrationContext = new RegisterClientValidationAttributesContext {
+            var registrationContext = new RegisterClientValidationAttributesContext
+            {
                 FieldName = element.Name
             };
 
-            if (element.Form != null && element.Form.EnableClientValidation == true) {
+            if (element.Form != null && element.Form.EnableClientValidation == true)
+            {
                 _formService.RegisterClientValidationAttributes(element, registrationContext);
 
-                if (registrationContext.ClientAttributes.Any()) {
+                if (registrationContext.ClientAttributes.Any())
+                {
                     registrationContext.ClientAttributes["data-val"] = "true";
                 }
             }

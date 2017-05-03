@@ -2,8 +2,10 @@
 using Orchard.Environment.Extensions.Models;
 using Orchard.Modules.Models;
 
-namespace Orchard.Modules.Services {
-    public interface IModuleService : IDependency {
+namespace Orchard.Modules.Services
+{
+    public interface IModuleService : IDependency
+    {
         /// <summary>
         /// Retrieves an enumeration of the available features together with its state (enabled / disabled).
         /// </summary>

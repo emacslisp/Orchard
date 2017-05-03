@@ -1,7 +1,9 @@
 ﻿using System;
 
-namespace Orchard.ContentTypes.Settings {
-    public class PlacementSettings : IEquatable<PlacementSettings> {
+namespace Orchard.ContentTypes.Settings
+{
+    public class PlacementSettings : IEquatable<PlacementSettings>
+    {
         /// <summary>
         /// e.g., Parts_Title_Summary
         /// </summary>
@@ -11,7 +13,7 @@ namespace Orchard.ContentTypes.Settings {
         /// e.g., Header, /Navigation
         /// </summary>
         public string Zone { get; set; }
-        
+
         /// <summary>
         /// e.g, 5, after.7
         /// </summary>
@@ -22,17 +24,21 @@ namespace Orchard.ContentTypes.Settings {
         /// </summary>
         public string Differentiator { get; set; }
 
-        public bool IsSameAs(PlacementSettings other) {
+        public bool IsSameAs(PlacementSettings other)
+        {
             return (ShapeType ?? String.Empty) == (other.ShapeType ?? String.Empty)
                 && (Differentiator ?? String.Empty) == (other.Differentiator ?? String.Empty);
         }
 
-        public bool Equals(PlacementSettings other) {
-            if(other == this) {
+        public bool Equals(PlacementSettings other)
+        {
+            if (other == this)
+            {
                 return true;
             }
 
-            if(other == null) {
+            if (other == null)
+            {
                 return false;
             }
 

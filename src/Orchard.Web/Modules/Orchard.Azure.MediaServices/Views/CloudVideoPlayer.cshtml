@@ -5,8 +5,8 @@
 
 @{
     Style.Include("cloudmedia-videoplayer.css", "cloudmedia-videoplayer.min.css");
-    
-    Script.Require("jQuery").AtFoot();    
+
+    Script.Require("jQuery").AtFoot();
     Script.Include("Lib/swfobject.js").AtFoot();
     Script.Include("Lib/dash.all.js").AtFoot();
     Script.Require("Uri").AtFoot();
@@ -31,13 +31,13 @@
     var autoPlay = Model.AutoPlay; // True to start playing the video automatically, otherwise false.
 }
 <div id="cloudmedia-videoplayer-@Html.Raw(renderId)" class="cloudmedia-videoplayer-container"
-    data-cloudvideo-player-content-baseurl="@Url.Content("~/Modules/Orchard.Azure.MediaServices/Content/")"
-    data-cloudvideo-player-assetdata="@assetDataJson"
-    data-cloudvideo-player-width="@playerWidth"
-    data-cloudvideo-player-height="@playerHeight"
-    data-cloudvideo-player-applymediaqueries="@applyMediaQueries.ToString().ToLower()"
-    data-cloudvideo-player-autoplay="@autoPlay.ToString().ToLower()"
-    data-cloudvideo-player-errortext="@T("This video item could not be played back on your computer.")"
-    data-cloudvideo-player-alttext="@(!String.IsNullOrEmpty(altText) ? T("Description of video item: {0}", altText).Text : "")"
-    data-cloudvideo-player-retrytext="@T("Retry")">
+     data-cloudvideo-player-content-baseurl="@Url.Content("~/Modules/Orchard.Azure.MediaServices/Content/")"
+     data-cloudvideo-player-assetdata="@assetDataJson"
+     data-cloudvideo-player-width="@playerWidth"
+     data-cloudvideo-player-height="@playerHeight"
+     data-cloudvideo-player-applymediaqueries="@applyMediaQueries.ToString().ToLower()"
+     data-cloudvideo-player-autoplay="@autoPlay.ToString().ToLower()"
+     data-cloudvideo-player-errortext="@T("This video item could not be played back on your computer.")"
+     data-cloudvideo-player-alttext="@(!String.IsNullOrEmpty(altText) ? T("Description of video item: {0}", altText).Text : "")"
+     data-cloudvideo-player-retrytext="@T("Retry")">
 </div>

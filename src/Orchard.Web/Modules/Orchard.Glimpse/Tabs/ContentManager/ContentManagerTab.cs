@@ -2,12 +2,16 @@
 using Glimpse.Core.Extensions;
 using System.Linq;
 
-namespace Orchard.Glimpse.Tabs.ContentManager {
-    public class ContentManagerTab : TabBase, ITabSetup, IKey, ILayoutControl {
-        public override object GetData(ITabContext context) {
+namespace Orchard.Glimpse.Tabs.ContentManager
+{
+    public class ContentManagerTab : TabBase, ITabSetup, IKey, ILayoutControl
+    {
+        public override object GetData(ITabContext context)
+        {
             var messages = context.GetMessages<ContentManagerGetMessage>().ToList();
 
-            if (!messages.Any()) {
+            if (!messages.Any())
+            {
                 return null;
             }
 
@@ -16,7 +20,8 @@ namespace Orchard.Glimpse.Tabs.ContentManager {
 
         public override string Name => "Content Manager";
 
-        public void Setup(ITabSetupContext context) {
+        public void Setup(ITabSetupContext context)
+        {
             context.PersistMessages<ContentManagerGetMessage>();
         }
 

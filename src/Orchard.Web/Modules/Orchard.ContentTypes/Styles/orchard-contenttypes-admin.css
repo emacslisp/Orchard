@@ -21,38 +21,38 @@
 
 .manage-part, .manage-field {
     margin-bottom: 0;
-    padding:0;
+    padding: 0;
     border-bottom: 1px solid #EAEAEA;
 }
 
-.manage-part h3,
-.manage-field h3 {
-    display: relative;
-    line-height: 1.4em;
-    padding-bottom: 0;
-    padding-top: 0;
-}
+    .manage-part h3,
+    .manage-field h3 {
+        display: relative;
+        line-height: 1.4em;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
 
-.manage-part h3,
-.manage-field h3,
-.manage-part h4,
-.manage-type .manage-field .details,
-.manage-type .manage-part .manage-field,
-.manage-type .manage-part .settings {
-    padding-left: 30px;
-    padding-right: 30px;
-}
+    .manage-part h3,
+    .manage-field h3,
+    .manage-part h4,
+    .manage-type .manage-field .details,
+    .manage-type .manage-part .manage-field,
+    .manage-type .manage-part .settings {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
 
-.manage-part h3, .manage-field h3 {
-    margin: 1em 0 !important;
-    padding-left: 30px;
-    width: 90%;
-}
+    .manage-part h3, .manage-field h3 {
+        margin: 1em 0 !important;
+        padding-left: 30px;
+        width: 90%;
+    }
 
-.manage-part .expando-glyph, .manage-field .expando-glyph {
-    width:16px;
-    height:16px;
-}
+    .manage-part .expando-glyph, .manage-field .expando-glyph {
+        width: 16px;
+        height: 16px;
+    }
 
 .manage-type .manage-field .settings {
     padding-bottom: 10px;

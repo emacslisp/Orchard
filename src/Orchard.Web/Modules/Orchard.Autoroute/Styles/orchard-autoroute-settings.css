@@ -1,16 +1,17 @@
 ﻿.autoroute-settings-default {
     width: 5%;
 }
+
 .autoroute-settings-name {
-    width: 20%
+    width: 20%;
 }
 
 .autoroute-settings-pat {
-    width: 30%
+    width: 30%;
 }
 
 .autoroute-settings-desc {
-    width: 40%
+    width: 40%;
 }
 
 .autoroute-settings-actions {
@@ -22,6 +23,6 @@
     width: 100%;
 }
 
-.autoroute-settings-patterns td, .autoroute-settings-patterns th {
-    padding:10px;
-}
+    .autoroute-settings-patterns td, .autoroute-settings-patterns th {
+        padding: 10px;
+    }

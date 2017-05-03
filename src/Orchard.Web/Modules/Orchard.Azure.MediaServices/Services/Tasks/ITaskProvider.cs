@@ -5,8 +5,10 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Localization;
 
-namespace Orchard.Azure.MediaServices.Services.Tasks {
-    public interface ITaskProvider : IDependency {
+namespace Orchard.Azure.MediaServices.Services.Tasks
+{
+    public interface ITaskProvider : IDependency
+    {
         /// <summary>
         /// Gets the technical name of the task provider.
         /// </summary>

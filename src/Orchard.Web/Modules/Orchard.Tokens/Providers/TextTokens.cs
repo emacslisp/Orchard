@@ -2,15 +2,19 @@
 using System.Web;
 using Orchard.Localization;
 
-namespace Orchard.Tokens.Providers {
-    public class TextTokens : ITokenProvider {
-        public TextTokens() {
+namespace Orchard.Tokens.Providers
+{
+    public class TextTokens : ITokenProvider
+    {
+        public TextTokens()
+        {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public void Describe(DescribeContext context) {
+        public void Describe(DescribeContext context)
+        {
             context.For("Text", T("Text"), T("Tokens for text strings"))
                 .Token("Limit:*", T("Limit:<text length>[,<ellipsis>]"), T("Limit text to specified length and append an optional ellipsis text."))
                 .Token("Format:*", T("Format:<text format>"), T("Optional format specifier (e.g. foo{0}bar)."))
@@ -22,7 +26,8 @@ namespace Orchard.Tokens.Providers {
                 ;
         }
 
-        public void Evaluate(EvaluateContext context) {
+        public void Evaluate(EvaluateContext context)
+        {
             context.For<String>("Text", () => "")
                 // {Text}
                 .Token(
@@ -50,17 +55,21 @@ namespace Orchard.Tokens.Providers {
 
         }
 
-        private static string FilterTokenParam(string tokenName, string token) {
+        private static string FilterTokenParam(string tokenName, string token)
+        {
             return token.StartsWith(tokenName, StringComparison.OrdinalIgnoreCase) ? token.Substring(tokenName.Length) : null;
         }
 
-        private static string TrimEnd(string param, string token) {
-            if (String.IsNullOrEmpty(param)) {
+        private static string TrimEnd(string param, string token)
+        {
+            if (String.IsNullOrEmpty(param))
+            {
                 return token;
             }
 
             int n;
-            if (!int.TryParse(param, out n)) {
+            if (!int.TryParse(param, out n))
+            {
                 return token.TrimEnd(param.ToCharArray());
             }
 
@@ -68,23 +77,28 @@ namespace Orchard.Tokens.Providers {
             return token.Substring(0, token.Length - n);
         }
 
-        private static string Limit(string token, string param) {
-            if(String.IsNullOrEmpty(token)) {
+        private static string Limit(string token, string param)
+        {
+            if (String.IsNullOrEmpty(token))
+            {
                 return String.Empty;
             }
 
             int index = param.IndexOf(',');
             int limit = index == -1 ? Int32.Parse(param) : Int32.Parse(param.Substring(0, index));
 
-            if (token.Length <= limit) {
+            if (token.Length <= limit)
+            {
                 // no limit
                 return token;
             }
-            if (index == -1) {
+            if (index == -1)
+            {
                 // no ellipsis
                 return token.Substring(0, limit);
             }
-            else {
+            else
+            {
                 // ellipsis
                 var ellipsis = param.Substring(index + 1);
                 return token.Substring(0, limit) + ellipsis;

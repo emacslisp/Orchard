@@ -14,10 +14,10 @@
     height: 24px;
 }
 
-.coll-exp-button:hover {
-    background: #f0f0f0;
-    color: black;
-}
+    .coll-exp-button:hover {
+        background: #f0f0f0;
+        color: black;
+    }
 
 .coll-exp-area {
     display: none;

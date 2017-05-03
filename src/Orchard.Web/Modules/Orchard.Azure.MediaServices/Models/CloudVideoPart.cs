@@ -6,29 +6,36 @@ using Orchard.Azure.MediaServices.Services.Assets;
 using Orchard.Azure.MediaServices.Services.Jobs;
 using Orchard.ContentManagement;
 
-namespace Orchard.Azure.MediaServices.Models {
-    public class CloudVideoPart : ContentPart {
+namespace Orchard.Azure.MediaServices.Models
+{
+    public class CloudVideoPart : ContentPart
+    {
         public IAssetManager _assetManager;
         internal IJobManager _jobManager;
 
-        public IEnumerable<Asset> Assets {
+        public IEnumerable<Asset> Assets
+        {
             get { return _assetManager.LoadAssetsFor(this); }
         }
 
-        public MezzanineAsset MezzanineAsset {
+        public MezzanineAsset MezzanineAsset
+        {
             get { return (MezzanineAsset)Assets.FirstOrDefault(x => x is MezzanineAsset); }
         }
 
-        public IEnumerable<Job> Jobs {
+        public IEnumerable<Job> Jobs
+        {
             get { return _jobManager.GetJobsFor(this); }
         }
 
-        public bool PublishOnUpload {
+        public bool PublishOnUpload
+        {
             get { return this.Retrieve(x => x.PublishOnUpload); }
             set { this.Store(x => x.PublishOnUpload, value); }
         }
 
-        public ThumbnailAsset ThumbnailAsset {
+        public ThumbnailAsset ThumbnailAsset
+        {
             get { return _assetManager.GetThumbnailAssetFor(this); }
         }
     }

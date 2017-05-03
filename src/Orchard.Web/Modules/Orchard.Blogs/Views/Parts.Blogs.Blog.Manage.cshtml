@@ -4,7 +4,7 @@
     Style.Require("BlogsAdmin");
 }
 @if (AuthorizedFor(Orchard.Blogs.Permissions.ManageBlogs)) {
-<div class="item-properties actions">
-    <p><a href="@Url.BlogEdit((BlogPart)Model.ContentPart)" class="edit">@T("Blog Properties")</a></p>
-</div>
+    <div class="item-properties actions">
+        <p><a href="@Url.BlogEdit((BlogPart)Model.ContentPart)" class="edit">@T("Blog Properties")</a></p>
+    </div>
 }

@@ -1,6 +1,7 @@
 ﻿.navicon-workflows {
-background-image:url(images/menu.workflows.png) !important;
+    background-image: url(images/menu.workflows.png) !important;
 }
-.navicon-workflows:hover {
-background-position:0 -30px !important;
-}
+
+    .navicon-workflows:hover {
+        background-position: 0 -30px !important;
+    }

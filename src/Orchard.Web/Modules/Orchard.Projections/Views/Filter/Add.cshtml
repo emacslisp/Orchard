@@ -1,7 +1,7 @@
 ﻿@model FilterAddViewModel
 @using Orchard.Projections.Models;
 @using Orchard.Projections.ViewModels;
-           
+
 @{
     Layout.Title = T("Add a Filter");
 }
@@ -12,7 +12,7 @@
 
 @foreach (var filter in Model.Filters.OrderBy(x => x.Name.Text)) {
     <h2>@filter.Name</h2>
-    
+
     <table class="items">
         <thead>
             <tr>
@@ -21,10 +21,10 @@
             </tr>
         </thead>
         @foreach (var descriptor in filter.Descriptors) {
-        <tr>
-            <td>@Html.ActionLink(descriptor.Name.Text, "Edit", new { id = Model.Id, category = descriptor.Category, type = descriptor.Type })</td>
-            <td>@descriptor.Description</td>    
-        </tr>
+            <tr>
+                <td>@Html.ActionLink(descriptor.Name.Text, "Edit", new { id = Model.Id, category = descriptor.Category, type = descriptor.Type })</td>
+                <td>@descriptor.Description</td>
+            </tr>
         }
     </table>
 }

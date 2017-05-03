@@ -23,7 +23,7 @@
     if (element.ValidationSettings.Required == true && index == 0) {
         inputTagBuilder.AddClientValidationAttributes((IDictionary<string, string>) Model.ClientValidationAttributes);
     }
-    <li>   
+    <li>
         <label>
             @inputTagBuilder.ToHtmlString(TagRenderMode.SelfClosing)
             @option.Text

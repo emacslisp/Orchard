@@ -1,6 +1,7 @@
 ﻿.navicon-import-export {
-background-image:url(images/menu.importexport.png) !important;
+    background-image: url(images/menu.importexport.png) !important;
 }
-.navicon-import-export:hover {
-background-position:0 -30px !important;
-}
+
+    .navicon-import-export:hover {
+        background-position: 0 -30px !important;
+    }

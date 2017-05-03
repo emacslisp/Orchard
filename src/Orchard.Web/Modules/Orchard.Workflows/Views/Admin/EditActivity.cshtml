@@ -7,28 +7,28 @@
 
 @using (Html.BeginFormAntiForgeryPost()) {
 
-    @* Render the dynamic form *@    
+    @* Render the dynamic form *@
     if (Model.Form != null) {
-        <fieldset>
-            @DisplayChildren(Model.Form)
-        </fieldset>
+    <fieldset>
+        @DisplayChildren(Model.Form)
+    </fieldset>
     }
 
     @Display.TokenHint()
 
-<fieldset>
-    <button class="primaryAction" type="submit" name="_submit.Save" value="@T("Save")">@T("Save")</button>
-    <button class="cancel" type="submit" name="_submit.Cancel" value="@T("Cancel")">@T("Cancel")</button>
-</fieldset>
+    <fieldset>
+        <button class="primaryAction" type="submit" name="_submit.Save" value="@T("Save")">@T("Save")</button>
+        <button class="cancel" type="submit" name="_submit.Cancel" value="@T("Cancel")">@T("Cancel")</button>
+    </fieldset>
 }
 
 @using (Script.Head()) {
-<script type="text/javascript">
+    <script type="text/javascript">
     //<![CDATA[
     var requestAntiForgeryToken = '@Html.AntiForgeryTokenValueOrchard()';
     var localId = '@Model.LocalId';
     //]]>
-</script>
+    </script>
 }
 
 @using (Script.Foot()) {

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Roles.Models {
-    public class RoleRecord {
-        public RoleRecord() {
+namespace Orchard.Roles.Models
+{
+    public class RoleRecord
+    {
+        public RoleRecord()
+        {
             RolesPermissions = new List<RolesPermissionsRecord>();
         }
 

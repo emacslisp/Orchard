@@ -3,9 +3,12 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 
-namespace Orchard.Azure.MediaServices {
-    public class Migrations : DataMigrationImpl {
-        public int Create() {
+namespace Orchard.Azure.MediaServices
+{
+    public class Migrations : DataMigrationImpl
+    {
+        public int Create()
+        {
 
             SchemaBuilder.CreateTable("AssetRecord", table => table
                 .Column<int>("Id", column => column.PrimaryKey().Identity())
@@ -78,14 +81,16 @@ namespace Orchard.Azure.MediaServices {
             return 3;
         }
 
-        public int UpdateFrom1() {
+        public int UpdateFrom1()
+        {
             SchemaBuilder.AlterTable("AssetRecord", table => table
                    .AddColumn<int>("MediaQuery", column => column.WithLength(256)));
 
             return 2;
         }
 
-        public int UpdateFrom2() {
+        public int UpdateFrom2()
+        {
             SchemaBuilder.AlterTable("AssetRecord", table => table
                 .DropColumn("MimeType"));
 

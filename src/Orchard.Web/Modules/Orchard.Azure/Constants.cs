@@ -1,6 +1,8 @@
-﻿namespace Orchard.Azure {
+﻿namespace Orchard.Azure
+{
 
-    public class Constants {
+    public class Constants
+    {
         public const string ShellSettingsStorageConnectionStringSettingName = "Orchard.Azure.Settings.StorageConnectionString";
         public const string ShellSettingsContainerNameSettingName = "Orchard.Azure.Settings.ContainerName";
         public const string ShellSettingsDefaultContainerName = "sites"; // Container names must be lower case.

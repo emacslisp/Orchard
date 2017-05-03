@@ -9,24 +9,29 @@ using Orchard.Forms.Services;
 using Orchard.Localization;
 using Orchard.UI.Resources;
 
-namespace Orchard.Projections.FilterEditors.Forms {
-    public class DateTimeFilterForm : IFormProvider {
+namespace Orchard.Projections.FilterEditors.Forms
+{
+    public class DateTimeFilterForm : IFormProvider
+    {
         public const string FormName = "DateTimeFilter";
-        private static readonly Regex _dateRegEx = new Regex(@"(?<year>\d{1,4})(\-(?<month>\d{1,2})(\-(?<day>\d{1,2})\s*((?<hour>\d{1,2})(:(?<minute>\d{1,2})(:(?<second>\d{1,2}))?)?)?)?)?"); 
+        private static readonly Regex _dateRegEx = new Regex(@"(?<year>\d{1,4})(\-(?<month>\d{1,2})(\-(?<day>\d{1,2})\s*((?<hour>\d{1,2})(:(?<minute>\d{1,2})(:(?<second>\d{1,2}))?)?)?)?)?");
 
         private readonly Work<IResourceManager> _resourceManager;
         protected dynamic Shape { get; set; }
         public Localizer T { get; set; }
 
-        public DateTimeFilterForm(IShapeFactory shapeFactory, Work<IResourceManager> resourceManager) {
+        public DateTimeFilterForm(IShapeFactory shapeFactory, Work<IResourceManager> resourceManager)
+        {
             _resourceManager = resourceManager;
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
         }
 
-        public void Describe(DescribeContext context) {
+        public void Describe(DescribeContext context)
+        {
             Func<IShapeFactory, object> form =
-                shape => {
+                shape =>
+                {
 
                     var f = Shape.Form(
                         Id: "DateTimeFilter",
@@ -53,7 +58,7 @@ namespace Orchard.Projections.FilterEditors.Forms {
                             _Value: Shape.TextBox(
                                 Id: "value", Name: "Value",
                                 Title: T("Value"),
-                                Classes: new [] {"tokenized"}
+                                Classes: new[] { "tokenized" }
                                 ),
                             _ValueUnit: Shape.SelectList(
                                 Id: "value-unit", Name: "ValueUnit",
@@ -105,7 +110,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
                     f._Operator.Add(new SelectListItem { Value = Convert.ToString(DateTimeOperator.Between), Text = T("Is between").Text });
                     f._Operator.Add(new SelectListItem { Value = Convert.ToString(DateTimeOperator.NotBetween), Text = T("Is not between").Text });
 
-                    foreach (var unit in new[] { f._FieldSetSingle._ValueUnit, f._FieldSetMin._MinUnit, f._FieldSetMax._MaxUnit }) {
+                    foreach (var unit in new[] { f._FieldSetSingle._ValueUnit, f._FieldSetMin._MinUnit, f._FieldSetMax._MaxUnit })
+                    {
                         unit.Add(new SelectListItem { Value = Convert.ToString(DateTimeSpan.Year), Text = T("Year").Text });
                         unit.Add(new SelectListItem { Value = Convert.ToString(DateTimeSpan.Month), Text = T("Month").Text });
                         unit.Add(new SelectListItem { Value = Convert.ToString(DateTimeSpan.Day), Text = T("Day").Text });
@@ -121,7 +127,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
 
         }
 
-        public static Action<IHqlExpressionFactory> GetFilterPredicate(dynamic formState, string property, DateTime now, bool asTicks = false) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicate(dynamic formState, string property, DateTime now, bool asTicks = false)
+        {
 
             var op = (DateTimeOperator)Enum.Parse(typeof(DateTimeOperator), Convert.ToString(formState.Operator));
 
@@ -130,22 +137,28 @@ namespace Orchard.Projections.FilterEditors.Forms {
             DateTime min, max;
 
             // Are those dates or time spans
-            if (type == "0") {
-                if (op == DateTimeOperator.Between || op == DateTimeOperator.NotBetween) {
+            if (type == "0")
+            {
+                if (op == DateTimeOperator.Between || op == DateTimeOperator.NotBetween)
+                {
                     min = GetLowBoundPattern(Convert.ToString(formState.Min));
                     max = GetHighBoundPattern(Convert.ToString(formState.Max));
                 }
-                else {
+                else
+                {
                     min = GetLowBoundPattern(Convert.ToString(formState.Value));
                     max = GetHighBoundPattern(Convert.ToString(formState.Value));
                 }
             }
-            else {
-                if (op == DateTimeOperator.Between || op == DateTimeOperator.NotBetween) {
+            else
+            {
+                if (op == DateTimeOperator.Between || op == DateTimeOperator.NotBetween)
+                {
                     min = ApplyDelta(now, formState.MinUnit.Value, Int32.Parse(formState.Min.Value));
                     max = ApplyDelta(now, formState.MaxUnit.Value, Int32.Parse(formState.Max.Value));
                 }
-                else {
+                else
+                {
                     min = max = ApplyDelta(now, Convert.ToString(formState.ValueUnit), Convert.ToInt32(formState.Value));
                 }
             }
@@ -156,23 +169,27 @@ namespace Orchard.Projections.FilterEditors.Forms {
             object minValue = min;
             object maxValue = max;
 
-            if(asTicks) {
+            if (asTicks)
+            {
                 minValue = min.Ticks;
                 maxValue = max.Ticks;
             }
 
-            switch (op) {
+            switch (op)
+            {
                 case DateTimeOperator.LessThan:
                     return x => x.Lt(property, maxValue);
                 case DateTimeOperator.LessThanEquals:
                     return x => x.Le(property, maxValue);
                 case DateTimeOperator.Equals:
-                    if (min == max) {
+                    if (min == max)
+                    {
                         return x => x.Eq(property, minValue);
                     }
                     return y => y.And(x => x.Ge(property, minValue), x => x.Le(property, maxValue));
                 case DateTimeOperator.NotEquals:
-                    if (min == max) {
+                    if (min == max)
+                    {
                         return x => x.Not(y => y.Eq(property, minValue));
                     }
                     return y => y.Or(x => x.Lt(property, minValue), x => x.Gt(property, maxValue));
@@ -193,7 +210,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
         /// Returns the low bound value of a date pattern. e.g., 2011-10 will return 2011-10-01 00:00:00
         /// </summary>
         /// <remarks>DateTime is stored in UTC but entered in local</remarks>
-        protected static DateTime GetLowBoundPattern(string datePattern) {
+        protected static DateTime GetLowBoundPattern(string datePattern)
+        {
             var match = _dateRegEx.Match(datePattern);
 
             return DateTime.Parse(
@@ -207,10 +225,12 @@ namespace Orchard.Projections.FilterEditors.Forms {
                 CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
         }
 
-        protected static DateTime ApplyDelta(DateTime now, string unit, int value) {
+        protected static DateTime ApplyDelta(DateTime now, string unit, int value)
+        {
             var span = (DateTimeSpan)Enum.Parse(typeof(DateTimeSpan), unit);
 
-            switch (span) {
+            switch (span)
+            {
                 case DateTimeSpan.Year:
                     return now.AddYears(value);
                 case DateTimeSpan.Month:
@@ -228,7 +248,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
             }
         }
 
-        public static LocalizedString DisplayFilter(string fieldName, dynamic formState, Localizer T) {
+        public static LocalizedString DisplayFilter(string fieldName, dynamic formState, Localizer T)
+        {
             var op = (DateTimeOperator)Enum.Parse(typeof(DateTimeOperator), Convert.ToString(formState.Operator));
             string type = Convert.ToString(formState.ValueType);
             string value = Convert.ToString(formState.Value);
@@ -238,16 +259,19 @@ namespace Orchard.Projections.FilterEditors.Forms {
             string minUnit = Convert.ToString(formState.MinUnit);
             string maxUnit = Convert.ToString(formState.MaxUnit);
 
-            if (type == "0") {
+            if (type == "0")
+            {
                 valueUnit = minUnit = maxUnit = String.Empty;
             }
-            else {
+            else
+            {
                 valueUnit = " " + valueUnit;
                 minUnit = " " + minUnit;
                 maxUnit = " " + maxUnit;
             }
 
-            switch (op) {
+            switch (op)
+            {
                 case DateTimeOperator.LessThan:
                     return T("{0} is less than {1}{2}", fieldName, value, T(valueUnit));
                 case DateTimeOperator.LessThanEquals:
@@ -274,7 +298,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
         /// Returns the low bound value of a date pattern. e.g., 2011-10 will return 2011-10-01 00:00:00
         /// </summary>
         /// <remarks>DateTime is stored in UTC but entered in local</remarks>
-        protected static DateTime GetHighBoundPattern(string datePattern) {
+        protected static DateTime GetHighBoundPattern(string datePattern)
+        {
             var match = _dateRegEx.Match(datePattern);
 
             string year, month;
@@ -291,7 +316,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
 
     }
 
-    public enum DateTimeOperator {
+    public enum DateTimeOperator
+    {
         LessThan,
         LessThanEquals,
         Equals,
@@ -302,7 +328,8 @@ namespace Orchard.Projections.FilterEditors.Forms {
         NotBetween
     }
 
-    public enum DateTimeSpan {
+    public enum DateTimeSpan
+    {
         Year,
         Month,
         Day,

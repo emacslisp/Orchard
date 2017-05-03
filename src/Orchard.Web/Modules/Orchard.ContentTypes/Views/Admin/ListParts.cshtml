@@ -13,8 +13,8 @@
 </fieldset>
 <ul class="contentItems">
     @foreach (var type in Model.Parts) {
-    <li data-record-text="@type.DisplayName">
-        @Html.DisplayFor(m => type)
-    </li>
+        <li data-record-text="@type.DisplayName">
+            @Html.DisplayFor(m => type)
+        </li>
     }
 </ul>

@@ -5,40 +5,50 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Routing;
 
-namespace Orchard.Blogs.Routing {
-    public class ArchiveConstraint : IArchiveConstraint {
+namespace Orchard.Blogs.Routing
+{
+    public class ArchiveConstraint : IArchiveConstraint
+    {
         private readonly IAliasHolder _aliasHolder;
 
-        public ArchiveConstraint(IAliasHolder aliasHolder) {
+        public ArchiveConstraint(IAliasHolder aliasHolder)
+        {
             _aliasHolder = aliasHolder;
         }
 
-        public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection) {
+        public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
+        {
 
             object value;
-            if (values.TryGetValue(parameterName, out value)) {
+            if (values.TryGetValue(parameterName, out value))
+            {
                 var parameterValue = Convert.ToString(value);
 
                 var path = FindPath(parameterValue);
-                if (path == null) {
+                if (path == null)
+                {
                     return false;
                 }
 
                 var archiveData = FindArchiveData(parameterValue);
-                if (archiveData == null) {
+                if (archiveData == null)
+                {
                     return false;
                 }
 
-                try {
+                try
+                {
                     // is this a valid date ?
                     archiveData.ToDateTime();
                 }
-                catch {
+                catch
+                {
                     return false;
                 }
 
                 AliasInfo aliasInfo;
-                if (!_aliasHolder.GetMap("Orchard.Blogs").TryGetAlias(path, out aliasInfo)) {
+                if (!_aliasHolder.GetMap("Orchard.Blogs").TryGetAlias(path, out aliasInfo))
+                {
                     return false;
                 }
 
@@ -57,34 +67,41 @@ namespace Orchard.Blogs.Routing {
             return false;
         }
 
-        public string FindPath(string path) {
+        public string FindPath(string path)
+        {
             // my-blog/archive
-            if (path.EndsWith("/archive", StringComparison.OrdinalIgnoreCase)) {
+            if (path.EndsWith("/archive", StringComparison.OrdinalIgnoreCase))
+            {
                 return path.Substring(0, path.Length - "/archive".Length);
             }
 
             // my-blog/archive/
-            if (path.EndsWith("/archive/", StringComparison.OrdinalIgnoreCase)) {
+            if (path.EndsWith("/archive/", StringComparison.OrdinalIgnoreCase))
+            {
                 return null;
             }
 
             // my-blog/archive/2014
             var archiveIndex = path.IndexOf("/archive/", StringComparison.OrdinalIgnoreCase);
 
-            if (archiveIndex == -1) {
+            if (archiveIndex == -1)
+            {
 
                 // archive/
-                if (path.EndsWith("archive/", StringComparison.OrdinalIgnoreCase)) {
+                if (path.EndsWith("archive/", StringComparison.OrdinalIgnoreCase))
+                {
                     return null;
                 }
 
                 // archive
-                if (path.EndsWith("archive", StringComparison.OrdinalIgnoreCase)) {
+                if (path.EndsWith("archive", StringComparison.OrdinalIgnoreCase))
+                {
                     return String.Empty;
                 }
 
                 // archive for blog as homepage ?
-                if (path.StartsWith("archive/", StringComparison.OrdinalIgnoreCase)) {
+                if (path.StartsWith("archive/", StringComparison.OrdinalIgnoreCase))
+                {
                     return String.Empty;
                 }
 
@@ -94,43 +111,52 @@ namespace Orchard.Blogs.Routing {
             return path.Substring(0, archiveIndex);
         }
 
-        public ArchiveData FindArchiveData(string path) {
+        public ArchiveData FindArchiveData(string path)
+        {
             // my-blog/archive
-            if (path.EndsWith("/archive", StringComparison.OrdinalIgnoreCase)) {
+            if (path.EndsWith("/archive", StringComparison.OrdinalIgnoreCase))
+            {
                 return new ArchiveData("");
             }
 
             // my-blog/archive/
-            if (path.EndsWith("/archive/", StringComparison.OrdinalIgnoreCase)) {
+            if (path.EndsWith("/archive/", StringComparison.OrdinalIgnoreCase))
+            {
                 return null;
             }
 
             var archiveIndex = path.IndexOf("/archive/", StringComparison.OrdinalIgnoreCase);
 
-            if (archiveIndex == -1) {
+            if (archiveIndex == -1)
+            {
 
                 // archive/
-                if (path.EndsWith("archive/", StringComparison.OrdinalIgnoreCase)) {
+                if (path.EndsWith("archive/", StringComparison.OrdinalIgnoreCase))
+                {
                     return null;
                 }
 
                 // archive
-                if (path.EndsWith("archive", StringComparison.OrdinalIgnoreCase)) {
+                if (path.EndsWith("archive", StringComparison.OrdinalIgnoreCase))
+                {
                     return new ArchiveData("");
                 }
 
                 // archive for blog as homepage ?
-                if (path.StartsWith("archive/", StringComparison.OrdinalIgnoreCase)) {
+                if (path.StartsWith("archive/", StringComparison.OrdinalIgnoreCase))
+                {
                     return new ArchiveData(path.Substring("archive/".Length));
                 }
 
                 return null;
             }
 
-            try {
+            try
+            {
                 return new ArchiveData(path.Substring(archiveIndex + "/archive/".Length));
             }
-            catch {
+            catch
+            {
                 return null;
             }
         }

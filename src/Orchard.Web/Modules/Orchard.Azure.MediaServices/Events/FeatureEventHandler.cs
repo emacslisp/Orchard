@@ -5,23 +5,28 @@ using Orchard.ContentManagement;
 using Orchard.Environment;
 using Orchard.Environment.Extensions.Models;
 
-namespace Orchard.Azure.MediaServices.Events {
-    public class FeatureEventHandler : IFeatureEventHandler {
+namespace Orchard.Azure.MediaServices.Events
+{
+    public class FeatureEventHandler : IFeatureEventHandler
+    {
 
         private readonly IOrchardServices _orchardServices;
 
-        public FeatureEventHandler(IOrchardServices orchardServices) {
+        public FeatureEventHandler(IOrchardServices orchardServices)
+        {
             _orchardServices = orchardServices;
         }
 
-        public void Installing(Feature feature) {
-            
+        public void Installing(Feature feature)
+        {
+
         }
 
-        public void Installed(Feature feature) {
+        public void Installed(Feature feature)
+        {
             if (feature.Descriptor.Id != "Orchard.Azure.MediaServices")
                 return;
-            
+
             var settings = _orchardServices.WorkContext.CurrentSite.As<CloudMediaSettingsPart>();
             settings.AllowedVideoFilenameExtensions = "asf;avi;m2ts;m2v;mp4;mpeg;mpg;mts;ts;wmv;3gp;3g2;3gp2;mod;dv;vob;ismv;m4a".Split(';');
             settings.WamsEncodingPresets = new[] {
@@ -89,27 +94,33 @@ namespace Orchard.Azure.MediaServices.Events {
             };
         }
 
-        public void Enabling(Feature feature) {
+        public void Enabling(Feature feature)
+        {
 
         }
 
-        public void Enabled(Feature feature) {
+        public void Enabled(Feature feature)
+        {
 
         }
 
-        public void Disabling(Feature feature) {
+        public void Disabling(Feature feature)
+        {
 
         }
 
-        public void Disabled(Feature feature) {
+        public void Disabled(Feature feature)
+        {
 
         }
 
-        public void Uninstalling(Feature feature) {
+        public void Uninstalling(Feature feature)
+        {
 
         }
 
-        public void Uninstalled(Feature feature) {
+        public void Uninstalled(Feature feature)
+        {
 
         }
     }

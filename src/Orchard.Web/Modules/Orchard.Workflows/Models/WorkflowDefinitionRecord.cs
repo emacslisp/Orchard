@@ -2,12 +2,15 @@
 using System.ComponentModel.DataAnnotations;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Workflows.Models {
+namespace Orchard.Workflows.Models
+{
     /// <summary>
     /// Represent a workflow definition comprised of activities and transitions between them.
     /// </summary>
-    public class WorkflowDefinitionRecord {
-        public WorkflowDefinitionRecord() {
+    public class WorkflowDefinitionRecord
+    {
+        public WorkflowDefinitionRecord()
+        {
             ActivityRecords = new List<ActivityRecord>();
             TransitionRecords = new List<TransitionRecord>();
         }

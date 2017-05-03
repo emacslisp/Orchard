@@ -2,8 +2,10 @@
 using Orchard.Taxonomies.Models;
 using Orchard.Taxonomies.Settings;
 
-namespace Orchard.Taxonomies.ViewModels {
-    public class TaxonomyFieldViewModel {
+namespace Orchard.Taxonomies.ViewModels
+{
+    public class TaxonomyFieldViewModel
+    {
         public int TaxonomyId { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }

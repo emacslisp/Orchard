@@ -1,7 +1,7 @@
 ﻿@model PropertyEditViewModel
 @using Orchard.Projections.Models;
 @using Orchard.Projections.ViewModels;
-           
+
 @{
     Script.Require("jQuery");
     Layout.Title = T("Edit Property - {0}", Model.Property.Name);
@@ -20,7 +20,7 @@
         @Html.TextBoxFor(m => m.Description, new { @class = "text medium" })
         <span class="hint">@T("You may optionally give a description to this property, to be used in the dashboard screens.")</span>
     </fieldset>
-    
+
     <fieldset>
         <legend>@T("Display")</legend>
         <div>
@@ -35,13 +35,13 @@
         </div>
     </fieldset>
 
-    @* Render the dynamic form *@    
+    @* Render the dynamic form *@
     if (Model.Form != null) {
-        <fieldset>
-            @DisplayChildren(Model.Form)
-        </fieldset>
+    <fieldset>
+        @DisplayChildren(Model.Form)
+    </fieldset>
     }
-    
+
     <fieldset>
         <legend>@T("Label")</legend>
         <div class="expando">
@@ -55,7 +55,7 @@
             </div>
         </div>
     </fieldset>
-    
+
     @* Field parameters *@
     <fieldset>
         <legend>@T("Style")</legend>
@@ -110,7 +110,7 @@
             </div>
         </div>
     </fieldset>
-    
+
     <fieldset>
         <legend>@T("No Results")</legend>
         <div class="expando">
@@ -135,7 +135,7 @@
             </div>
         </div>
     </fieldset>
-    
+
     <fieldset>
         <legend>@T("Rewrite Results")</legend>
         <div class="expando">
@@ -145,7 +145,7 @@
                     <label class="forcheckbox" for="@Html.FieldIdFor(m => m.RewriteOutput)">@T("Rewrite output")</label>
                     <span class="hint">@T("Check to override the output of this property.")</span>
                 </div>
-                
+
                 <div data-controllerid="@Html.FieldIdFor(m => m.RewriteOutput)">
                     <div>
                         <label for="@Html.FieldIdFor(m => m.RewriteText)">@T("Rewrite text")</label>
@@ -166,7 +166,7 @@
                         @Html.TextBoxFor(m => m.MaxLength, new { @class = "text small" })
                         <span class="hint">@T("The maximum number of characters this property can be.")</span>
                     </div>
-                    
+
                     <div>
                         @Html.CheckBoxFor(m => m.TrimOnWordBoundary)
                         <label class="forcheckbox" for="@Html.FieldIdFor(m => m.TrimOnWordBoundary)">@T("Trim only on a word boundary")</label>
@@ -199,7 +199,7 @@
                 </div>
             </div>
         </div>
-    </fieldset>    
+    </fieldset>
     @Display.TokenHint()
 
     <fieldset>
@@ -209,10 +209,10 @@
 }
 
 @using (Script.Foot()) {
-<script type="text/javascript">
+    <script type="text/javascript">
 //<![CDATA[
     (function ($) {
         $("fieldset legend").expandoControl(function (controller) { return controller.nextAll(".expando"); }, { collapse: true, remember: false });
     })(jQuery);//]]>
-</script>
+    </script>
 }

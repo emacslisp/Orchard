@@ -6,24 +6,29 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 
-namespace Orchard.Blogs.Drivers {
-    public class BlogArchivesPartDriver : ContentPartDriver<BlogArchivesPart> {
+namespace Orchard.Blogs.Drivers
+{
+    public class BlogArchivesPartDriver : ContentPartDriver<BlogArchivesPart>
+    {
         private readonly IBlogService _blogService;
         private readonly IBlogPostService _blogPostService;
         private readonly IContentManager _contentManager;
 
         public BlogArchivesPartDriver(
-            IBlogService blogService, 
+            IBlogService blogService,
             IBlogPostService blogPostService,
-            IContentManager contentManager) {
+            IContentManager contentManager)
+        {
             _blogService = blogService;
             _blogPostService = blogPostService;
             _contentManager = contentManager;
         }
 
-        protected override DriverResult Display(BlogArchivesPart part, string displayType, dynamic shapeHelper) {
+        protected override DriverResult Display(BlogArchivesPart part, string displayType, dynamic shapeHelper)
+        {
             return ContentShape("Parts_Blogs_BlogArchives",
-                                () => {
+                                () =>
+                                {
                                     var blog = _blogService.Get(part.BlogId, VersionOptions.Published).As<BlogPart>();
 
                                     if (blog == null)
@@ -33,28 +38,34 @@ namespace Orchard.Blogs.Drivers {
                                 });
         }
 
-        protected override DriverResult Editor(BlogArchivesPart part, dynamic shapeHelper) {
-            var viewModel = new BlogArchivesViewModel {
+        protected override DriverResult Editor(BlogArchivesPart part, dynamic shapeHelper)
+        {
+            var viewModel = new BlogArchivesViewModel
+            {
                 BlogId = part.BlogId,
                 Blogs = _blogService.Get().ToList().OrderBy(b => _contentManager.GetItemMetadata(b).DisplayText)
-                };
+            };
 
             return ContentShape("Parts_Blogs_BlogArchives_Edit",
                                 () => shapeHelper.EditorTemplate(TemplateName: "Parts.Blogs.BlogArchives", Model: viewModel, Prefix: Prefix));
         }
 
-        protected override DriverResult Editor(BlogArchivesPart part, IUpdateModel updater, dynamic shapeHelper) {
+        protected override DriverResult Editor(BlogArchivesPart part, IUpdateModel updater, dynamic shapeHelper)
+        {
             var viewModel = new BlogArchivesViewModel();
-            if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
+            if (updater.TryUpdateModel(viewModel, Prefix, null, null))
+            {
                 part.BlogId = viewModel.BlogId;
             }
 
             return Editor(part, shapeHelper);
         }
 
-        protected override void Importing(BlogArchivesPart part, ImportContentContext context) {
+        protected override void Importing(BlogArchivesPart part, ImportContentContext context)
+        {
             // Don't do anything if the tag is not specified.
-            if (context.Data.Element(part.PartDefinition.Name) == null) {
+            if (context.Data.Element(part.PartDefinition.Name) == null)
+            {
                 return;
             }
 
@@ -63,7 +74,8 @@ namespace Orchard.Blogs.Drivers {
             );
         }
 
-        protected override void Exporting(BlogArchivesPart part, ExportContentContext context) {
+        protected override void Exporting(BlogArchivesPart part, ExportContentContext context)
+        {
             var blog = _contentManager.Get(part.BlogId);
             var blogIdentity = _contentManager.GetItemMetadata(blog).Identity;
             context.Element(part.PartDefinition.Name).SetAttributeValue("Blog", blogIdentity);

@@ -16,7 +16,7 @@
         @Html.DropDownList("CultureTo", new SelectList(cultures, "Name", "DisplayName", Model.CultureTo))
 
         <textarea rows="25" cols="80" name="Rules" id="Rules">@Model.Rules</textarea>
-        
+
         @Html.HiddenFor(x => x.Id)
     </fieldset>
 

@@ -2,12 +2,15 @@
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
-namespace Orchard.Workflows.Models {
+namespace Orchard.Workflows.Models
+{
     /// <summary>
     /// Reprensents a running workflow instance.
     /// </summary>
-    public class WorkflowRecord {
-        public WorkflowRecord() {
+    public class WorkflowRecord
+    {
+        public WorkflowRecord()
+        {
             AwaitingActivities = new List<AwaitingActivityRecord>();
         }
 

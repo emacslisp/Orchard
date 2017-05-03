@@ -23,7 +23,7 @@
         var isRemoved = !contentItem.VersionRecord.Latest && !contentItem.VersionRecord.Published;
         @(contentItem.ContentType)<text>: </text>if (isRemoved) {<strong>@title</strong>} else {@Html.ItemEditLink(title, contentItemId)}<br />
         if (isPublishedEvent || isLatest) {
-            @Html.ActionLink(T("Version {0}", eventVersionNumber).Text, "Detail", "Content", new { area = "Orchard.AuditTrail", id = contentItem.Id, version = eventVersionNumber }, null)<br />
+        @Html.ActionLink(T("Version {0}", eventVersionNumber).Text, "Detail", "Content", new { area = "Orchard.AuditTrail", id = contentItem.Id, version = eventVersionNumber }, null)<br />
         }
     }
     else {
@@ -54,12 +54,12 @@
                 }
                 else {
                     foreach (var node in diffNodes) {
-                        <tr>
-                            <td>@T(node.Type.ToString())</td>
-                            <td>@node.Context</td>
-                            <td>@node.Previous.OrIfEmpty(T("[Empty]"))</td>
-                            <td>@node.Current.OrIfEmpty(T("[Empty]"))</td>
-                        </tr>
+                    <tr>
+                        <td>@T(node.Type.ToString())</td>
+                        <td>@node.Context</td>
+                        <td>@node.Previous.OrIfEmpty(T("[Empty]"))</td>
+                        <td>@node.Current.OrIfEmpty(T("[Empty]"))</td>
+                    </tr>
                     }
                 }
             </tbody>

@@ -1,7 +1,7 @@
 ﻿@model SortCriterionAddViewModel
 @using Orchard.Projections.Models;
 @using Orchard.Projections.ViewModels;
-           
+
 @{
     Layout.Title = T("Add a Sort Criterion");
 }
@@ -12,7 +12,7 @@
 
 @foreach (var sortCriterion in Model.SortCriteria.OrderBy(x => x.Name.Text)) {
     <h2>@sortCriterion.Name</h2>
-    
+
     <table class="items">
         <thead>
             <tr>
@@ -21,10 +21,10 @@
             </tr>
         </thead>
         @foreach (var descriptor in sortCriterion.Descriptors) {
-        <tr>
-            <td>@Html.ActionLink(descriptor.Name.Text, "Edit", new { id = Model.Id, category = descriptor.Category, type = descriptor.Type })</td>
-            <td>@descriptor.Description</td>    
-        </tr>
+            <tr>
+                <td>@Html.ActionLink(descriptor.Name.Text, "Edit", new { id = Model.Id, category = descriptor.Category, type = descriptor.Type })</td>
+                <td>@descriptor.Description</td>
+            </tr>
         }
     </table>
 }
