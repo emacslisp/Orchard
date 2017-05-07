@@ -22,12 +22,10 @@
 
             > .layout-children {
                 padding: @container-padding;
-
                 // All adjacent non-container children need some space between...
                 > .layout-element:not(.layout-container) + .layout-element:not(.layout-container) {
                     margin-top: @content-spacing;
                 }
-
                 // ... except when jQuery UI sortable helper is the first element (because that one is absolutely positioned and "floating").
                 > .ui-sortable-helper:first-child + .layout-element:not(.layout-container) {
                     margin-top: 0;

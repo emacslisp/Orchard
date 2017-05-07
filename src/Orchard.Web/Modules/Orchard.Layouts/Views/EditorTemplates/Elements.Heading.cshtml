@@ -5,11 +5,11 @@
 <fieldset>
     <legend>@T("Level")</legend>
     <ul>
-    @for (var i = 1; i <= 6; i++) {
-        <li>
-            @Html.RadioButtonFor(m => m.Level, i, new {id = "h" + i})
-            <label for="@("h" + i)" class="forcheckbox">@T("&lt;h{0}/&gt;", i)</label>
-        </li>
+        @for (var i = 1; i <= 6; i++) {
+            <li>
+                @Html.RadioButtonFor(m => m.Level, i, new {id = "h" + i})
+                <label for="@("h" + i)" class="forcheckbox">@T("&lt;h{0}/&gt;", i)</label>
+            </li>
     }
     </ul>
 </fieldset>

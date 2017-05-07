@@ -19,14 +19,14 @@
 using (Html.BeginFormAntiForgeryPost(Url.Action("Update", "Element", new {session = Model.SessionKey, area = "Orchard.Layouts"}))) {
      foreach (var tab in Model.Tabs) {
          var id = String.Format("element-{0}", tab.ToLowerInvariant());
-         <div id="@id" class="tab-view">
-             @foreach (var editor in Model.EditorResult.Editors) {
+    <div id="@id" class="tab-view">
+        @foreach (var editor in Model.EditorResult.Editors) {
                  var position = ShapePosition.Parse((String) editor.Metadata.Position);
                  if (position.Name == tab) {
-                     @Display(editor)
+            @Display(editor)
                  }
              }
-         </div>
+    </div>
      }
   }
 }
@@ -35,7 +35,7 @@ else {
     Layout.DialogClosing = true;
 
     using (Script.Foot()) {
-        <script type="text/javascript">
+    <script type="text/javascript">
             jQuery(function () {
                 var payload = {
                     command: "@command",
@@ -52,7 +52,7 @@ else {
 
                 window.parent.currentDialog.trigger("command", payload);
             });
-        </script>
+    </script>
     }
 }
 <div class="dialog-settings">

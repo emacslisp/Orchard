@@ -7,7 +7,7 @@
         @foreach (var editor in Model.ElementEditorResult.Editors) {
             var position = ShapePosition.Parse((String)editor.Metadata.Position);
             if (position.Name == tab) {
-                @Display(editor)
+            @Display(editor)
             }
         }
     </section>

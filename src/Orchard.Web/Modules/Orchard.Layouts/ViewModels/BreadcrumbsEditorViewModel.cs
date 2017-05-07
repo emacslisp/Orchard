@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Orchard.ContentManagement;
 
-namespace Orchard.Layouts.ViewModels {
-    public class BreadcrumbsEditorViewModel {
+namespace Orchard.Layouts.ViewModels
+{
+    public class BreadcrumbsEditorViewModel
+    {
         public IEnumerable<ContentItem> Menus { get; set; }
         public int CurrentMenuId { get; set; }
 

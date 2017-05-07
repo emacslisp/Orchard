@@ -1,7 +1,9 @@
 ﻿using Orchard.Data.Conventions;
 
-namespace Orchard.Layouts.Models {
-    public class ElementBlueprint {
+namespace Orchard.Layouts.Models
+{
+    public class ElementBlueprint
+    {
         public virtual int Id { get; set; }
         public virtual string BaseElementTypeName { get; set; }
         public virtual string ElementTypeName { get; set; }

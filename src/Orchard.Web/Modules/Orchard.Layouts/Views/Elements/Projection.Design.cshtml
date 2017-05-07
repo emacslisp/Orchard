@@ -6,9 +6,9 @@
     foreach (var contentItem in contentItems) {
         var displayTextHtmlString = Html.ItemDisplayText(contentItem);
         var displayText = displayTextHtmlString != null ? displayTextHtmlString.ToString() : T("-").ToString();
-        <div class="layout-snippet">
-            @displayText
-        </div>
+    <div class="layout-snippet">
+        @displayText
+    </div>
     }
 }
 else {

@@ -5,9 +5,12 @@ using Orchard.Layouts.Framework.Display;
 using Orchard.Layouts.Framework.Drivers;
 using Orchard.Localization;
 
-namespace Orchard.Layouts.Framework.Elements {
-    public class ElementDescriptor {
-        public ElementDescriptor(Type elementType, string typeName, LocalizedString displayText, LocalizedString description, string category) {
+namespace Orchard.Layouts.Framework.Elements
+{
+    public class ElementDescriptor
+    {
+        public ElementDescriptor(Type elementType, string typeName, LocalizedString displayText, LocalizedString description, string category)
+        {
             ElementType = elementType;
             TypeName = typeName;
             DisplayText = displayText;

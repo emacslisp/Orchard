@@ -7,17 +7,21 @@ using Orchard.Layouts.Elements;
 using Orchard.Layouts.Framework.Elements;
 using Orchard.Layouts.Helpers;
 
-namespace Orchard.Layouts.Services {
-    public class ElementSerializer : IElementSerializer {
+namespace Orchard.Layouts.Services
+{
+    public class ElementSerializer : IElementSerializer
+    {
         private readonly IElementManager _elementManager;
         private readonly IElementFactory _elementFactory;
 
-        public ElementSerializer(IElementManager elementManager, IElementFactory elementFactory) {
+        public ElementSerializer(IElementManager elementManager, IElementFactory elementFactory)
+        {
             _elementManager = elementManager;
             _elementFactory = elementFactory;
         }
 
-        public Element Deserialize(string data, DescribeElementsContext describeContext) {
+        public Element Deserialize(string data, DescribeElementsContext describeContext)
+        {
             if (String.IsNullOrWhiteSpace(data))
                 return null;
 
@@ -27,14 +31,17 @@ namespace Orchard.Layouts.Services {
             return element;
         }
 
-        public string Serialize(Element element) {
+        public string Serialize(Element element)
+        {
             var dto = ToDto(element);
             return JToken.FromObject(dto).ToString(Formatting.None);
         }
 
-        public object ToDto(Element element, int index = 0) {
+        public object ToDto(Element element, int index = 0)
+        {
             var container = element as Container;
-            var dto = new {
+            var dto = new
+            {
                 typeName = element.Descriptor.TypeName,
                 data = element.Data.Serialize(),
                 exportableData = element.ExportableData.Serialize(),
@@ -49,7 +56,8 @@ namespace Orchard.Layouts.Services {
             return dto;
         }
 
-        public Element ParseNode(JToken node, Container parent, int index, DescribeElementsContext describeContext) {
+        public Element ParseNode(JToken node, Container parent, int index, DescribeElementsContext describeContext)
+        {
             var elementTypeName = (string)node["typeName"];
 
             if (String.IsNullOrWhiteSpace(elementTypeName))
@@ -68,7 +76,8 @@ namespace Orchard.Layouts.Services {
             if (elementDescriptor == null)
                 return null; // This happens if an element exists in a layout, but its type is no longer available due to its feature being disabled.
 
-            var element = _elementFactory.Activate(elementDescriptor, e => {
+            var element = _elementFactory.Activate(elementDescriptor, e =>
+            {
                 e.Container = parent;
                 e.Index = index;
                 e.Data = elementData;

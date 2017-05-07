@@ -14,7 +14,7 @@
 @if (!Model.Collapsed) {
     @tagBuilder.StartElement
     foreach (var item in CoreShapes.Order(Model)) {
-        @Display(item)
+    @Display(item)
     }
     @tagBuilder.EndElement
 }

@@ -2,8 +2,10 @@
 using Orchard.Layouts.Elements;
 using Orchard.Layouts.Framework.Drivers;
 
-namespace Orchard.Layouts.Drivers {
+namespace Orchard.Layouts.Drivers
+{
     [OrchardFeature("Orchard.Layouts.Snippets")]
-    public class SnippetElementDriver : ElementDriver<Snippet> {
+    public class SnippetElementDriver : ElementDriver<Snippet>
+    {
     }
 }

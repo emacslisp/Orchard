@@ -4,16 +4,20 @@ using Orchard.Conditions.Services;
 using Orchard.Layouts.Framework.Display;
 using Orchard.Layouts.Services;
 
-namespace Orchard.Layouts.Handlers {
-    public class ElementRuleCoordinator : ElementEventHandlerBase {
+namespace Orchard.Layouts.Handlers
+{
+    public class ElementRuleCoordinator : ElementEventHandlerBase
+    {
         private readonly IConditionManager _conditionManager;
         private readonly Dictionary<string, bool> _evaluations = new Dictionary<string, bool>();
 
-        public ElementRuleCoordinator(IConditionManager conditionManager) {
+        public ElementRuleCoordinator(IConditionManager conditionManager)
+        {
             _conditionManager = conditionManager;
         }
 
-        public override void CreatingDisplay(ElementCreatingDisplayShapeContext context) {
+        public override void CreatingDisplay(ElementCreatingDisplayShapeContext context)
+        {
             if (context.DisplayType == "Design")
                 return;
 
@@ -23,7 +27,8 @@ namespace Orchard.Layouts.Handlers {
             context.Cancel = !EvaluateRule(context.Element.Rule);
         }
 
-        private bool EvaluateRule(string rule) {
+        private bool EvaluateRule(string rule)
+        {
             if (_evaluations.ContainsKey(rule))
                 return _evaluations[rule];
 

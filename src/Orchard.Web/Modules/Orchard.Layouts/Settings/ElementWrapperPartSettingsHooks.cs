@@ -5,10 +5,13 @@ using Orchard.ContentManagement.MetaData.Builders;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.ViewModels;
 
-namespace Orchard.Layouts.Settings {
-    public class ElementWrapperPartSettingsHooks : ContentDefinitionEditorEventsBase {
+namespace Orchard.Layouts.Settings
+{
+    public class ElementWrapperPartSettingsHooks : ContentDefinitionEditorEventsBase
+    {
 
-        public override IEnumerable<TemplateViewModel> TypePartEditor(ContentTypePartDefinition definition) {
+        public override IEnumerable<TemplateViewModel> TypePartEditor(ContentTypePartDefinition definition)
+        {
             if (definition.PartDefinition.Name != "ElementWrapperPart")
                 yield break;
 
@@ -17,7 +20,8 @@ namespace Orchard.Layouts.Settings {
             yield return DefinitionTemplate(model);
         }
 
-        public override IEnumerable<TemplateViewModel> TypePartEditorUpdate(ContentTypePartDefinitionBuilder builder, IUpdateModel updateModel) {
+        public override IEnumerable<TemplateViewModel> TypePartEditorUpdate(ContentTypePartDefinitionBuilder builder, IUpdateModel updateModel)
+        {
             if (builder.Name != "ElementWrapperPart")
                 yield break;
 

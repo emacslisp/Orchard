@@ -2,9 +2,12 @@
 using Orchard.ContentManagement;
 using Orchard.Layouts.Framework.Elements;
 
-namespace Orchard.Layouts.Framework.Drivers {
-    public class ElementEditorContext {
-        public ElementEditorContext() {
+namespace Orchard.Layouts.Framework.Drivers
+{
+    public class ElementEditorContext
+    {
+        public ElementEditorContext()
+        {
             EditorResult = new EditorResult();
         }
 

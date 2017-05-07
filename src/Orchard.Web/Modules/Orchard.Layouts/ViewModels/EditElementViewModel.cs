@@ -3,9 +3,12 @@ using Orchard.Layouts.Framework.Drivers;
 using Orchard.Layouts.Models;
 using Orchard.Localization;
 
-namespace Orchard.Layouts.ViewModels {
-    public class EditElementViewModel {
-        public EditElementViewModel() {
+namespace Orchard.Layouts.ViewModels
+{
+    public class EditElementViewModel
+    {
+        public EditElementViewModel()
+        {
             Tabs = new List<string>();
         }
 

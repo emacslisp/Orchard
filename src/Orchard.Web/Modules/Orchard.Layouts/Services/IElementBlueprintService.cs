@@ -2,8 +2,10 @@
 using Orchard.Layouts.Framework.Elements;
 using Orchard.Layouts.Models;
 
-namespace Orchard.Layouts.Services {
-    public interface IElementBlueprintService : IDependency {
+namespace Orchard.Layouts.Services
+{
+    public interface IElementBlueprintService : IDependency
+    {
         ElementBlueprint GetBlueprint(int id);
         IEnumerable<ElementBlueprint> GetBlueprints();
         void DeleteBlueprint(ElementBlueprint blueprint);

@@ -16,21 +16,27 @@ using Orchard.Layouts.Settings;
 using Orchard.Layouts.ViewModels;
 using ContentItem = Orchard.ContentManagement.ContentItem;
 
-namespace Orchard.Layouts.Providers {
-    public class PlaceableContentElementHarvester : Component, IElementHarvester {
+namespace Orchard.Layouts.Providers
+{
+    public class PlaceableContentElementHarvester : Component, IElementHarvester
+    {
         private readonly Work<IContentManager> _contentManager;
 
-        public PlaceableContentElementHarvester(Work<IContentManager> contentManager) {
+        public PlaceableContentElementHarvester(Work<IContentManager> contentManager)
+        {
             _contentManager = contentManager;
         }
 
-        public IEnumerable<ElementDescriptor> HarvestElements(HarvestElementsContext context) {
+        public IEnumerable<ElementDescriptor> HarvestElements(HarvestElementsContext context)
+        {
             var contentTypeDefinitions = GetPlaceableContentTypeDefinitions();
 
-            return contentTypeDefinitions.Select(contentTypeDefinition => {
+            return contentTypeDefinitions.Select(contentTypeDefinition =>
+            {
                 var settings = contentTypeDefinition.Settings;
                 var description = settings.ContainsKey("Description") ? settings["Description"] : contentTypeDefinition.DisplayName;
-                return new ElementDescriptor(typeof (PlaceableContentItem), contentTypeDefinition.Name, T(contentTypeDefinition.DisplayName), T(description), category: "Content Items") {
+                return new ElementDescriptor(typeof(PlaceableContentItem), contentTypeDefinition.Name, T(contentTypeDefinition.DisplayName), T(description), category: "Content Items")
+                {
                     Displaying = Displaying,
                     Editor = Editor,
                     UpdateEditor = UpdateEditor,
@@ -46,7 +52,8 @@ namespace Orchard.Layouts.Providers {
             });
         }
 
-        private void Displaying(ElementDisplayingContext context) {
+        private void Displaying(ElementDisplayingContext context)
+        {
             var contentTypeName = (string)context.Element.Descriptor.StateBag["ContentTypeName"];
             var element = (PlaceableContentItem)context.Element;
             var contentItemId = element.ContentItemId;
@@ -60,33 +67,40 @@ namespace Orchard.Layouts.Providers {
             context.ElementShape.ContentShape = contentShape;
         }
 
-        private void Editor(ElementEditorContext context) {
+        private void Editor(ElementEditorContext context)
+        {
             UpdateEditor(context);
         }
 
-        private void UpdateEditor(ElementEditorContext context) {
+        private void UpdateEditor(ElementEditorContext context)
+        {
             var contentTypeName = (string)context.Element.Descriptor.StateBag["ContentTypeName"];
-            var element = (PlaceableContentItem) context.Element;
-            var elementViewModel = new PlaceableContentItemViewModel {
+            var element = (PlaceableContentItem)context.Element;
+            var elementViewModel = new PlaceableContentItemViewModel
+            {
                 ContentItemId = element.ContentItemId
             };
 
-            if (context.Updater != null) {
+            if (context.Updater != null)
+            {
                 context.Updater.TryUpdateModel(elementViewModel, context.Prefix, null, null);
             }
 
             var contentItemId = elementViewModel.ContentItemId;
-            var contentItem = contentItemId != null 
-                ? _contentManager.Value.Get(contentItemId.Value, VersionOptions.Latest) 
+            var contentItem = contentItemId != null
+                ? _contentManager.Value.Get(contentItemId.Value, VersionOptions.Latest)
                 : _contentManager.Value.New(contentTypeName);
 
             dynamic contentEditorShape;
 
-            if (context.Updater != null) {
-                if (contentItem.Id == 0) {
+            if (context.Updater != null)
+            {
+                if (contentItem.Id == 0)
+                {
                     _contentManager.Value.Create(contentItem, VersionOptions.Draft);
                 }
-                else {
+                else
+                {
                     var isDraftable = contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable;
                     var versionOptions = isDraftable ? VersionOptions.DraftRequired : VersionOptions.Latest;
                     contentItem = _contentManager.Value.Get(contentItem.Id, versionOptions);
@@ -105,20 +119,22 @@ namespace Orchard.Layouts.Providers {
 
                 _contentManager.Value.Publish(contentItem);
             }
-            else {
+            else
+            {
                 contentEditorShape = _contentManager.Value.BuildEditor(contentItem);
             }
 
             var elementEditorShape = context.ShapeFactory.EditorTemplate(TemplateName: "Elements.PlaceableContentItem", Model: elementViewModel, Prefix: context.Prefix);
-            
+
             elementEditorShape.Metadata.Position = "Properties:0";
             contentEditorShape.Metadata.Position = "Properties:0";
             context.EditorResult.Add(elementEditorShape);
             context.EditorResult.Add(contentEditorShape);
         }
 
-        private void RemoveContentItem(ElementRemovingContext context) {
-            var element = (PlaceableContentItem) context.Element;
+        private void RemoveContentItem(ElementRemovingContext context)
+        {
+            var element = (PlaceableContentItem)context.Element;
             var contentItemId = element.ContentItemId;
 
             // Only remove the content item if no other elements are referencing this one.
@@ -135,11 +151,12 @@ namespace Orchard.Layouts.Providers {
 
             var contentItem = contentItemId != null ? _contentManager.Value.Get(contentItemId.Value, VersionOptions.Latest) : default(ContentItem);
 
-            if(contentItem != null)
+            if (contentItem != null)
                 _contentManager.Value.Remove(contentItem);
         }
 
-        private void ExportElement(ExportElementContext context) {
+        private void ExportElement(ExportElementContext context)
+        {
             var element = (PlaceableContentItem)context.Element;
             var contentItemId = element.ContentItemId;
             var contentItem = contentItemId != null ? _contentManager.Value.Get(contentItemId.Value, VersionOptions.Latest) : default(ContentItem);
@@ -149,7 +166,8 @@ namespace Orchard.Layouts.Providers {
                 context.ExportableData["ContentItemId"] = contentItemIdentity;
         }
 
-        private void ImportElement(ImportElementContext context) {
+        private void ImportElement(ImportElementContext context)
+        {
             var contentItemIdentity = context.ExportableData.Get("ContentItemId");
 
             if (String.IsNullOrWhiteSpace(contentItemIdentity))
@@ -161,7 +179,8 @@ namespace Orchard.Layouts.Providers {
             element.ContentItemId = contentItem != null ? contentItem.Id : default(int?);
         }
 
-        private IEnumerable<ContentTypeDefinition> GetPlaceableContentTypeDefinitions() {
+        private IEnumerable<ContentTypeDefinition> GetPlaceableContentTypeDefinitions()
+        {
             // Select all types that have either "Placeable" set to true.
             var contentTypeDefinitionsQuery =
                 from contentTypeDefinition in _contentManager.Value.GetContentTypeDefinitions()

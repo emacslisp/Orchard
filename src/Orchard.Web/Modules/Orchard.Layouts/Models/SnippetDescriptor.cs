@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 
-namespace Orchard.Layouts.Models {
-    public class SnippetDescriptor {
-        public SnippetDescriptor() {
+namespace Orchard.Layouts.Models
+{
+    public class SnippetDescriptor
+    {
+        public SnippetDescriptor()
+        {
             Fields = new List<SnippetFieldDescriptor>();
         }
 
