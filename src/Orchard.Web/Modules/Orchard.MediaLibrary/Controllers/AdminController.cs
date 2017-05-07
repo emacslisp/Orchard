@@ -16,9 +16,11 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.Validation;
 using System.Collections.Generic;
 
-namespace Orchard.MediaLibrary.Controllers {
+namespace Orchard.MediaLibrary.Controllers
+{
     [ValidateInput(false)]
-    public class AdminController : Controller {
+    public class AdminController : Controller
+    {
         private readonly IMediaLibraryService _mediaLibraryService;
         private readonly INavigationManager _navigationManager;
         private readonly IContentDefinitionManager _contentDefinitionManager;
@@ -27,7 +29,8 @@ namespace Orchard.MediaLibrary.Controllers {
             IOrchardServices services,
             IMediaLibraryService mediaLibraryService,
             INavigationManager navigationManager,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager)
+        {
             _mediaLibraryService = mediaLibraryService;
             _navigationManager = navigationManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -41,13 +44,15 @@ namespace Orchard.MediaLibrary.Controllers {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public ActionResult Index(string folderPath = "", bool dialog = false) {
+        public ActionResult Index(string folderPath = "", bool dialog = false)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Cannot view media")))
                 return new HttpUnauthorizedResult();
 
             // If the user is trying to access a folder above his boundaries, redirect him to his home folder
             var rootMediaFolder = _mediaLibraryService.GetRootMediaFolder();
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+            {
                 return RedirectToAction("Index", new { folderPath = rootMediaFolder.MediaPath, dialog });
             }
 
@@ -58,7 +63,8 @@ namespace Orchard.MediaLibrary.Controllers {
             var explorerShape = Services.ContentManager.BuildDisplay(explorer);
             var rootMediaFolderPath = rootMediaFolder == null ? null : rootMediaFolder.MediaPath;
 
-            var viewModel = new MediaManagerIndexViewModel {
+            var viewModel = new MediaManagerIndexViewModel
+            {
                 DialogMode = dialog,
                 FolderPath = folderPath,
                 RootFolderPath = rootMediaFolderPath,
@@ -68,46 +74,55 @@ namespace Orchard.MediaLibrary.Controllers {
                 CustomNavigationShapes = explorerShape.Navigation,
             };
 
-            foreach (var shape in explorerShape.Actions.Items) {
+            foreach (var shape in explorerShape.Actions.Items)
+            {
                 shape.MediaManagerIndexViewModel = viewModel;
             }
 
-            foreach (var shape in explorerShape.Navigation.Items) {
+            foreach (var shape in explorerShape.Navigation.Items)
+            {
                 shape.MediaManagerIndexViewModel = viewModel;
             }
 
             return View(viewModel);
         }
 
-        public ActionResult Import(string folderPath, int? replaceId = null) {
+        public ActionResult Import(string folderPath, int? replaceId = null)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Cannot import media")))
                 return new HttpUnauthorizedResult();
 
             var mediaProviderMenu = _navigationManager.BuildMenu("mediaproviders");
             var imageSets = _navigationManager.BuildImageSets("mediaproviders");
 
-            var viewModel = new MediaManagerImportViewModel {
+            var viewModel = new MediaManagerImportViewModel
+            {
                 Menu = mediaProviderMenu,
                 ImageSets = imageSets,
                 FolderPath = folderPath,
                 MediaTypes = _mediaLibraryService.GetMediaTypes(),
             };
 
-            if (replaceId.HasValue) {
+            if (replaceId.HasValue)
+            {
                 var replaceMedia = Services.ContentManager.Get(replaceId.Value).As<MediaPart>();
                 if (replaceMedia == null)
                     return HttpNotFound();
 
                 // Check permission
-                if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(replaceMedia.FolderPath)) {
+                if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(replaceMedia.FolderPath))
+                {
                     return new HttpUnauthorizedResult();
                 }
 
                 viewModel.Replace = replaceMedia;
                 viewModel.FolderPath = replaceMedia.FolderPath;
-            } else {
+            }
+            else
+            {
                 // Check permission
-                if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
+                if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+                {
                     return new HttpUnauthorizedResult();
                 }
             }
@@ -116,13 +131,16 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult MediaItems(string folderPath, int skip = 0, int count = 0, string order = "created", string mediaType = "") {
+        public ActionResult MediaItems(string folderPath, int skip = 0, int count = 0, string order = "created", string mediaType = "")
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Cannot view media")))
                 return new HttpUnauthorizedResult();
 
             // Check permission
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
-                var model = new MediaManagerMediaItemsViewModel {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+            {
+                var model = new MediaManagerMediaItemsViewModel
+                {
                     MediaItems = new List<MediaManagerMediaItemViewModel>(),
                     MediaItemsCount = 0,
                     FolderPath = folderPath
@@ -134,12 +152,14 @@ namespace Orchard.MediaLibrary.Controllers {
             var mediaParts = _mediaLibraryService.GetMediaContentItems(folderPath, skip, count, order, mediaType, VersionOptions.Latest);
             var mediaPartsCount = _mediaLibraryService.GetMediaContentItemsCount(folderPath, mediaType, VersionOptions.Latest);
 
-            var mediaItems = mediaParts.Select(x => new MediaManagerMediaItemViewModel {
+            var mediaItems = mediaParts.Select(x => new MediaManagerMediaItemViewModel
+            {
                 MediaPart = x,
                 Shape = Services.ContentManager.BuildDisplay(x.ContentItem, "Thumbnail")
             }).ToList();
 
-            var viewModel = new MediaManagerMediaItemsViewModel {
+            var viewModel = new MediaManagerMediaItemsViewModel
+            {
                 MediaItems = mediaItems,
                 MediaItemsCount = mediaPartsCount,
                 FolderPath = folderPath
@@ -149,21 +169,25 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult ChildFolders(string folderPath = null) {
+        public ActionResult ChildFolders(string folderPath = null)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Cannot get child folder listing")))
                 return new HttpUnauthorizedResult();
 
             // Check permission
             var rootMediaFolder = _mediaLibraryService.GetRootMediaFolder();
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
-                var model = new MediaManagerChildFoldersViewModel {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+            {
+                var model = new MediaManagerChildFoldersViewModel
+                {
                     Children = new IMediaFolder[0]
                 };
 
                 return View(model);
             }
 
-            var viewModel = new MediaManagerChildFoldersViewModel {
+            var viewModel = new MediaManagerChildFoldersViewModel
+            {
                 Children = _mediaLibraryService.GetMediaFolders(folderPath)
             };
 
@@ -173,7 +197,8 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult RecentMediaItems(int skip = 0, int count = 0, string order = "created", string mediaType = "") {
+        public ActionResult RecentMediaItems(int skip = 0, int count = 0, string order = "created", string mediaType = "")
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Cannot view media")))
                 return new HttpUnauthorizedResult();
 
@@ -183,12 +208,14 @@ namespace Orchard.MediaLibrary.Controllers {
             var mediaPartsCount = _mediaLibraryService.GetMediaContentItemsCountRecursive(rootMediaFolderPath, mediaType);
 
 
-            var mediaItems = mediaParts.Select(x => new MediaManagerMediaItemViewModel {
+            var mediaItems = mediaParts.Select(x => new MediaManagerMediaItemViewModel
+            {
                 MediaPart = x,
                 Shape = Services.ContentManager.BuildDisplay(x, "Thumbnail")
             }).ToList();
 
-            var viewModel = new MediaManagerMediaItemsViewModel {
+            var viewModel = new MediaManagerMediaItemsViewModel
+            {
                 MediaItems = mediaItems,
                 MediaItemsCount = mediaPartsCount
             };
@@ -197,7 +224,8 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [Themed(false)]
-        public ActionResult MediaItem(int id, string displayType = "SummaryAdmin") {
+        public ActionResult MediaItem(int id, string displayType = "SummaryAdmin")
+        {
             var contentItem = Services.ContentManager.Get<MediaPart>(id, VersionOptions.Latest);
 
             if (contentItem == null)
@@ -213,7 +241,8 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Delete(int[] mediaItemIds) {
+        public ActionResult Delete(int[] mediaItemIds)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Couldn't delete media items")))
                 return new HttpUnauthorizedResult();
 
@@ -224,30 +253,37 @@ namespace Orchard.MediaLibrary.Controllers {
                 .Select(x => x.As<MediaPart>())
                 .Where(x => x != null);
 
-            try {
-                foreach (var media in mediaItems) {
-                    if (_mediaLibraryService.CanManageMediaFolder(media.FolderPath)) {
+            try
+            {
+                foreach (var media in mediaItems)
+                {
+                    if (_mediaLibraryService.CanManageMediaFolder(media.FolderPath))
+                    {
                         Services.ContentManager.Remove(media.ContentItem);
                     }
                 }
 
                 return Json(true);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Error(e, "Could not delete media items.");
                 return Json(false);
             }
         }
 
         [HttpPost]
-        public ActionResult Clone(int mediaItemId) {
+        public ActionResult Clone(int mediaItemId)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia, T("Couldn't clone media items")))
                 return new HttpUnauthorizedResult();
 
-            try {
+            try
+            {
                 var media = Services.ContentManager.Get(mediaItemId).As<MediaPart>();
 
-                if (!_mediaLibraryService.CanManageMediaFolder(media.FolderPath)) {
+                if (!_mediaLibraryService.CanManageMediaFolder(media.FolderPath))
+                {
                     return new HttpUnauthorizedResult();
                 }
 
@@ -268,13 +304,15 @@ namespace Orchard.MediaLibrary.Controllers {
 
                 return Json(true);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Error(e, "Could not clone media item.");
                 return Json(false);
             }
         }
 
-        private FolderHierarchy GetFolderHierarchy(IMediaFolder root) {
+        private FolderHierarchy GetFolderHierarchy(IMediaFolder root)
+        {
             Argument.ThrowIfNull(root, "root");
             return new FolderHierarchy(root) { Children = _mediaLibraryService.GetMediaFolders(root.MediaPath).Select(GetFolderHierarchy) };
         }

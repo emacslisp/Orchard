@@ -60,7 +60,7 @@
                         <button type="submit" class="fa fa-download"></button>
                     </div>
                     <div id="query">
-                        <input name="url" type="text" autofocus placeholder="@T("media url")" value="@Model.Url" />
+                        <input name="url" type="text" autofocus=autofocus placeholder="@T("media url")" value="@Model.Url" />
                     </div>
                 </fieldset>
                 <fieldset>
@@ -68,10 +68,10 @@
                     <div>
                         <label for="type">@T("Type")</label>
                         <select id="type" name="type">
-                            <option value="video" @(type == "video" ? "selected" : "")>@T("Video")</option>
-                            <option value="photo" @(type == "photo" ? "selected" : "")>@T("Photo")</option>
-                            <option value="link" @(type == "link" ? "selected" : "")>@T("Link")</option>
-                            <option value="rich" @(type == "rich" ? "selected" : "")>@T("Rich")</option>
+                            <option value="video" @(type == "video" ? "selected" : "")=)>@T("Video")</option>
+                            <option value="photo" @(type == "photo" ? "selected" : "")=)>@T("Photo")</option>
+                            <option value="link" @(type == "link" ? "selected" : "")=)>@T("Link")</option>
+                            <option value="rich" @(type == "rich" ? "selected" : "")=)>@T("Rich")</option>
                         </select>
                     </div>
                     <div>
@@ -90,14 +90,14 @@
                         <label for="thumbnail">@T("Thumbnail URL")</label>
                         <input class="text large" type="text" name="thumbnail" id="thumbnail" value="@thumbnail" />
                     </div>
-                    <br/>
+                    <br />
                     <div>
                         <label for="width">@T("Width")</label>
                         <input class="text small" type="text" name="width" id="width" value="@width" /> @T("px")
                         <label for="thumbnail">@T("Height")</label>
                         <input class="text small" type="text" name="haight" id="height" value="@height" /> @T("px")
                     </div>
-                    <br/>
+                    <br />
                     <button type="submit">@T("Preview")</button>
                 </fieldset>
         }
@@ -106,45 +106,45 @@
         @if (Model.Content != null) {
             switch (type) {
                 case "photo":
-                    <img src="@url" width="@width" height="@height" />
+            <img src="@url" width="@width" height="@height" />
                     break;
                 case "video":
-                    @Html.Raw(html)
+            @Html.Raw(html)
                     break;
                 case "link":
                     if (!String.IsNullOrWhiteSpace(url)) {
-                        <a href="@url">@title</a>
+            <a href="@url">@title</a>
                     }
                     else {
-                        @title
+            @title
                     }
                     break;
                 case "rich":
-                    @Html.Raw(html)
+            @Html.Raw(html)
                     break;
             }
 
             if (String.IsNullOrWhiteSpace(html) && !String.IsNullOrEmpty(thumbnail)) {
-                <div class="media-thumbnail">
-                    <img src="@thumbnail" />
-                </div>
+            <div class="media-thumbnail">
+                <img src="@thumbnail" />
+            </div>
             }
 
             if (Model.Replace == null) {
                 using (Html.BeginFormAntiForgeryPost(Url.Action("Import"))) {
-                    @Html.Hidden("folderPath", Model.FolderPath)
-                    @Html.Hidden("url", Model.Url)
-                    @Html.Hidden("document", Model.Content.ToString())
-                    <br/>
-                    <button type="submit">@T("Import")</button>
+            @Html.Hidden("folderPath", Model.FolderPath)
+            @Html.Hidden("url", Model.Url)
+            @Html.Hidden("document", Model.Content.ToString())
+            <br />
+            <button type="submit">@T("Import")</button>
                 }
             } else {
                 using (Html.BeginFormAntiForgeryPost(Url.Action("Replace"), FormMethod.Post, new { onsubmit = "window.parent.$('a.button.close')[0].click();" })) {
-                    @Html.Hidden("replaceId", Model.Replace)
-                    @Html.Hidden("url", Model.Url)
-                    @Html.Hidden("document", Model.Content.ToString())
-                    <br />
-                    <button type="submit">@T("Replace")</button>
+            @Html.Hidden("replaceId", Model.Replace)
+            @Html.Hidden("url", Model.Url)
+            @Html.Hidden("document", Model.Content.ToString())
+            <br />
+            <button type="submit">@T("Replace")</button>
                 }
             }
         }

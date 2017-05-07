@@ -9,14 +9,14 @@
         @Display(Model.Header)
         @if (Model.Meta != null) {
             <div class="metadata">
-            @Display(Model.Meta)
+                @Display(Model.Meta)
             </div>
         }
     </header>
     @Display(Model.Content)
     @if(Model.Footer != null) {
-    <footer>
-        @Display(Model.Footer)
-    </footer>
+        <footer>
+            @Display(Model.Footer)
+        </footer>
     }
 </article>

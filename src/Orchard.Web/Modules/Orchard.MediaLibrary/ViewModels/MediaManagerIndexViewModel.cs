@@ -2,8 +2,10 @@
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.MediaLibrary.Models;
 
-namespace Orchard.MediaLibrary.ViewModels {
-    public class MediaManagerIndexViewModel {
+namespace Orchard.MediaLibrary.ViewModels
+{
+    public class MediaManagerIndexViewModel
+    {
         public MediaManagerChildFoldersViewModel ChildFoldersViewModel { get; set; }
         public string FolderPath { get; set; }
         public string RootFolderPath { get; set; }

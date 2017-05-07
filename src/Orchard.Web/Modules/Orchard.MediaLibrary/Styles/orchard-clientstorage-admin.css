@@ -15,7 +15,6 @@
     bottom: 0;
     padding: 0;
     overflow: auto;
-
 }
 
 #fileupload {
@@ -28,22 +27,22 @@
     margin: 10px 15px 15px 10px;
 }
 
-#fileupload input{
-    position: absolute;
-    opacity: 0;
-    top: 0;
-    left: 0;
-    /*bottom: 0;*/
-    width: 0;
-    height: 0;
-    cursor: none;
-    z-index: 1000;
-}
+    #fileupload input {
+        position: absolute;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        /*bottom: 0;*/
+        width: 0;
+        height: 0;
+        cursor: none;
+        z-index: 1000;
+    }
 
-#fileupload ul {
-    width: 100%;
-    z-index: 2000;
-}
+    #fileupload ul {
+        width: 100%;
+        z-index: 2000;
+    }
 
 #clientstorage-main li {
     margin-right: 10px;
@@ -69,6 +68,7 @@
 #clientstorage-main:hover {
     background-color: #e0e0e0;
 }
+
 .media-thumbnail > div {
     width: 200px;
     height: 200px;

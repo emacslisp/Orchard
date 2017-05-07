@@ -9,26 +9,32 @@ using Orchard.Localization;
 using Orchard.Utility.Extensions;
 using Orchard.MediaLibrary.Fields;
 
-namespace Orchard.MediaLibrary.Drivers {
-    public class MediaLibraryPickerFieldDriver : ContentFieldDriver<Fields.MediaLibraryPickerField> {
+namespace Orchard.MediaLibrary.Drivers
+{
+    public class MediaLibraryPickerFieldDriver : ContentFieldDriver<Fields.MediaLibraryPickerField>
+    {
         private readonly IContentManager _contentManager;
 
-        public MediaLibraryPickerFieldDriver(IContentManager contentManager) {
+        public MediaLibraryPickerFieldDriver(IContentManager contentManager)
+        {
             _contentManager = contentManager;
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        private static string GetPrefix(Fields.MediaLibraryPickerField field, ContentPart part) {
+        private static string GetPrefix(Fields.MediaLibraryPickerField field, ContentPart part)
+        {
             return part.PartDefinition.Name + "." + field.Name;
         }
 
-        private static string GetDifferentiator(Fields.MediaLibraryPickerField field, ContentPart part) {
+        private static string GetDifferentiator(Fields.MediaLibraryPickerField field, ContentPart part)
+        {
             return field.Name;
         }
 
-        protected override DriverResult Display(ContentPart part, Fields.MediaLibraryPickerField field, string displayType, dynamic shapeHelper) {
+        protected override DriverResult Display(ContentPart part, Fields.MediaLibraryPickerField field, string displayType, dynamic shapeHelper)
+        {
             return Combined(
                 ContentShape("Fields_MediaLibraryPicker", GetDifferentiator(field, part), () => shapeHelper.Fields_MediaLibraryPicker()),
                 ContentShape("Fields_MediaLibraryPicker_Summary", GetDifferentiator(field, part), () => shapeHelper.Fields_MediaLibraryPicker_Summary()),
@@ -36,10 +42,13 @@ namespace Orchard.MediaLibrary.Drivers {
             );
         }
 
-        protected override DriverResult Editor(ContentPart part, Fields.MediaLibraryPickerField field, dynamic shapeHelper) {
+        protected override DriverResult Editor(ContentPart part, Fields.MediaLibraryPickerField field, dynamic shapeHelper)
+        {
             return ContentShape("Fields_MediaLibraryPicker_Edit", GetDifferentiator(field, part),
-                () => {
-                    var model = new MediaLibraryPickerFieldViewModel {
+                () =>
+                {
+                    var model = new MediaLibraryPickerFieldViewModel
+                    {
                         Field = field,
                         Part = part,
                         ContentItems = _contentManager.GetMany<ContentItem>(field.Ids, VersionOptions.Published, QueryHints.Empty).ToList(),
@@ -51,41 +60,50 @@ namespace Orchard.MediaLibrary.Drivers {
                 });
         }
 
-        protected override DriverResult Editor(ContentPart part, Fields.MediaLibraryPickerField field, IUpdateModel updater, dynamic shapeHelper) {
+        protected override DriverResult Editor(ContentPart part, Fields.MediaLibraryPickerField field, IUpdateModel updater, dynamic shapeHelper)
+        {
             var model = new MediaLibraryPickerFieldViewModel { SelectedIds = string.Join(",", field.Ids) };
 
             updater.TryUpdateModel(model, GetPrefix(field, part), null, null);
 
             var settings = field.PartFieldDefinition.Settings.GetModel<MediaLibraryPickerFieldSettings>();
 
-            if (String.IsNullOrEmpty(model.SelectedIds)) {
+            if (String.IsNullOrEmpty(model.SelectedIds))
+            {
                 field.Ids = new int[0];
             }
-            else {
+            else
+            {
                 field.Ids = model.SelectedIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             }
 
-            if (settings.Required && field.Ids.Length == 0) {
+            if (settings.Required && field.Ids.Length == 0)
+            {
                 updater.AddModelError("Id", T("The {0} field is required.", field.DisplayName));
             }
 
             return Editor(part, field, shapeHelper);
         }
 
-        protected override void Importing(ContentPart part, Fields.MediaLibraryPickerField field, ImportContentContext context) {
+        protected override void Importing(ContentPart part, Fields.MediaLibraryPickerField field, ImportContentContext context)
+        {
             var contentItemIds = context.Attribute(field.FieldDefinition.Name + "." + field.Name, "ContentItems");
-            if (contentItemIds != null) {
+            if (contentItemIds != null)
+            {
                 field.Ids = contentItemIds.Split(',')
                     .Select(context.GetItemFromSession)
                     .Select(contentItem => contentItem.Id).ToArray();
             }
-            else {
+            else
+            {
                 field.Ids = new int[0];
             }
         }
 
-        protected override void Exporting(ContentPart part, Fields.MediaLibraryPickerField field, ExportContentContext context) {
-            if (field.Ids.Any()) {
+        protected override void Exporting(ContentPart part, Fields.MediaLibraryPickerField field, ExportContentContext context)
+        {
+            if (field.Ids.Any())
+            {
                 var contentItemIds = field.Ids
                     .Select(x => _contentManager.Get(x))
                     .Where(x => x != null)
@@ -96,11 +114,13 @@ namespace Orchard.MediaLibrary.Drivers {
             }
         }
 
-        protected override void Cloning(ContentPart part, MediaLibraryPickerField originalField, MediaLibraryPickerField cloneField, CloneContentContext context) {
+        protected override void Cloning(ContentPart part, MediaLibraryPickerField originalField, MediaLibraryPickerField cloneField, CloneContentContext context)
+        {
             cloneField.Ids = originalField.Ids;
         }
 
-        protected override void Describe(DescribeMembersContext context) {
+        protected override void Describe(DescribeMembersContext context)
+        {
             context
                 .Member(null, typeof(string), T("Ids"), T("A formatted list of the ids, e.g., {1},{42}"));
         }

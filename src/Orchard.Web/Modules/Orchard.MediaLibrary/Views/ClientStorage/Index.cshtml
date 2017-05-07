@@ -23,7 +23,7 @@
     <div id="clientstorage-main">
         <div id="message">@T("Click here, Drop files or Paste images")</div>
         <div id="fileupload">
-            <input type="file" name="files[]" @if(Model.Replace == null) { <text>multiple="multiple"</text> } >
+            <input type="file" name="files[]" @if(Model.Replace == null) { =if(Model.Replace == null) { <text>=<text> multiple="multiple" </text>=</text>  }= } />
             <ul id="fileupload-transfers" data-bind="foreach: transfers">
                 <li data-bind="css: status()" class="transfer">
                     <div class="media-thumbnail" data-bind="html: thumbnail(), visible: status() == 'success'"></div>
@@ -36,9 +36,9 @@
             </ul>
         </div>
     </div>
-        
+
     @using (Script.Foot()) {
-    <script type="text/javascript">
+        <script type="text/javascript">
         //<![CDATA[
         $(function () {
 
@@ -170,9 +170,9 @@
             });
         })
         //]]>
-    </script>
+        </script>
     }
-    
+
     @Display.FootScripts()
 </body>
 </html>

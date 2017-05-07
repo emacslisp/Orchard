@@ -2,9 +2,11 @@
 using Orchard.ContentManagement;
 using Orchard.MediaLibrary.Fields;
 
-namespace Orchard.MediaLibrary.ViewModels {
+namespace Orchard.MediaLibrary.ViewModels
+{
 
-    public class MediaLibraryPickerFieldViewModel {
+    public class MediaLibraryPickerFieldViewModel
+    {
 
         public ICollection<ContentItem> ContentItems { get; set; }
         public string SelectedIds { get; set; }

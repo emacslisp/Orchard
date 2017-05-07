@@ -12,9 +12,11 @@ using Orchard.MediaLibrary.Models;
 using System.Linq;
 using Orchard.Localization;
 
-namespace Orchard.MediaLibrary.Controllers {
+namespace Orchard.MediaLibrary.Controllers
+{
     [Admin, Themed(false)]
-    public class WebSearchController : Controller {
+    public class WebSearchController : Controller
+    {
         private readonly IMediaLibraryService _mediaLibraryService;
         private readonly IContentManager _contentManager;
         private readonly IMimeTypeProvider _mimeTypeProvider;
@@ -23,7 +25,8 @@ namespace Orchard.MediaLibrary.Controllers {
             IMediaLibraryService mediaManagerService,
             IContentManager contentManager,
             IOrchardServices orchardServices,
-            IMimeTypeProvider mimeTypeProvider) {
+            IMimeTypeProvider mimeTypeProvider)
+        {
             _mediaLibraryService = mediaManagerService;
             _contentManager = contentManager;
             _mimeTypeProvider = mimeTypeProvider;
@@ -34,22 +37,27 @@ namespace Orchard.MediaLibrary.Controllers {
         public IOrchardServices Services { get; set; }
         public Localizer T { get; set; }
 
-        public ActionResult Index(string folderPath, string type, int? replaceId = null) {
-            if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia)) {
+        public ActionResult Index(string folderPath, string type, int? replaceId = null)
+        {
+            if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia))
+            {
                 return new HttpUnauthorizedResult();
             }
 
             // Check permission
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+            {
                 return new HttpUnauthorizedResult();
             }
 
-            var viewModel = new ImportMediaViewModel {
+            var viewModel = new ImportMediaViewModel
+            {
                 FolderPath = folderPath,
                 Type = type,
             };
 
-            if (replaceId != null) {
+            if (replaceId != null)
+            {
                 var replaceMedia = Services.ContentManager.Get<MediaPart>(replaceId.Value);
                 if (replaceMedia == null)
                     return HttpNotFound();
@@ -61,12 +69,14 @@ namespace Orchard.MediaLibrary.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Import(string folderPath, string type, string url) {
+        public ActionResult Import(string folderPath, string type, string url)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia))
                 return new HttpUnauthorizedResult();
 
             // Check permission
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath)) {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(folderPath))
+            {
                 return new HttpUnauthorizedResult();
             }
 
@@ -75,12 +85,15 @@ namespace Orchard.MediaLibrary.Controllers {
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(x => x.StartsWith("."));
 
-            try {
+            try
+            {
                 var filename = Path.GetFileName(url);
 
                 // skip file if the allowed extensions is defined and doesn't match
-                if (allowedExtensions.Any()) {
-                    if (!allowedExtensions.Any(e => filename.EndsWith(e, StringComparison.OrdinalIgnoreCase))) {
+                if (allowedExtensions.Any())
+                {
+                    if (!allowedExtensions.Any(e => filename.EndsWith(e, StringComparison.OrdinalIgnoreCase)))
+                    {
                         throw new Exception(T("This file type is not allowed: {0}", Path.GetExtension(filename)).Text);
                     }
                 }
@@ -94,13 +107,15 @@ namespace Orchard.MediaLibrary.Controllers {
                 return new JsonResult { Data = new { folderPath, MediaPath = mediaPart.FileName } };
 
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return new JsonResult { Data = new { error = e.Message } };
             }
         }
 
         [HttpPost]
-        public ActionResult Replace(int replaceId, string type, string url) {
+        public ActionResult Replace(int replaceId, string type, string url)
+        {
             if (!Services.Authorizer.Authorize(Permissions.ManageOwnMedia))
                 return new HttpUnauthorizedResult();
 
@@ -109,7 +124,8 @@ namespace Orchard.MediaLibrary.Controllers {
                 return HttpNotFound();
 
             // Check permission
-            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(replaceMedia.FolderPath)) {
+            if (!Services.Authorizer.Authorize(Permissions.ManageMediaContent) && !_mediaLibraryService.CanManageMediaFolder(replaceMedia.FolderPath))
+            {
                 return new HttpUnauthorizedResult();
             }
 
@@ -118,12 +134,15 @@ namespace Orchard.MediaLibrary.Controllers {
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(x => x.StartsWith("."));
 
-            try {
+            try
+            {
                 var filename = Path.GetFileName(url);
 
                 // skip file if the allowed extensions is defined and doesn't match
-                if (allowedExtensions.Any()) {
-                    if (!allowedExtensions.Any(e => filename.EndsWith(e, StringComparison.OrdinalIgnoreCase))) {
+                if (allowedExtensions.Any())
+                {
+                    if (!allowedExtensions.Any(e => filename.EndsWith(e, StringComparison.OrdinalIgnoreCase)))
+                    {
                         throw new Exception(T("This file type is not allowed: {0}", Path.GetExtension(filename)).Text);
                     }
                 }
@@ -147,7 +166,8 @@ namespace Orchard.MediaLibrary.Controllers {
 
                 return new JsonResult { Data = new { replaceMedia.FolderPath, MediaPath = replaceMedia.FileName } };
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return new JsonResult { Data = new { Success = false, error = e.Message } };
             }
         }

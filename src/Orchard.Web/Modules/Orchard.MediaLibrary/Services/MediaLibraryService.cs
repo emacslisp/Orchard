@@ -14,8 +14,10 @@ using Orchard.Core.Title.Models;
 using Orchard.Validation;
 using Orchard.MediaLibrary.Providers;
 
-namespace Orchard.MediaLibrary.Services {
-    public class MediaLibraryService : IMediaLibraryService {
+namespace Orchard.MediaLibrary.Services
+{
+    public class MediaLibraryService : IMediaLibraryService
+    {
         private readonly IOrchardServices _orchardServices;
         private readonly IMimeTypeProvider _mimeTypeProvider;
         private readonly IStorageProvider _storageProvider;
@@ -28,7 +30,8 @@ namespace Orchard.MediaLibrary.Services {
             IMimeTypeProvider mimeTypeProvider,
             IStorageProvider storageProvider,
             IEnumerable<IMediaFactorySelector> mediaFactorySelectors,
-            IMediaFolderProvider mediaFolderProvider) {
+            IMediaFolderProvider mediaFolderProvider)
+        {
             _orchardServices = orchardServices;
             _mimeTypeProvider = mimeTypeProvider;
             _storageProvider = storageProvider;
@@ -40,7 +43,8 @@ namespace Orchard.MediaLibrary.Services {
 
         public Localizer T { get; set; }
 
-        public IEnumerable<ContentTypeDefinition> GetMediaTypes() {
+        public IEnumerable<ContentTypeDefinition> GetMediaTypes()
+        {
             return _orchardServices
                 .ContentManager
                 .GetContentTypeDefinitions()
@@ -49,59 +53,72 @@ namespace Orchard.MediaLibrary.Services {
                 .ToArray();
         }
 
-        public IContentQuery<MediaPart, MediaPartRecord> GetMediaContentItems(VersionOptions versionOptions = null) {
+        public IContentQuery<MediaPart, MediaPartRecord> GetMediaContentItems(VersionOptions versionOptions = null)
+        {
             return _orchardServices.ContentManager.Query<MediaPart, MediaPartRecord>(versionOptions);
         }
 
-        public IEnumerable<MediaPart> GetMediaContentItems(string folderPath, int skip, int count, string order, string mediaType, VersionOptions versionOptions = null) {
+        public IEnumerable<MediaPart> GetMediaContentItems(string folderPath, int skip, int count, string order, string mediaType, VersionOptions versionOptions = null)
+        {
             return BuildGetMediaContentItemsQuery(_orchardServices.ContentManager, folderPath, order: order, mediaType: mediaType, versionOptions: versionOptions)
                 .Slice(skip, count);
         }
 
-        public IEnumerable<MediaPart> GetMediaContentItems(int skip, int count, string order, string mediaType, VersionOptions versionOptions = null) {
+        public IEnumerable<MediaPart> GetMediaContentItems(int skip, int count, string order, string mediaType, VersionOptions versionOptions = null)
+        {
             return GetMediaContentItems(null, skip, count, order, mediaType, versionOptions);
         }
 
-        public IEnumerable<MediaPart> GetMediaContentItemsRecursive(string folderPath, int skip, int count, string order, string mediaType, VersionOptions versionOptions = null) {
+        public IEnumerable<MediaPart> GetMediaContentItemsRecursive(string folderPath, int skip, int count, string order, string mediaType, VersionOptions versionOptions = null)
+        {
             return BuildGetMediaContentItemsQuery(_orchardServices.ContentManager, folderPath, true, order, mediaType, versionOptions)
                 .Slice(skip, count);
         }
 
-        public int GetMediaContentItemsCount(string folderPath, string mediaType, VersionOptions versionOptions = null) {
+        public int GetMediaContentItemsCount(string folderPath, string mediaType, VersionOptions versionOptions = null)
+        {
             return BuildGetMediaContentItemsQuery(_orchardServices.ContentManager, folderPath, mediaType: mediaType, versionOptions: versionOptions)
                 .Count();
         }
 
-        public int GetMediaContentItemsCount(string mediaType, VersionOptions versionOptions = null) {
+        public int GetMediaContentItemsCount(string mediaType, VersionOptions versionOptions = null)
+        {
             return GetMediaContentItemsCount(null, mediaType, versionOptions);
         }
 
-        public int GetMediaContentItemsCountRecursive(string folderPath, string mediaType, VersionOptions versionOptions = null) {
+        public int GetMediaContentItemsCountRecursive(string folderPath, string mediaType, VersionOptions versionOptions = null)
+        {
             return BuildGetMediaContentItemsQuery(_orchardServices.ContentManager, folderPath, true, mediaType: mediaType, versionOptions: versionOptions)
                 .Count();
         }
 
         private static IContentQuery<MediaPart> BuildGetMediaContentItemsQuery(
-            IContentManager contentManager, string folderPath = null, bool recursive = false, string order = null, string mediaType = null, VersionOptions versionOptions = null) {
+            IContentManager contentManager, string folderPath = null, bool recursive = false, string order = null, string mediaType = null, VersionOptions versionOptions = null)
+        {
 
             var query = contentManager.Query<MediaPart>(versionOptions);
 
             query = query.Join<MediaPartRecord>();
 
-            if (!String.IsNullOrEmpty(mediaType)) {
+            if (!String.IsNullOrEmpty(mediaType))
+            {
                 query = query.ForType(new[] { mediaType });
             }
 
-            if (!String.IsNullOrEmpty(folderPath)) {
-                if (recursive) {
+            if (!String.IsNullOrEmpty(folderPath))
+            {
+                if (recursive)
+                {
                     query = query.Join<MediaPartRecord>().Where(m => m.FolderPath.StartsWith(folderPath));
                 }
-                else {
+                else
+                {
                     query = query.Join<MediaPartRecord>().Where(m => m.FolderPath == folderPath);
                 }
             }
 
-            switch (order) {
+            switch (order)
+            {
                 case "title":
                     query = query.Join<TitlePartRecord>()
                         .OrderBy(x => x.Title)
@@ -132,55 +149,65 @@ namespace Orchard.MediaLibrary.Services {
             return query;
         }
 
-        public MediaPart ImportMedia(Stream stream, string relativePath, string filename) {
+        public MediaPart ImportMedia(Stream stream, string relativePath, string filename)
+        {
             return ImportMedia(stream, relativePath, filename, null);
         }
 
-        public MediaPart ImportMedia(Stream stream, string relativePath, string filename, string contentType) {
+        public MediaPart ImportMedia(Stream stream, string relativePath, string filename, string contentType)
+        {
             var uniqueFilename = GetUniqueFilename(relativePath, filename);
 
             UploadMediaFile(relativePath, uniqueFilename, stream);
             return ImportMedia(relativePath, uniqueFilename, contentType);
         }
 
-        public string GetUniqueFilename(string folderPath, string filename) {
+        public string GetUniqueFilename(string folderPath, string filename)
+        {
 
             // remove any char which is unallowed in an HTTP request
-            foreach (var unallowedChar in HttpUnallowed) {
+            foreach (var unallowedChar in HttpUnallowed)
+            {
                 filename = filename.Replace(unallowedChar.ToString(), "");
             }
 
             // compute a unique filename
             var uniqueFilename = filename;
             var index = 1;
-            while (_storageProvider.FileExists(_storageProvider.Combine(folderPath, uniqueFilename))) {
+            while (_storageProvider.FileExists(_storageProvider.Combine(folderPath, uniqueFilename)))
+            {
                 uniqueFilename = Path.GetFileNameWithoutExtension(filename) + "-" + index++ + Path.GetExtension(filename);
             }
 
             return uniqueFilename;
         }
 
-        public MediaPart ImportMedia(string relativePath, string filename) {
+        public MediaPart ImportMedia(string relativePath, string filename)
+        {
             return ImportMedia(relativePath, filename, null);
         }
 
-        public MediaPart ImportMedia(string relativePath, string filename, string contentType) {
+        public MediaPart ImportMedia(string relativePath, string filename, string contentType)
+        {
 
             var mimeType = _mimeTypeProvider.GetMimeType(filename);
 
-            if (!_storageProvider.FileExists(_storageProvider.Combine(relativePath, filename))) {
+            if (!_storageProvider.FileExists(_storageProvider.Combine(relativePath, filename)))
+            {
                 return null;
             }
 
             var storageFile = _storageProvider.GetFile(_storageProvider.Combine(relativePath, filename));
             var mediaFile = BuildMediaFile(relativePath, storageFile);
 
-            using (var stream = storageFile.OpenRead()) {
+            using (var stream = storageFile.OpenRead())
+            {
                 var mediaFactory = GetMediaFactory(stream, mimeType, contentType);
                 if (mediaFactory == null)
                     throw new Exception(T("No media factory available to handle this resource.").Text);
                 var mediaPart = mediaFactory.CreateMedia(stream, mediaFile.Name, mimeType, contentType);
-                if (mediaPart != null) {
+                if (mediaPart != null)
+                {
                     mediaPart.FolderPath = relativePath;
                     mediaPart.FileName = filename;
                 }
@@ -189,7 +216,8 @@ namespace Orchard.MediaLibrary.Services {
             }
         }
 
-        public IMediaFactory GetMediaFactory(Stream stream, string mimeType, string contentType) {
+        public IMediaFactory GetMediaFactory(Stream stream, string mimeType, string contentType)
+        {
             var requestMediaFactoryResults = _mediaFactorySelectors
                 .Select(x => x.GetMediaFactory(stream, mimeType, contentType))
                 .Where(x => x != null)
@@ -209,7 +237,8 @@ namespace Orchard.MediaLibrary.Services {
         /// </example>
         /// <param name="relativePath">The relative path within the media directory.</param>
         /// <returns>The public path relative to the application url.</returns>
-        public string GetPublicUrl(string relativePath) {
+        public string GetPublicUrl(string relativePath)
+        {
             Argument.ThrowIfNullOrEmpty(relativePath, "relativePath");
 
             return _storageProvider.GetPublicUrl(relativePath);
@@ -221,19 +250,24 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="mediaPath">The relative path of the media folder containing the media.</param>
         /// <param name="fileName">The media file name.</param>
         /// <returns>The public URL for the media.</returns>
-        public string GetMediaPublicUrl(string mediaPath, string fileName) {
+        public string GetMediaPublicUrl(string mediaPath, string fileName)
+        {
             return GetPublicUrl(Path.Combine(mediaPath, fileName));
         }
 
-        public IMediaFolder GetRootMediaFolder() {
-            if (_orchardServices.Authorizer.Authorize(Permissions.ManageMediaContent)) {
+        public IMediaFolder GetRootMediaFolder()
+        {
+            if (_orchardServices.Authorizer.Authorize(Permissions.ManageMediaContent))
+            {
                 return null;
             }
 
-            if (_orchardServices.Authorizer.Authorize(Permissions.ManageOwnMedia)) {
+            if (_orchardServices.Authorizer.Authorize(Permissions.ManageOwnMedia))
+            {
                 var currentUser = _orchardServices.WorkContext.CurrentUser;
                 var userPath = _storageProvider.Combine("Users", _mediaFolderProvider.GetFolderName(currentUser));
-                return new MediaFolder() {
+                return new MediaFolder()
+                {
                     Name = currentUser.UserName,
                     MediaPath = userPath
                 };
@@ -247,7 +281,8 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="relativePath">The path where to retrieve the media folder from. null means root.</param>
         /// <returns>The media folder in the given path.</returns>
-        public IEnumerable<IMediaFolder> GetMediaFolders(string relativePath) {
+        public IEnumerable<IMediaFolder> GetMediaFolders(string relativePath)
+        {
             return _storageProvider
                 .ListFolders(relativePath)
                 .Where(f => !f.GetName().StartsWith("_"))
@@ -255,8 +290,10 @@ namespace Orchard.MediaLibrary.Services {
                 .ToList();
         }
 
-        private static IMediaFolder BuildMediaFolder(IStorageFolder folder) {
-            return new MediaFolder {
+        private static IMediaFolder BuildMediaFolder(IStorageFolder folder)
+        {
+            return new MediaFolder
+            {
                 Name = folder.GetName(),
                 SizeField = new Lazy<long>(folder.GetSize),
                 LastUpdated = folder.GetLastUpdated(),
@@ -269,13 +306,16 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="relativePath">The path where to retrieve the media files from. null means root.</param>
         /// <returns>The media files in the given path.</returns>
-        public IEnumerable<MediaFile> GetMediaFiles(string relativePath) {
+        public IEnumerable<MediaFile> GetMediaFiles(string relativePath)
+        {
             return _storageProvider.ListFiles(relativePath).Select(file =>
                 BuildMediaFile(relativePath, file)).ToList();
         }
 
-        private MediaFile BuildMediaFile(string relativePath, IStorageFile file) {
-            return new MediaFile {
+        private MediaFile BuildMediaFile(string relativePath, IStorageFile file)
+        {
+            return new MediaFile
+            {
                 Name = file.GetName(),
                 Size = file.GetSize(),
                 LastUpdated = file.GetLastUpdated(),
@@ -290,7 +330,8 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="relativePath">The path where to create the new folder. null means root.</param>
         /// <param name="folderName">The name of the folder to be created.</param>
-        public void CreateFolder(string relativePath, string folderName) {
+        public void CreateFolder(string relativePath, string folderName)
+        {
             Argument.ThrowIfNullOrEmpty(folderName, "folderName");
 
             _storageProvider.CreateFolder(relativePath == null ? folderName : _storageProvider.Combine(relativePath, folderName));
@@ -300,19 +341,23 @@ namespace Orchard.MediaLibrary.Services {
         /// Deletes a media folder.
         /// </summary>
         /// <param name="folderPath">The path to the folder to be deleted.</param>
-        public void DeleteFolder(string folderPath) {
+        public void DeleteFolder(string folderPath)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
 
-            try {
+            try
+            {
                 var contentManager = _orchardServices.ContentManager;
                 var mediaParts = BuildGetMediaContentItemsQuery(contentManager, folderPath, true).List();
-                foreach (var mediaPart in mediaParts) {
+                foreach (var mediaPart in mediaParts)
+                {
                     contentManager.Remove(mediaPart.ContentItem);
                 }
 
                 _storageProvider.DeleteFolder(folderPath);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 _orchardServices.TransactionManager.Cancel();
                 throw;
             }
@@ -323,22 +368,26 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="folderPath">The path to the folder to be renamed.</param>
         /// <param name="newFolderName">The new folder name.</param>
-        public void RenameFolder(string folderPath, string newFolderName) {
+        public void RenameFolder(string folderPath, string newFolderName)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNullOrEmpty(newFolderName, "newFolderName");
 
-            try {
+            try
+            {
                 var segments = folderPath.Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).ToArray();
                 var newFolderPath = String.Join(Path.DirectorySeparatorChar.ToString(), segments.Take(segments.Length - 1).Union(new[] { newFolderName }));
 
                 var mediaParts = BuildGetMediaContentItemsQuery(_orchardServices.ContentManager, folderPath, true).List();
-                foreach (var mediaPart in mediaParts) {
+                foreach (var mediaPart in mediaParts)
+                {
                     mediaPart.FolderPath = newFolderPath + mediaPart.FolderPath.Substring(folderPath.Length);
                 }
 
                 _storageProvider.RenameFolder(folderPath, _storageProvider.Combine(Path.GetDirectoryName(folderPath), newFolderName));
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 _orchardServices.TransactionManager.Cancel();
                 throw;
             }
@@ -349,7 +398,8 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="folderPath">The folder path.</param>
         /// <param name="fileName">The file name.</param>
-        public void DeleteFile(string folderPath, string fileName) {
+        public void DeleteFile(string folderPath, string fileName)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNullOrEmpty(fileName, "fileName");
 
@@ -362,7 +412,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="folderPath">The path to the file's parent folder.</param>
         /// <param name="currentFileName">The current file name.</param>
         /// <param name="newFileName">The new file name.</param>
-        public void RenameFile(string folderPath, string currentFileName, string newFileName) {
+        public void RenameFile(string folderPath, string currentFileName, string newFileName)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNullOrEmpty(currentFileName, "currentFileName");
             Argument.ThrowIfNullOrEmpty(newFileName, "newFileName");
@@ -377,7 +428,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="filename">The file name.</param>
         /// <param name="newPath">The path where the file will be moved to.</param>
         /// <param name="newFilename">The new file name.</param>
-        public void MoveFile(string currentPath, string filename, string newPath, string newFilename) {
+        public void MoveFile(string currentPath, string filename, string newPath, string newFilename)
+        {
             Argument.ThrowIfNullOrEmpty(currentPath, "currentPath");
             Argument.ThrowIfNullOrEmpty(newPath, "newPath");
             Argument.ThrowIfNullOrEmpty(filename, "filename");
@@ -393,7 +445,8 @@ namespace Orchard.MediaLibrary.Services {
         /// </summary>
         /// <param name="originalPath">The relative path to the file to be copied.</param>
         /// <param name="duplicatePath">The relative path to the new file.</param>
-        public void CopyFile(string currentPath, string filename, string duplicatePath, string duplicateFilename) {
+        public void CopyFile(string currentPath, string filename, string duplicatePath, string duplicateFilename)
+        {
             Argument.ThrowIfNullOrEmpty(currentPath, "currentPath");
             Argument.ThrowIfNullOrEmpty(duplicatePath, "duplicatePath");
             Argument.ThrowIfNullOrEmpty(filename, "filename");
@@ -408,7 +461,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="folderPath">The path to the folder where to upload the file.</param>
         /// <param name="postedFile">The file to upload.</param>
         /// <returns>The path to the uploaded file.</returns>
-        public string UploadMediaFile(string folderPath, HttpPostedFileBase postedFile) {
+        public string UploadMediaFile(string folderPath, HttpPostedFileBase postedFile)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNull(postedFile, "postedFile");
 
@@ -422,7 +476,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="fileName">The file name.</param>
         /// <param name="bytes">The array of bytes with the file's contents.</param>
         /// <returns>The path to the uploaded file.</returns>
-        public string UploadMediaFile(string folderPath, string fileName, byte[] bytes) {
+        public string UploadMediaFile(string folderPath, string fileName, byte[] bytes)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNullOrEmpty(fileName, "fileName");
             Argument.ThrowIfNull(bytes, "bytes");
@@ -437,7 +492,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="fileName">The file name.</param>
         /// <param name="inputStream">The stream with the file's contents.</param>
         /// <returns>The path to the uploaded file.</returns>
-        public string UploadMediaFile(string folderPath, string fileName, Stream inputStream) {
+        public string UploadMediaFile(string folderPath, string fileName, Stream inputStream)
+        {
             Argument.ThrowIfNullOrEmpty(folderPath, "folderPath");
             Argument.ThrowIfNullOrEmpty(fileName, "fileName");
             Argument.ThrowIfNull(inputStream, "inputStream");
@@ -454,7 +510,8 @@ namespace Orchard.MediaLibrary.Services {
         /// <param name="path1">The parent path.</param>
         /// <param name="path2">The child path.</param>
         /// <returns>The combined path.</returns>
-        public string Combine(string path1, string path2) {
+        public string Combine(string path1, string path2)
+        {
             return _storageProvider.Combine(path1, path2);
         }
     }

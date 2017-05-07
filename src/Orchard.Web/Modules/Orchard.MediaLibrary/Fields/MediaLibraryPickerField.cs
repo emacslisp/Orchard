@@ -5,18 +5,23 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.FieldStorage;
 using Orchard.MediaLibrary.Models;
 
-namespace Orchard.MediaLibrary.Fields {
-    public class MediaLibraryPickerField : ContentField {
-        private static readonly char[] separator = {'{', '}', ','};
+namespace Orchard.MediaLibrary.Fields
+{
+    public class MediaLibraryPickerField : ContentField
+    {
+        private static readonly char[] separator = { '{', '}', ',' };
         internal Lazy<IEnumerable<MediaPart>> _contentItems;
- 
-        public int[] Ids {
+
+        public int[] Ids
+        {
             get { return DecodeIds(Storage.Get<string>()); }
             set { Storage.Set(EncodeIds(value)); }
         }
 
-        public IEnumerable<MediaPart> MediaParts { 
-            get {
+        public IEnumerable<MediaPart> MediaParts
+        {
+            get
+            {
                 return _contentItems != null ? _contentItems.Value : Enumerable.Empty<MediaPart>();
             }
         }
@@ -24,9 +29,12 @@ namespace Orchard.MediaLibrary.Fields {
         /// <summary>
         /// Gets the MediaUrl property of the first Media, or null if none
         /// </summary>
-        public string FirstMediaUrl {
-            get {
-                if (!MediaParts.Any()) {
+        public string FirstMediaUrl
+        {
+            get
+            {
+                if (!MediaParts.Any())
+                {
                     return null;
                 }
 
@@ -34,8 +42,10 @@ namespace Orchard.MediaLibrary.Fields {
             }
         }
 
-        private string EncodeIds(ICollection<int> ids) {
-            if (ids == null || !ids.Any()) {
+        private string EncodeIds(ICollection<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
                 return string.Empty;
             }
 
@@ -43,8 +53,10 @@ namespace Orchard.MediaLibrary.Fields {
             return "{" + string.Join("},{", ids.ToArray()) + "}";
         }
 
-        private int[] DecodeIds(string ids) {
-            if(String.IsNullOrWhiteSpace(ids)) {
+        private int[] DecodeIds(string ids)
+        {
+            if (String.IsNullOrWhiteSpace(ids))
+            {
                 return new int[0];
             }
 

@@ -32,37 +32,37 @@
 
 #icon {
     float: right;
-    width:40px;
+    width: 40px;
 }
 
-#icon button {
-    height: 28px;
-    width: 40px;
-    border: none;
-    cursor: pointer;
-    color: white;
-    background-color:black;
-    margin-bottom: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    font-size: 18px;
-}
+    #icon button {
+        height: 28px;
+        width: 40px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        background-color: black;
+        margin-bottom: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        font-size: 18px;
+    }
 
 /* Messages */
 .message {
-    margin:10px 0 4px 0;
-    padding:4px;
-    clear:both;
+    margin: 10px 0 4px 0;
+    padding: 4px;
+    clear: both;
 }
 
 .message-Information {
-    background:#e6f1c9; /* green */
-    border:1px solid #cfe493;
-    color:#062232;
+    background: #e6f1c9; /* green */
+    border: 1px solid #cfe493;
+    color: #062232;
 }
 
 .message-Error {
-    background:#e68585; /* red */
-    border:1px solid #990808;
-    color:#fff;
+    background: #e68585; /* red */
+    border: 1px solid #990808;
+    color: #fff;
 }

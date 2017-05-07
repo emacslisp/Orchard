@@ -31,7 +31,7 @@
           data-return-url="@HttpUtility.JavaScriptStringEncode(Request.RawUrl)"
           data-prompt-on-navigate="@promptOnNavigate.ToString().ToLower()"
           data-show-save-warning="@showSaveWarning.ToString().ToLower()">
-    <label @if (required) { <text> class="required" </text>    }>@displayName</label>
+    <label @if (required) { <text> class="required" </text>     }>@displayName</label>
     <div class="message message-Warning media-library-picker-message">@T("You need to save your changes.")</div>
     <div class="items media-library-picker" summary="@displayName">
         <ul>

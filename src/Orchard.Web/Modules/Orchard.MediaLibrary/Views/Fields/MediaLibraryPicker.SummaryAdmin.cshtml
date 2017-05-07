@@ -12,16 +12,16 @@
 }
 <span class="name">@displayName:</span>
 <p class="media-library-picker-field media-library-picker-field-@name.HtmlClassify()">
-    
+
     @if (mediaParts.Any()) {
         foreach (var contentItem in mediaParts) {
             if (Authorizer.Authorize(Permissions.EditContent, contentItem)) {
-                <a href="@Url.ItemEditUrl(contentItem, new {returnUrl})">
-                    @Display(BuildDisplay(contentItem, "Thumbnail"))
-                </a>
+        <a href="@Url.ItemEditUrl(contentItem, new {returnUrl})">
+            @Display(BuildDisplay(contentItem, "Thumbnail"))
+        </a>
             }
             else {
-                @Display(BuildDisplay(contentItem, "Thumbnail"))
+        @Display(BuildDisplay(contentItem, "Thumbnail"))
             }
         }
     }

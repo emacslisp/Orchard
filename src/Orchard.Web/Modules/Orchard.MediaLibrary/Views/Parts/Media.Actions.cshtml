@@ -10,12 +10,12 @@
     @if (Authorizer.Authorize(Permissions.EditContent, contentItem)) {
         @Html.Link(T("Edit").Text, Url.ItemEditUrl(contentItem), new { @class = "button", id = "edit-media-link" })
     }
-    @if (Authorizer.Authorize(Permissions.PublishContent, contentItem) && draftable) {        
+    @if (Authorizer.Authorize(Permissions.PublishContent, contentItem) && draftable) {
         if (contentItem.HasPublished()) {
-            @Html.AntiForgeryTokenValueOrchardLink(T("Unpublish").Text, Url.Action("Unpublish", "Admin", new { Area = "Contents", contentItem.Id }), new { @class = "button", itemprop = "UnsafeUrl" })
+        @Html.AntiForgeryTokenValueOrchardLink(T("Unpublish").Text, Url.Action("Unpublish", "Admin", new { Area = "Contents", contentItem.Id }), new { @class = "button", itemprop = "UnsafeUrl" })
         }
         else {
-            @Html.AntiForgeryTokenValueOrchardLink(T("Publish").Text, Url.Action("Publish", "Admin", new { Area = "Contents", contentItem.Id }), new { @class = "button", itemprop = "UnsafeUrl" })
+        @Html.AntiForgeryTokenValueOrchardLink(T("Publish").Text, Url.Action("Publish", "Admin", new { Area = "Contents", contentItem.Id }), new { @class = "button", itemprop = "UnsafeUrl" })
         }
     }
 </div>

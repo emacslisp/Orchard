@@ -6,14 +6,15 @@
 }
 
 <div class="breadCrumbs">
-<p>@Html.ActionLink(T("Media Library").ToString(), "Index", "Admin", new { area = "Orchard.MediaLibrary" }, new {}) &#62; 
-        @foreach (var folder in Model.FolderPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) { 
-            @folder <text>&#62;</text>
+    <p>
+        @Html.ActionLink(T("Media Library").ToString(), "Index", "Admin", new { area = "Orchard.MediaLibrary" }, new {}) &#62;
+    @foreach (var folder in Model.FolderPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)) {
+        @folder <text>&#62;</text>
         }
 </p>
-</div> 
+</div>
 
-@using (Html.BeginFormAntiForgeryPost()) { 
+@using (Html.BeginFormAntiForgeryPost()) {
     @Html.ValidationSummary()
     <fieldset>
         <label for="Name">@T("Folder Name")</label>

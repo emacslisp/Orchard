@@ -10,8 +10,10 @@ using Orchard.Localization;
 using Orchard.Mvc.Extensions;
 using Orchard.Security;
 
-namespace Orchard.MediaLibrary.Services {
-    public class XmlRpcHandler : IXmlRpcHandler {
+namespace Orchard.MediaLibrary.Services
+{
+    public class XmlRpcHandler : IXmlRpcHandler
+    {
         private readonly IContentManager _contentManager;
         private readonly IMembershipService _membershipService;
         private readonly IAuthorizationService _authorizationService;
@@ -23,7 +25,8 @@ namespace Orchard.MediaLibrary.Services {
             IAuthorizationService authorizationService,
             IMediaLibraryService mediaLibraryService,
             RouteCollection routeCollection,
-            IContentManager contentManager) {
+            IContentManager contentManager)
+        {
             _membershipService = membershipService;
             _authorizationService = authorizationService;
             _mediaLibraryService = mediaLibraryService;
@@ -35,15 +38,18 @@ namespace Orchard.MediaLibrary.Services {
 
         public Localizer T { get; set; }
 
-        public void SetCapabilities(XElement options) {
+        public void SetCapabilities(XElement options)
+        {
             const string manifestUri = "http://schemas.microsoft.com/wlw/manifest/weblog";
             options.SetElementValue(XName.Get("supportsFileUpload", manifestUri), "Yes");
         }
 
-        public void Process(XmlRpcContext context) {
+        public void Process(XmlRpcContext context)
+        {
             var urlHelper = new UrlHelper(context.ControllerContext.RequestContext, _routeCollection);
 
-            if (context.Request.MethodName == "metaWeblog.newMediaObject") {
+            if (context.Request.MethodName == "metaWeblog.newMediaObject")
+            {
                 var result = MetaWeblogNewMediaObject(
                     Convert.ToString(context.Request.Params[1].Value),
                     Convert.ToString(context.Request.Params[2].Value),
@@ -57,10 +63,12 @@ namespace Orchard.MediaLibrary.Services {
             string userName,
             string password,
             XRpcStruct file,
-            UrlHelper url) {
+            UrlHelper url)
+        {
 
             var user = _membershipService.ValidateUser(userName, password);
-            if (!_authorizationService.TryCheckAccess(Permissions.ManageOwnMedia, user, null)) {
+            if (!_authorizationService.TryCheckAccess(Permissions.ManageOwnMedia, user, null))
+            {
                 throw new OrchardCoreException(T("Access denied"));
             }
 
@@ -68,30 +76,36 @@ namespace Orchard.MediaLibrary.Services {
             var bits = file.Optional<byte[]>("bits");
 
             string directoryName = Path.GetDirectoryName(name);
-            if (string.IsNullOrWhiteSpace(directoryName)) { // Some clients only pass in a name path that does not contain a directory component.
+            if (string.IsNullOrWhiteSpace(directoryName))
+            { // Some clients only pass in a name path that does not contain a directory component.
                 directoryName = "media";
             }
 
             // If the user only has access to his own folder, rewrite the folder name
-            if (!_authorizationService.TryCheckAccess(Permissions.ManageMediaContent, user, null)) {
+            if (!_authorizationService.TryCheckAccess(Permissions.ManageMediaContent, user, null))
+            {
                 directoryName = Path.Combine(_mediaLibraryService.GetRootedFolderPath(directoryName));
             }
 
-            try {
+            try
+            {
                 // delete the file if it already exists, e.g. an updated image in a blog post
                 // it's safe to delete the file as each content item gets a specific folder
                 _mediaLibraryService.DeleteFile(directoryName, Path.GetFileName(name));
             }
-            catch {
+            catch
+            {
                 // current way to delete a file if it exists
             }
 
             string publicUrl = _mediaLibraryService.UploadMediaFile(directoryName, Path.GetFileName(name), bits);
             var mediaPart = _mediaLibraryService.ImportMedia(directoryName, Path.GetFileName(name));
-            try {
+            try
+            {
                 _contentManager.Create(mediaPart);
             }
-            catch {
+            catch
+            {
             }
 
             return new XRpcStruct() // Some clients require all optional attributes to be declared Wordpress responds in this way as well.

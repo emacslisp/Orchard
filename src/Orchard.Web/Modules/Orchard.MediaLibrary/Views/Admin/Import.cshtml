@@ -25,7 +25,7 @@
                     @Html.SelectOption(mediaType.Name, false, mediaType.DisplayName)
                 }
             </select>
-            
+
             <a href="@Url.Action("Index", "Admin", new { folderPath = Model.FolderPath})" class="button close">@T("Close")</a>
         </div>
 
@@ -41,9 +41,9 @@
                 string sectionHeaderTextHint = menuItem.Text.TextHint;
                 var itemClassName = "navicon-" + sectionHeaderTextHint.HtmlClassify();
                 if (Model.Replace == null) {
-                    <div class="import-provider"><a class="navicon @itemClassName" href="@menuItem.Href/Index?folderPath=@HttpUtility.UrlEncode(Model.FolderPath)">@menuItem.Text</a></div>
+                <div class="import-provider"><a class="navicon @itemClassName" href="@menuItem.Href/Index?folderPath=@HttpUtility.UrlEncode(Model.FolderPath)">@menuItem.Text</a></div>
                 } else {
-                    <div class="import-provider"><a class="navicon @itemClassName" href="@menuItem.Href/Index?folderPath=@HttpUtility.UrlEncode(Model.FolderPath)&replaceId=@HttpUtility.UrlEncode(Model.Replace.Id.ToString())">@menuItem.Text</a></div>
+                <div class="import-provider"><a class="navicon @itemClassName" href="@menuItem.Href/Index?folderPath=@HttpUtility.UrlEncode(Model.FolderPath)&replaceId=@HttpUtility.UrlEncode(Model.Replace.Id.ToString())">@menuItem.Text</a></div>
                 }
             }
         </div>

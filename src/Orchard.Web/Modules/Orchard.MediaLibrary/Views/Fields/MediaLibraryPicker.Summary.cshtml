@@ -9,10 +9,10 @@
     var mediaParts = field.MediaParts;
 }
 @if (mediaParts.Any()) {
-<span class="name">@displayName:</span>
-<p class="media-@name.HtmlClassify()">    
+    <span class="name">@displayName:</span>
+    <p class="media-@name.HtmlClassify()">
         @foreach (var contentItem in mediaParts) {
-                @Display(BuildDisplay(contentItem, "Thumbnail"))
+            @Display(BuildDisplay(contentItem, "Thumbnail"))
         }
-</p>
+    </p>
 }
